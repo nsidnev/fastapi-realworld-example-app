@@ -11,6 +11,9 @@ fastapi = {version = "^0.1.18",extras = ["all"]}
 uvicorn = "0.3.32"
 passlib = {version = "^1.7",extras = ["bcrypt"]}
 pyjwt = "^1.7"
+asyncpg = "^0.18.3"
+alembic = "^1.0"
+psycopg2-binary = "^2.7"
 
 
 [tool.poetry.dev-dependencies]

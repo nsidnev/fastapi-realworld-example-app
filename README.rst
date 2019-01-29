@@ -34,7 +34,55 @@ Then create ``.env`` file in project root and set enviroment variables for appli
 
 To run the web application in degub use::
 
+    alembic upgrade head
     uvicorn app.main:app --debug
+
+
+Structure
+---------
+
+::
+
+    fastapi-realworld-example-app - project root
+    ├── alembic.ini
+    ├── alembic - alembic migrations directory
+    │   ├── env.py
+    │   ├── README
+    │   ├── script.py.mako
+    │   └── versions
+    │       └── 4e62e0d755a8_init.py
+    ├── app
+    │   ├── __init__.py
+    │   ├── main.py - FastAPI application object and it's configutaion
+    │   ├── api
+    │   │   ├── api_v1
+    │   │   └── __init__.py
+    │   │       ├── __init__.py
+    │   │       ├── api.py - main api router
+    │   │       └── endpoints
+    │   │           ├── __init__.py
+    │   │           ├── article.py
+    │   │           ├── authenticaion.py
+    │   │           ├── comment.py
+    │   │           ├── profile.py
+    │   │           └── user.py
+    │   ├── core
+    │   │   ├── __init__.py
+    │   │   ├── config.py
+    │   │   ├── errors.py
+    │   │   └── security.py
+    │   ├── crud - db opetaions (CRUD for user/comment/article/etc)
+    │   │   └── __init__.py
+    │   ├── db - database specific utils (db object, connect/disconnect to postgres coroutines)
+    │   │   ├── __init__.py
+    │   │   ├── database.py
+    │   │   └── db_utils.py
+    │   └── models - pydantic models
+    │       └── __init__.py
+    ├── poetry.lock - poetry lock file
+    ├── pyproject.toml - poetry project file
+    └── README.rst
+
 
 
 TODO
