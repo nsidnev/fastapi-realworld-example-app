@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Body, Depends
 
-from app.core.jwt import get_current_user
+from app.core.jwt import get_current_user_authorizer
 from app.db.database import DataBase
 from app.db.db_utils import get_database
 from app.models.user import UserInResponse, User, UserInUpdate
@@ -10,15 +10,15 @@ router = APIRouter()
 
 
 @router.get("/user", response_model=UserInResponse, tags=["users"])
-async def retrieve_current_user(user: User = Depends(get_current_user)):
+async def retrieve_current_user(user: User = Depends(get_current_user_authorizer())):
     return UserInResponse(user=user)
 
 
 @router.put("/user", response_model=UserInResponse, tags=["users"])
 async def update_current_user(
-        user: UserInUpdate = Body(..., embed=True),
-        current_user: User = Depends(get_current_user),
-        db: DataBase = Depends(get_database),
+    user: UserInUpdate = Body(..., embed=True),
+    current_user: User = Depends(get_current_user_authorizer()),
+    db: DataBase = Depends(get_database),
 ):
     async with db.pool.acquire() as conn:
         if user.username == current_user.username:

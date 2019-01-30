@@ -39,10 +39,11 @@ async def create_user(conn: Connection, user: UserInCreate) -> UserInDB:
     dbuser = UserInDB(**user.dict())
     dbuser.change_password(user.password)
 
-    await conn.execute(
+    row = await conn.fetchrow(
         """
         INSERT INTO users (username, email, salt, hashed_password, bio, image) 
         VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id, username, email, salt, hashed_password, bio, image, created_at, updated_at
         """,
         dbuser.username,
         dbuser.email,
@@ -52,11 +53,12 @@ async def create_user(conn: Connection, user: UserInCreate) -> UserInDB:
         dbuser.image,
     )
 
+    dbuser = UserInDB(**row)
     return dbuser
 
 
 async def update_user(
-        conn: Connection, username: str, user_data: UserInUpdate
+    conn: Connection, username: str, user_data: UserInUpdate
 ) -> UserInDB:
     dbuser = await get_user(conn, username)
 
@@ -67,11 +69,12 @@ async def update_user(
     if user_data.password:
         dbuser.change_password(user_data.password)
 
-    await conn.execute(
+    row = await conn.fetchrow(
         """
         UPDATE users
         SET username = $1, email = $2, salt = $3, hashed_password = $4, bio = $5, image = $6
         WHERE username = $7
+        RETURNING id, username, email, salt, hashed_password, bio, image, created_at, updated_at
         """,
         dbuser.username,
         dbuser.email,
@@ -82,11 +85,12 @@ async def update_user(
         username,
     )
 
+    dbuser = UserInDB(**row)
     return dbuser
 
 
 async def check_free_username_and_email(
-        conn: Connection, username: Optional[str], email: Optional[EmailStr]
+    conn: Connection, username: Optional[str], email: Optional[EmailStr]
 ):
     if username:
         user_by_username = await get_user(conn, username)

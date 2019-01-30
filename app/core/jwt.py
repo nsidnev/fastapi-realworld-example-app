@@ -19,7 +19,7 @@ ALGORITHM = "HS256"
 access_token_jwt_subject = "access"
 
 
-def get_authorization_token(authorization: str = Header(...)):
+def _get_authorization_token(authorization: str = Header(...)):
     token_prefix, token = authorization.split(" ")
     if token_prefix != JWT_TOKEN_PREFIX:
         raise HTTPException(
@@ -29,8 +29,8 @@ def get_authorization_token(authorization: str = Header(...)):
     return token
 
 
-async def get_current_user(
-    db: DataBase = Depends(get_database), token: str = Depends(get_authorization_token)
+async def _get_current_user(
+    db: DataBase = Depends(get_database), token: str = Depends(_get_authorization_token)
 ) -> User:
     try:
         payload = jwt.decode(token, str(SECRET_KEY), algorithms=[ALGORITHM])
@@ -47,6 +47,29 @@ async def get_current_user(
 
         user = User(**dbuser.dict(), token=token)
         return user
+
+
+def _get_authorization_token_optional(authorization: str = Header(None)):
+    if authorization:
+        return _get_authorization_token(authorization)
+    return ""
+
+
+async def _get_current_user_optional(
+    db: DataBase = Depends(get_database),
+    token: str = Depends(_get_authorization_token_optional),
+) -> Optional[User]:
+    if token:
+        return await _get_current_user(db, token)
+
+    return None
+
+
+def get_current_user_authorizer(*, required: bool = True):
+    if required:
+        return _get_current_user
+    else:
+        return _get_current_user_optional
 
 
 def create_access_token(*, data: dict, expires_delta: Optional[timedelta] = None):
