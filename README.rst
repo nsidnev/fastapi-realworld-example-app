@@ -19,7 +19,7 @@ Then run the following commands to bootstrap your environment with ``poetry``.
 
     git clone https://github.com/nikelwolf/fastapi-realworld-example-app
     cd fastapi-realworld-example-app
-    poetry instal
+    poetry install
     poetry shell
 
 Then create ``.env`` file in project root and set enviroment variables for application.

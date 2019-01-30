@@ -1,12 +1,11 @@
-import os
-
+import bcrypt
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def generate_salt():
-    return os.urandom(32)
+    return bcrypt.gensalt().decode()
 
 
 def verify_password(plain_password, hashed_password):

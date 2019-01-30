@@ -1,3 +1,5 @@
+from collections.abc import Iterable
+
 from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 from starlette.exceptions import HTTPException
 from starlette.responses import JSONResponse
@@ -20,11 +22,18 @@ async def http_422_error_handler(request: Request, exc: HTTPException) -> JSONRe
     """
 
     errors = {"body": []}
-    for error in exc.detail:
-        error_name = ".".join(
-            error["loc"][1:]
-        )  # remove 'body' from path to invalid element
-        errors["body"].append({error_name: error["msg"]})
+
+    print(exc.detail)
+
+    if isinstance(exc.detail, Iterable) and not isinstance(exc.detail, str):  # check if error is pydantic's model error
+        for error in exc.detail:
+            error_name = ".".join(
+                error["loc"][1:]
+            )  # remove 'body' from path to invalid element
+            errors["body"].append({error_name: error["msg"]})
+    else:
+        errors['body'].append(exc.detail)
+
     return JSONResponse({"errors": errors}, status_code=HTTP_422_UNPROCESSABLE_ENTITY)
 
 
