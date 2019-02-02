@@ -20,8 +20,6 @@ Unidecode = "^1.0"
 
 
 [tool.poetry.dev-dependencies]
-requests = "^2.21"
-pytest = "^4.2"
 
 [build-system]
 requires = ["poetry>=0.12"]

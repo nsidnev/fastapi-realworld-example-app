@@ -20,9 +20,10 @@ if not DATABASE_URL:
 
     DATABASE_URL = DatabaseURL(
         f"postgresql://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_NAME}")
+    SECRET_KEY = config("SECRET_KEY", cast=Secret)
 else:
     DATABASE_URL = DatabaseURL(DATABASE_URL)
+    SECRET_KEY = os.getenv('SECRET_KEY')
 
-PROJECT_NAME = config("PROJECT_NAME")
-SECRET_KEY = config("SECRET_KEY", cast=Secret)
+PROJECT_NAME = config("PROJECT_NAME", default='FastAPI example application')
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=CommaSeparatedStrings, default=None)
