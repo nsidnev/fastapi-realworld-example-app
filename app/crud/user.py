@@ -2,7 +2,7 @@ from asyncpg import Connection
 from pydantic import EmailStr
 
 from app.models.user import UserInCreate, UserInUpdate
-from models.user import UserInDB
+from app.models.user import UserInDB
 
 
 async def get_user(conn: Connection, username: str) -> UserInDB:
