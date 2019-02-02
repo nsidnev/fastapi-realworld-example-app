@@ -8,16 +8,18 @@ from app.core.config import API_V1_STR, ALLOWED_HOSTS, PROJECT_NAME
 from app.core.errors import http_error_handler, http_422_error_handler
 from app.db.db_utils import connect_to_postgres, close_postgres_connection
 
-app = FastAPI(title=PROJECT_NAME, openapi_url=f"{API_V1_STR}/openapi.json")
+app = FastAPI(title=PROJECT_NAME)
 
-if ALLOWED_HOSTS:
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=ALLOWED_HOSTS,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+if not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=ALLOWED_HOSTS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.add_event_handler("startup", connect_to_postgres)
 app.add_event_handler("shutdown", close_postgres_connection)
