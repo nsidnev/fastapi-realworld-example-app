@@ -9,8 +9,7 @@ from .database import db
 async def connect_to_postgres():
     logging.info("Connecting to database")
 
-    pool = await asyncpg.create_pool(str(DATABASE_URL))
-    db.pool = pool
+    db.pool = await asyncpg.create_pool(str(DATABASE_URL))
 
     logging.info("Connected to database")
 
