@@ -1,6 +1,3 @@
-from contextlib import asynccontextmanager
-
-from asyncpg import Connection
 from asyncpg.pool import Pool
 
 
@@ -9,3 +6,7 @@ class DataBase:
 
 
 db = DataBase()
+
+
+async def get_database():
+    return db

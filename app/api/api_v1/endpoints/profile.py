@@ -1,28 +1,21 @@
 from typing import Optional
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Path
 from starlette.exceptions import HTTPException
-from starlette.status import HTTP_404_NOT_FOUND, HTTP_422_UNPROCESSABLE_ENTITY
+from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 
 from app.core.jwt import get_current_user_authorizer
-from app.db.database import DataBase
-from app.db.db_utils import get_database
-from app.crud.user import get_user
-from app.crud.profile import (
-    is_following_for_user,
-    follow_for_user,
-    unfollow_user,
-    get_profile_for_user,
-)
+from app.crud.profile import follow_for_user, unfollow_user, get_profile_for_user
+from app.db.database import DataBase, get_database
+from app.models.profile import ProfileInResponse
 from app.models.user import User
-from app.models.profile import ProfileInResponse, Profile
 
 router = APIRouter()
 
 
 @router.get("/profiles/{username}", response_model=ProfileInResponse, tags=["profiles"])
 async def retrieve_profile(
-    username: str,
+    username: str = Path(..., min_length=1),
     user: Optional[User] = Depends(get_current_user_authorizer(required=False)),
     db: DataBase = Depends(get_database),
 ):
@@ -38,7 +31,7 @@ async def retrieve_profile(
     "/profiles/{username}/follow", response_model=ProfileInResponse, tags=["profiles"]
 )
 async def follow_user(
-    username: str,
+    username: str = Path(..., min_length=1),
     user: User = Depends(get_current_user_authorizer()),
     db: DataBase = Depends(get_database),
 ):
@@ -68,7 +61,7 @@ async def follow_user(
     "/profiles/{username}/follow", response_model=ProfileInResponse, tags=["profiles"]
 )
 async def describe_from_user(
-    username: str,
+    username: str = Path(..., min_length=1),
     user: User = Depends(get_current_user_authorizer()),
     db: DataBase = Depends(get_database),
 ):

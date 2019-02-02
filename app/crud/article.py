@@ -1,5 +1,3 @@
-import logging
-
 from typing import List, Optional
 
 from asyncpg import Connection
@@ -11,8 +9,6 @@ from app.models.article import (
     ArticleInCreate,
     ArticleInUpdate,
 )
-from app.models.user import User
-
 from .profile import get_profile_for_user
 from .tag import (
     get_tags_for_article,

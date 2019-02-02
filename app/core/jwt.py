@@ -1,18 +1,16 @@
-from typing import Optional
 from datetime import datetime, timedelta
+from typing import Optional
 
 import jwt
-from jwt import PyJWTError
 from fastapi import Depends, Header
+from jwt import PyJWTError
 from starlette.exceptions import HTTPException
 from starlette.status import HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND
 
-from app.db.database import DataBase
-from app.db.db_utils import get_database
 from app.crud.user import get_user
-from app.models.user import User
+from app.db.database import DataBase, get_database
 from app.models.token import TokenPayload
-
+from app.models.user import User
 from .config import SECRET_KEY, JWT_TOKEN_PREFIX
 
 ALGORITHM = "HS256"

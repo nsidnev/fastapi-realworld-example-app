@@ -3,7 +3,6 @@ import logging
 import asyncpg
 
 from app.core.config import DATABASE_URL
-
 from .database import db
 
 
@@ -22,7 +21,3 @@ async def close_postgres_connection():
     await db.pool.close()
 
     logging.info("Connection closed")
-
-
-async def get_database():
-    return db

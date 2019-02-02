@@ -2,14 +2,13 @@ from datetime import timedelta
 
 from fastapi import APIRouter, Body, Depends
 from starlette.exceptions import HTTPException
-from starlette.status import HTTP_400_BAD_REQUEST
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED
 
 from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from app.core.jwt import create_access_token
-from app.crud.user import get_user_by_email, create_user
 from app.crud.shortcuts import check_free_username_and_email
-from app.db.database import DataBase
-from app.db.db_utils import get_database
+from app.crud.user import get_user_by_email, create_user
+from app.db.database import DataBase, get_database
 from app.models.user import User, UserInResponse, UserInLogin, UserInCreate
 
 router = APIRouter()
@@ -33,7 +32,12 @@ async def login(
         return UserInResponse(user=User(**dbuser.dict(), token=token))
 
 
-@router.post("/users", response_model=UserInResponse, tags=["authentication"])
+@router.post(
+    "/users",
+    response_model=UserInResponse,
+    tags=["authentication"],
+    status_code=HTTP_201_CREATED,
+)
 async def register(
     user: UserInCreate = Body(..., embed=True), db: DataBase = Depends(get_database)
 ):

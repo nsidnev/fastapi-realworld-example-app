@@ -1,8 +1,8 @@
 from typing import Optional
 
-from starlette.exceptions import HTTPException
-from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY, HTTP_404_NOT_FOUND
 from asyncpg import Connection
+from starlette.exceptions import HTTPException
+from starlette.status import HTTP_404_NOT_FOUND
 
 from app.crud.user import get_user
 from app.models.profile import Profile

@@ -1,9 +1,8 @@
 from fastapi import APIRouter, Depends
 
-from app.models.tag import TagsList
-from app.db.database import DataBase
-from app.db.db_utils import get_database
 from app.crud.tag import fetch_all_tags
+from app.db.database import DataBase, get_database
+from app.models.tag import TagsList
 
 router = APIRouter()
 
