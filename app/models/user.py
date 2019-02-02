@@ -3,7 +3,6 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr, UrlStr
 
 from app.core.security import verify_password, generate_salt, get_password_hash
-
 from .dbmodel import DBModelMixin
 
 

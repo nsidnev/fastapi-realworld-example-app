@@ -4,7 +4,10 @@ from typing import Optional
 from pydantic import BaseModel, Schema
 
 
-class DBModelMixin(BaseModel):
+class DateTimeModel(BaseModel):
+    createdAt: datetime = Schema(..., alias="created_at")
+    updatedAt: datetime = Schema(..., alias="updated_at")
+
+
+class DBModelMixin(DateTimeModel):
     id: Optional[int] = None
-    createdAt: Optional[datetime] = Schema(None, alias="created_at")
-    updatedAt: Optional[datetime] = Schema(None, alias="updated_at")

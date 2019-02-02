@@ -66,9 +66,8 @@ async def get_profile_for_user(
         )
 
     profile = Profile(**user.dict())
-    if current_username:
-        profile.following = await is_following_for_user(
-            conn, current_username, target_username
-        )
+    profile.following = await is_following_for_user(
+        conn, current_username, target_username
+    )
 
     return profile

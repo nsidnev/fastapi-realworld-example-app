@@ -14,6 +14,8 @@ pyjwt = "^1.7"
 asyncpg = "^0.18.3"
 alembic = "^1.0"
 psycopg2-binary = "^2.7"
+python-slugify = "^2.0"
+Unidecode = "^1.0"
 
 
 [tool.poetry.dev-dependencies]

@@ -57,10 +57,11 @@ async def follow_user(
                 detail=f"You follow this user already",
             )
 
-        await follow_for_user(conn, user.username, profile.username)
-        profile.following = True
+        async with conn.transaction():
+            await follow_for_user(conn, user.username, profile.username)
+            profile.following = True
 
-        return ProfileInResponse(profile=profile)
+            return ProfileInResponse(profile=profile)
 
 
 @router.delete(
@@ -86,7 +87,8 @@ async def describe_from_user(
                 detail=f"You did not follow this user",
             )
 
-        await unfollow_user(conn, user.username, profile.username)
-        profile.following = False
+        async with conn.transaction():
+            await unfollow_user(conn, user.username, profile.username)
+            profile.following = False
 
-        return ProfileInResponse(profile=profile)
+            return ProfileInResponse(profile=profile)

@@ -4,7 +4,8 @@ from app.core.jwt import get_current_user_authorizer
 from app.db.database import DataBase
 from app.db.db_utils import get_database
 from app.models.user import UserInResponse, User, UserInUpdate
-from app.crud.user import update_user, check_free_username_and_email
+from app.crud.user import update_user
+from app.crud.shortcuts import check_free_username_and_email
 
 router = APIRouter()
 
@@ -28,5 +29,6 @@ async def update_current_user(
 
         await check_free_username_and_email(conn, user.username, user.email)
 
-        dbuser = await update_user(conn, current_user.username, user)
-        return UserInResponse(user=User(**dbuser.dict(), token=current_user.token))
+        async with conn.transaction():
+            dbuser = await update_user(conn, current_user.username, user)
+            return UserInResponse(user=User(**dbuser.dict(), token=current_user.token))

@@ -6,7 +6,8 @@ from starlette.status import HTTP_400_BAD_REQUEST
 
 from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from app.core.jwt import create_access_token
-from app.crud.user import get_user_by_email, create_user, check_free_username_and_email
+from app.crud.user import get_user_by_email, create_user
+from app.crud.shortcuts import check_free_username_and_email
 from app.db.database import DataBase
 from app.db.db_utils import get_database
 from app.models.user import User, UserInResponse, UserInLogin, UserInCreate
@@ -39,10 +40,11 @@ async def register(
     async with db.pool.acquire() as conn:
         await check_free_username_and_email(conn, user.username, user.email)
 
-        dbuser = await create_user(conn, user)
-        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        token = create_access_token(
-            data={"username": dbuser.username}, expires_delta=access_token_expires
-        )
+        async with conn.transaction():
+            dbuser = await create_user(conn, user)
+            access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+            token = create_access_token(
+                data={"username": dbuser.username}, expires_delta=access_token_expires
+            )
 
-        return UserInResponse(user=User(**dbuser.dict(), token=token))
+            return UserInResponse(user=User(**dbuser.dict(), token=token))
