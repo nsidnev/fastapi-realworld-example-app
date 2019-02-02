@@ -6,6 +6,7 @@ Click==7.0
 dnspython==1.16.0
 email-validator==1.0.3
 fastapi==0.1.19
+gunicorn==19.9.0
 h11==0.8.1
 httptools==0.0.11
 idna==2.8
