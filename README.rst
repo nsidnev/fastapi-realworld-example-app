@@ -1,5 +1,16 @@
 .. image:: logo.png
 
+|
+
+.. image:: https://travis-ci.org/nikelwolf/fastapi-realworld-example-app.svg?branch=master
+    :target: https://travis-ci.org/nikelwolf/fastapi-realworld-example-app
+
+.. image:: https://img.shields.io/github/license/Naereen/StrapDown.js.svg
+   :target: https://github.com/nikelwolf/fastapi-realworld-example-app/blob/master/LICENSE
+
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+   :target: https://github.com/ambv/black
+
 Quickstart
 ----------
 
