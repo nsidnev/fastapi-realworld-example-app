@@ -26,10 +26,7 @@ def upgrade():
             RETURN NEW; 
         END;
         $$ language 'plpgsql';
-        """
-    )
-    conn.execute(
-        """
+        
         CREATE TABLE users (
             id SERIAL PRIMARY KEY,
             username VARCHAR(255) UNIQUE NOT NULL,
@@ -41,17 +38,10 @@ def upgrade():
             created_at TIMESTAMP NOT NULL DEFAULT now(),
             updated_at TIMESTAMP NOT NULL DEFAULT now()
         );
-        """
-    )
-    conn.execute(
-        """
         CREATE TRIGGER update_user_modtime 
         BEFORE UPDATE ON users 
         FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
-        """
-    )
-    conn.execute(
-        """
+        
         CREATE TABLE followers (
             id SERIAL PRIMARY KEY,
             follower_id INTEGER,
@@ -60,10 +50,7 @@ def upgrade():
             FOREIGN KEY (follower_id) REFERENCES users (id) ON DELETE CASCADE,
             FOREIGN KEY (following_id) REFERENCES users (id) ON DELETE CASCADE
         );
-        """
-    )
-    conn.execute(
-        """
+        
         CREATE TABLE articles (
             id SERIAL PRIMARY KEY,
             slug VARCHAR(255) NOT NULL UNIQUE,
@@ -75,45 +62,28 @@ def upgrade():
             author_id INTEGER,
             FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE SET NULL
         );
-        """
-    )
-    conn.execute(
-        """
         CREATE TRIGGER update_article_modtime 
         BEFORE UPDATE ON articles 
         FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
-        """
-    )
-    conn.execute(
-        """
+        
         CREATE TABLE tags (
             id SERIAL PRIMARY KEY,
             tag VARCHAR(255) NOT NULL UNIQUE,
             created_at TIMESTAMP NOT NULL DEFAULT now(),
             updated_at TIMESTAMP NOT NULL DEFAULT now()
         );
-    """
-    )
-    conn.execute(
-        """
         CREATE TRIGGER update_tag_modtime 
         BEFORE UPDATE ON tags 
         FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
-        """
-    )
-    conn.execute(
-        """
+        
         CREATE TABLE article_tags (
-        id SERIAL PRIMARY KEY,
-        article_id INTEGER,
-        tag_id INTEGER,
-        FOREIGN KEY (article_id) REFERENCES articles (id) ON DELETE CASCADE,
-        FOREIGN KEY (tag_id) REFERENCES tags (id) ON DELETE CASCADE 
+            id SERIAL PRIMARY KEY,
+            article_id INTEGER,
+            tag_id INTEGER,
+            FOREIGN KEY (article_id) REFERENCES articles (id) ON DELETE CASCADE,
+            FOREIGN KEY (tag_id) REFERENCES tags (id) ON DELETE CASCADE 
         );
-        """
-    )
-    conn.execute(
-        """
+        
         CREATE TABLE favourites (
             id SERIAL PRIMARY KEY,
             user_id INTEGER,
@@ -122,10 +92,7 @@ def upgrade():
             FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
             FOREIGN KEY (article_id) REFERENCES articles (id) ON DELETE CASCADE
         );
-        """
-    )
-    conn.execute(
-        """
+        
         CREATE TABLE commentaries (
             id SERIAL PRIMARY KEY,
             body TEXT NOT NULL,
@@ -136,10 +103,6 @@ def upgrade():
             FOREIGN KEY (author_id) REFERENCES users (id) ON DELETE CASCADE,
             FOREIGN KEY (article_id) REFERENCES articles (id) ON DELETE CASCADE 
         );
-        """
-    )
-    conn.execute(
-        """
         CREATE TRIGGER update_comment_modtime
         BEFORE UPDATE ON commentaries 
         FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
@@ -149,15 +112,19 @@ def upgrade():
 
 def downgrade():
     conn = op.get_bind()
-    conn.execute("""DROP TRIGGER update_comment_modtime ON commentaries;""")
-    conn.execute("""DROP TABLE commentaries;""")
-    conn.execute("""DROP TABLE favourites;""")
-    conn.execute("""DROP TABLE article_tags;""")
-    conn.execute("""DROP TRIGGER update_tag_modtime ON tags;""")
-    conn.execute("""DROP TABLE tags;""")
-    conn.execute("""DROP TRIGGER update_article_modtime ON articles;""")
-    conn.execute("""DROP TABLE articles;""")
-    conn.execute("""DROP TABLE followers;""")
-    conn.execute("""DROP TRIGGER update_user_modtime ON users;""")
-    conn.execute("""DROP TABLE users;""")
-    conn.execute("""DROP FUNCTION update_updated_at_column;""")
+    conn.execute(
+        """
+            DROP TRIGGER update_comment_modtime ON commentaries;
+            DROP TABLE commentaries;
+            DROP TABLE favourites;
+            DROP TABLE article_tags;
+            DROP TRIGGER update_tag_modtime ON tags;
+            DROP TABLE tags;
+            DROP TRIGGER update_article_modtime ON articles;
+            DROP TABLE articles;
+            DROP TABLE followers;
+            DROP TRIGGER update_user_modtime ON users;
+            DROP TABLE users;
+            DROP FUNCTION update_updated_at_column;
+        """
+    )

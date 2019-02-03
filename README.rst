@@ -65,6 +65,4 @@ Application parts are:
 
 Todo
 ----
-1) Add heroku deployment
-2) Add ci
-3) Add python tests
+1) Add python tests
