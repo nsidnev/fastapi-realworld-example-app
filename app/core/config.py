@@ -10,20 +10,21 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # one week
 
 config = Config(".env")
 
-DATABASE_URL = os.getenv('DATABASE_URL', '')  # deploying without docker-compose
+DATABASE_URL = os.getenv("DATABASE_URL", "")  # deploying without docker-compose
 if not DATABASE_URL:
-    POSTGRES_HOST = config('POSTGRES_HOST')
-    POSTGRES_PORT = config('POSTGRES_PORT')
-    POSTGRES_USER = config('POSTGRES_USER')
-    POSTGRES_PASS = config('POSTGRES_PASSWORD')
-    POSTGRES_NAME = config('POSTGRES_DB')
+    POSTGRES_HOST = config("POSTGRES_HOST")
+    POSTGRES_PORT = config("POSTGRES_PORT")
+    POSTGRES_USER = config("POSTGRES_USER")
+    POSTGRES_PASS = config("POSTGRES_PASSWORD")
+    POSTGRES_NAME = config("POSTGRES_DB")
 
     DATABASE_URL = DatabaseURL(
-        f"postgresql://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_NAME}")
+        f"postgresql://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_NAME}"
+    )
     SECRET_KEY = config("SECRET_KEY", cast=Secret)
 else:
     DATABASE_URL = DatabaseURL(DATABASE_URL)
-    SECRET_KEY = os.getenv('SECRET_KEY')
+    SECRET_KEY = os.getenv("SECRET_KEY")
 
-PROJECT_NAME = config("PROJECT_NAME", default='FastAPI example application')
+PROJECT_NAME = config("PROJECT_NAME", default="FastAPI example application")
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=CommaSeparatedStrings, default=None)
