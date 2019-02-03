@@ -5,14 +5,10 @@ install:
   - poetry install
 before_install:
   - pip install poetry
-  - poetry config settings.virtualenvs.create false
 before_script:
   - psql -c 'create database testing_db;' -U postgres
   - alembic upgrade head
-after_script:
-  - uvicorn run app.main:app & APIURL=http://localhost:7000/api ./postman_tests/run-api-tests.sh
-env:
-  - DATABASE_URL=postgresql://postgres@localhost/testing_db
-  - SECRET_KEY=travis-secret
+script:
+  - uvicorn app.main:app & APIURL=http://localhost:8000/api ./postman_tests/run-api-tests.sh
 services:
   - postgresql
