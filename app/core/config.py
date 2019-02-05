@@ -17,6 +17,8 @@ if not DATABASE_URL:
     POSTGRES_USER = config("POSTGRES_USER")
     POSTGRES_PASS = config("POSTGRES_PASSWORD")
     POSTGRES_NAME = config("POSTGRES_DB")
+    MAX_CONNECTIONS_COUNT = config("MAX_CONNECTIONS_COUNT", default=10, cast=int)
+    MIN_CONNECTIONS_COUNT = config("MIN_CONNECTIONS_COUNT", default=10, cast=int)
 
     DATABASE_URL = DatabaseURL(
         f"postgresql://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_NAME}"
@@ -25,6 +27,8 @@ if not DATABASE_URL:
 else:
     DATABASE_URL = DatabaseURL(DATABASE_URL)
     SECRET_KEY = os.getenv("SECRET_KEY")
+    MAX_CONNECTIONS_COUNT = int(os.getenv("MAX_CONNECTIONS_COUNT", 10))
+    MIN_CONNECTIONS_COUNT = int(os.getenv("MIN_CONNECTIONS_COUNT", 10))
 
 PROJECT_NAME = config("PROJECT_NAME", default="FastAPI example application")
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=CommaSeparatedStrings, default=None)
