@@ -17,6 +17,7 @@ alembic = "^1.0"
 psycopg2-binary = "^2.7"
 python-slugify = "^2.0"
 Unidecode = "^1.0"
+python-dotenv = "^0.10.1"
 
 
 [tool.poetry.dev-dependencies]
