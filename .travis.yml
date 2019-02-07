@@ -4,6 +4,8 @@ python: 3.7
 install:
   - poetry install
 before_install:
+  - docker build -t nikelwolf/fastapi-realworld .
+
   - pip install poetry
 before_script:
   - psql -c 'create database testing_db;' -U postgres

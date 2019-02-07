@@ -10,3 +10,4 @@ LICENSE
 logo.png
 postman_tests
 __pycache__
+.circleci

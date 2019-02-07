@@ -31,7 +31,7 @@ Then run the following commands to bootstrap your environment with ``poetry``: :
 Then create ``.env`` file (or rename and modify ``.env.example``) in project root and set environment variables for application: ::
 
     touch .env
-    echo PROJECT_NAME="FastAPI RealWorld Application Example" >> .env
+    echo "PROJECT_NAME=FastAPI RealWorld Application Example" >> .env
     echo DATABASE_URL=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB >> .env
     echo SECRET_KEY=$(openssl rand -hex 32) >> .env
     echo ALLOWED_HOSTS='"127.0.0.1", "localhost"' >> .env
