@@ -15,9 +15,10 @@ before_install:
   - echo POSTGRES_HOST=db >> .env
   - echo POSTGRES_PORT=5432 >> .env
   - echo POSTGRES_USER=postgres >> .env
-  - echo "POSTGRES_PASSWORD=" >> .env
-  - echo POSTGRES_DB=testing_db >> .env
+  - echo POSTGRES_PASSWORD=postgres >> .env
+  - echo POSTGRES_DB=rwdb >> .env
   - echo SECRET_KEY=$SECRET_KEY >> .env
+  - docker-compose up -d
 
   - pip install poetry
 install:
@@ -27,9 +28,9 @@ before_script:
   - alembic upgrade head
 script:
   - uvicorn app.main:app & APIURL=http://localhost:8000/api ./postman_tests/run-api-tests.sh
-
-  - docker-compose build
-  - docker-compose up -d && APIURL=http://localhost/api ./postman_tests/run-api-tests.sh
+  - APIURL=http://localhost/api ./postman_tests/run-api-tests.sh
+after_script:
+  - docker-compose kill
 deploy:
   provider: script
   script: bash docker_push.sh
