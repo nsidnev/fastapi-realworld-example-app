@@ -2,6 +2,9 @@
 
 |
 
+.. image:: https://circleci.com/gh/nikelwolf/fastapi-realworld-example-app.svg?style=svg
+    :target: https://circleci.com/gh/nikelwolf/fastapi-realworld-example-app
+
 .. image:: https://travis-ci.org/nikelwolf/fastapi-realworld-example-app.svg?branch=master
     :target: https://travis-ci.org/nikelwolf/fastapi-realworld-example-app
 
@@ -14,7 +17,7 @@
 Quickstart
 ----------
 
-First, run ``PostgreSQL``, set enviroment variables and create database. For example using ``docker``: ::
+First, run ``PostgreSQL``, set environment variables and create database. For example using ``docker``: ::
 
     export POSTGRES_DB=rwdb POSTGRES_PORT=5432 POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres
     docker run --name pgdb --rm -e POSTGRES_USER="$POSTGRES_USER" -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" -e POSTGRES_DB="$POSTGRES_DB" postgres
