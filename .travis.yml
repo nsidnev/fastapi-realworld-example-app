@@ -27,7 +27,9 @@ before_script:
   - alembic upgrade head
 script:
   - uvicorn app.main:app & APIURL=http://localhost:8000/api ./postman_tests/run-api-tests.sh
-  - docker-compose up -d & APIURL=http://localhost/api ./postman_tests/run-api-tests.sh
+
+  - docker-compose build
+  - docker-compose up -d && APIURL=http://localhost/api ./postman_tests/run-api-tests.sh
 deploy:
   provider: script
   script: bash docker_push.sh
