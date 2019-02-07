@@ -17,8 +17,9 @@ before_install:
   - echo POSTGRES_USER=postgres >> .env
   - echo POSTGRES_PASSWORD=postgres >> .env
   - echo POSTGRES_DB=rwdb >> .env
-  - echo SECRET_KEY=$SECRET_KEY >> .env
+  - echo SECRET_KEY=secret >> .env
   - docker-compose up -d
+  - docker ps
 
   - pip install poetry
 install:
