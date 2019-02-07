@@ -1,0 +1,12 @@
+.env
+.env.example
+.git*
+.travis.yml
+Procfile
+requirements.txt
+runtime.txt
+README.rst
+LICENSE
+logo.png
+postman_tests
+__pycache__

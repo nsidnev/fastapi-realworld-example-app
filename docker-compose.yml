@@ -2,15 +2,13 @@ version: '3'
 
 services:
   db:
-    image: postgres:latest
+    image: postgres
     env_file:
-      - .env.example
+      - .env
   web_app:
-    build:
-      dockerfile: Dockerfile
-      context: .
+    image: nikelwolf/fastapi-realworld
     env_file:
-      - .env.example
+      - .env
     depends_on:
       - db
     ports:

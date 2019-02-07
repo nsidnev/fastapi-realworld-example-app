@@ -1,14 +1,41 @@
 dist: xenial
 language: python
 python: 3.7
+env:
+  - DOCKER_COMPOSE_VERSION=1.23.2
 install:
   - poetry install
 before_install:
+  - sudo apt-get update
+  - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+
+  - docker build -t nikelwolf/fastapi-realworld .
+
+  - echo "PROJECT_NAME=FastAPI RealWorld Application Example" >> .env
+  - echo POSTGRES_HOST=db >> .env
+  - echo POSTGRES_PORT=5432 >> .env
+  - echo POSTGRES_USER=postgres >> .env
+  - echo "POSTGRES_PASSWORD=" >> .env
+  - echo POSTGRES_DB=testing_db >> .env
+  - echo SECRET_KEY=$SECRET_KEY >> .env
+
   - pip install poetry
 before_script:
   - psql -c 'create database testing_db;' -U postgres
   - alembic upgrade head
 script:
   - uvicorn app.main:app & APIURL=http://localhost:8000/api ./postman_tests/run-api-tests.sh
+
+  - docker-compose up -d & APIURL=http://localhost/api ./postman_tests/run-api-tests.sh
+deploy:
+  provider: script
+  script: bash docker_push.sh
+  on:
+    branch: master
 services:
   - postgresql
+  - docker

@@ -89,6 +89,14 @@ starlette = ">=0.9.11,<=0.10.1"
 
 [[package]]
 category = "main"
+description = "WSGI HTTP Server for UNIX"
+name = "gunicorn"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*"
+version = "19.9.0"
+
+[[package]]
+category = "main"
 description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
 name = "h11"
 optional = false
@@ -277,7 +285,7 @@ python-versions = ">=3.4"
 version = "7.0"
 
 [metadata]
-content-hash = "098af4420ec66ceab7e58f478f98b0288709b96670b4a077e194c47638293421"
+content-hash = "d7c78599269ac54742fb474efc8dcc599d7613fee1b0c07d6ea9c20a5aeca404"
 python-versions = "^3.7"
 
 [metadata.hashes]
@@ -289,6 +297,7 @@ click = ["2335065e6395b9e67ca716de5f7526736bfa6ceead690adf616d925bdc622b13", "5b
 dnspython = ["36c5e8e38d4369a08b6780b7f27d790a292b2b08eea01607865bf0936c558e01", "f69c21288a962f4da86e56c4905b49d11aba7938d3d740e80d9e366ee4f1632d"]
 email-validator = ["ddc4b5b59fa699bb10127adcf7ad4de78fde4ec539a072b104b8bb16da666ae5"]
 fastapi = ["1229397fc1fbbae5cdb3212e46a7b55936f3526eeddd3e271aab3adec1836fe3", "5fcc2035fe2d469dce0ed4625bf2012985ef39178b056f58edcf2d113e1343e3"]
+gunicorn = ["aa8e0b40b4157b36a5df5e599f45c9c76d6af43845ba3b3b0efe2c70473c2471", "fa2662097c66f920f53f70621c6c58ca4a3c4d3434205e608e121b5b3b71f4f3"]
 h11 = ["acca6a44cb52a32ab442b1779adf0875c443c689e9e028f8d831a3769f9c5208", "f2b1ca39bfed357d1f19ac732913d5f9faa54a5062eca7d2ec3a916cfb7ae4c7"]
 httptools = ["04c7703bbef0e8ca28b09811547352b8c7c20549eab70dc24e536bb24fd2b7c5"]
 idna = ["c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407", "ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c"]
