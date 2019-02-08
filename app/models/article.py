@@ -27,12 +27,8 @@ class Article(ArticleBase):
     author: Profile
     favorited: bool
     favoritesCount: int
-    createdAt: str  # delete in future
-    updatedAt: str  # delete in future
-
-    # TODO: uncomment this when fastapi will recognize json_encoders from pydantic
-    # createdAt: datetime
-    # updatedAt: datetime
+    createdAt: datetime
+    updatedAt: datetime
 
 
 class ArticleInDB(DBModelMixin, Article):
@@ -44,15 +40,22 @@ class ArticleInResponse(BaseModel):
 
     class Config:
         json_encoders = {
-            datetime: lambda dt: dt.replace(
-                microsecond=0, tzinfo=timezone.utc
-            ).isoformat()
+            datetime: lambda dt: dt.replace(tzinfo=timezone.utc)
+            .isoformat()
+            .replace("+00:00", "Z")
         }
 
 
 class ManyArticlesInResponse(BaseModel):
     articles: List[Article]
     articlesCount: int
+
+    class Config:
+        json_encoders = {
+            datetime: lambda dt: dt.replace(tzinfo=timezone.utc)
+            .isoformat()
+            .replace("+00:00", "Z")
+        }
 
 
 class ArticleInCreate(ArticleBase):

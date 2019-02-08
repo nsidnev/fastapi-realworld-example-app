@@ -1,4 +1,3 @@
-from datetime import timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Body, Query, Path
@@ -32,30 +31,12 @@ from app.models.article import (
     ArticleInResponse,
     ManyArticlesInResponse,
     ArticleInCreate,
-    Article,
     ArticleInUpdate,
-    ArticleInDB,
     ArticleFilterParams,
 )
 from app.models.user import User
 
 router = APIRouter()
-
-
-# TODO: remove after json_encoders fix in fastapi
-def _return_fixed_article(dbarticle: ArticleInDB) -> Article:
-    ad = dbarticle.dict()
-    ad.update(
-        {
-            "createdAt": dbarticle.createdAt.replace(tzinfo=timezone.utc)
-            .isoformat()
-            .replace("+00:00", "Z"),
-            "updatedAt": dbarticle.updatedAt.replace(tzinfo=timezone.utc)
-            .isoformat()
-            .replace("+00:00", "Z"),
-        }
-    )
-    return Article(**ad)
 
 
 @router.get("/articles", response_model=ManyArticlesInResponse, tags=["articles"])
@@ -76,8 +57,7 @@ async def get_articles(
             conn, filters, user.username if user else None
         )
         return ManyArticlesInResponse(
-            articles=[_return_fixed_article(dbarticle) for dbarticle in dbarticles],
-            articlesCount=len(dbarticles),
+            articles=dbarticles, articlesCount=len(dbarticles)
         )
 
 
@@ -91,8 +71,7 @@ async def articles_feed(
     async with db.pool.acquire() as conn:
         dbarticles = await get_user_articles(conn, user.username, limit, offset)
         return ManyArticlesInResponse(
-            articles=[_return_fixed_article(dbarticle) for dbarticle in dbarticles],
-            articlesCount=len(dbarticles),
+            articles=dbarticles, articlesCount=len(dbarticles)
         )
 
 
@@ -112,7 +91,7 @@ async def get_article(
                 detail=f"Article with slug '{slug}' not found",
             )
 
-        return ArticleInResponse(article=_return_fixed_article(dbarticle))
+        return ArticleInResponse(article=dbarticle)
 
 
 @router.post(
@@ -138,7 +117,7 @@ async def create_new_article(
 
         async with conn.transaction():
             dbarticle = await create_article_by_slug(conn, article, user.username)
-            return ArticleInResponse(article=_return_fixed_article(dbarticle))
+            return ArticleInResponse(article=dbarticle)
 
 
 @router.put("/articles/{slug}", response_model=ArticleInResponse, tags=["articles"])
@@ -155,7 +134,7 @@ async def update_article(
 
         async with conn.transaction():
             dbarticle = await update_article_by_slug(conn, slug, article, user.username)
-            return ArticleInResponse(article=_return_fixed_article(dbarticle))
+            return ArticleInResponse(article=dbarticle)
 
 
 @router.delete("/articles/{slug}", tags=["articles"], status_code=HTTP_204_NO_CONTENT)
@@ -194,7 +173,7 @@ async def favorite_article(
 
         async with conn.transaction():
             await add_article_to_favorites(conn, slug, user.username)
-            return ArticleInResponse(article=_return_fixed_article(dbarticle))
+            return ArticleInResponse(article=dbarticle)
 
 
 @router.delete(
@@ -219,4 +198,4 @@ async def delete_article_from_favorites(
 
         async with conn.transaction():
             await remove_article_from_favorites(conn, slug, user.username)
-            return ArticleInResponse(article=_return_fixed_article(dbarticle))
+            return ArticleInResponse(article=dbarticle)

@@ -9,7 +9,7 @@ license = "MIT"
 python = "^3.7"
 uvicorn = "0.3.32"
 gunicorn = "^19.9"
-fastapi = "^0.1.19"
+fastapi = "^0.2.0"
 pydantic = {version = "^0.18.2",extras = ["email"]}
 passlib = {version = "^1.7",extras = ["bcrypt"]}
 pyjwt = "^1.7"
