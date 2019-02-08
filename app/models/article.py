@@ -1,9 +1,10 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel
 
 from .dbmodel import DBModelMixin
+from .dtconfig import ISODatetimeConfig
 from .profile import Profile
 
 
@@ -38,24 +39,16 @@ class ArticleInDB(DBModelMixin, Article):
 class ArticleInResponse(BaseModel):
     article: Article
 
-    class Config:
-        json_encoders = {
-            datetime: lambda dt: dt.replace(tzinfo=timezone.utc)
-            .isoformat()
-            .replace("+00:00", "Z")
-        }
+    class Config(ISODatetimeConfig):
+        pass
 
 
 class ManyArticlesInResponse(BaseModel):
     articles: List[Article]
     articlesCount: int
 
-    class Config:
-        json_encoders = {
-            datetime: lambda dt: dt.replace(tzinfo=timezone.utc)
-            .isoformat()
-            .replace("+00:00", "Z")
-        }
+    class Config(ISODatetimeConfig):
+        pass
 
 
 class ArticleInCreate(ArticleBase):

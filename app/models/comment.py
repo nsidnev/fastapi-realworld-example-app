@@ -1,9 +1,10 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import List
 
 from pydantic import BaseModel
 
 from .dbmodel import DBModelMixin
+from .dtconfig import ISODatetimeConfig
 from .profile import Profile
 
 
@@ -24,13 +25,12 @@ class CommentInCreate(BaseModel):
 class CommentInResponse(BaseModel):
     comment: Comment
 
-    class Config:
-        json_encoders = {
-            datetime: lambda dt: dt.replace(tzinfo=timezone.utc)
-            .isoformat()
-            .replace("+00:00", "Z")
-        }
+    class Config(ISODatetimeConfig):
+        pass
 
 
 class ManyCommentsInResponse(BaseModel):
     comments: List[Comment]
+
+    class Config(ISODatetimeConfig):
+        pass
