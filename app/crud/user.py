@@ -50,8 +50,8 @@ async def create_user(conn: Connection, user: UserInCreate) -> UserInDB:
     )
 
     dbuser.id = row["id"]
-    dbuser.createdAt = row["created_at"]
-    dbuser.updatedAt = row["updated_at"]
+    dbuser.created_at = row["created_at"]
+    dbuser.updated_at = row["updated_at"]
 
     return dbuser
 
@@ -82,5 +82,5 @@ async def update_user(conn: Connection, username: str, user: UserInUpdate) -> Us
         username,
     )
 
-    dbuser.updatedAt = updated_at
+    dbuser.updated_at = updated_at
     return dbuser

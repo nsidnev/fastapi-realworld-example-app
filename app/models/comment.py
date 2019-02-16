@@ -1,36 +1,26 @@
-from datetime import datetime
 from typing import List
 
-from pydantic import BaseModel
-
 from .dbmodel import DBModelMixin
-from .dtconfig import ISODatetimeConfig
 from .profile import Profile
+from .rwmodel import RWModel
 
 
-class CommentInDB(DBModelMixin, BaseModel):
+class CommentInDB(DBModelMixin, RWModel):
     body: str
     author: Profile
 
 
 class Comment(CommentInDB):
-    createdAt: datetime
-    updatedAt: datetime
+    pass
 
 
-class CommentInCreate(BaseModel):
+class CommentInCreate(RWModel):
     body: str
 
 
-class CommentInResponse(BaseModel):
+class CommentInResponse(RWModel):
     comment: Comment
 
-    class Config(ISODatetimeConfig):
-        pass
 
-
-class ManyCommentsInResponse(BaseModel):
+class ManyCommentsInResponse(RWModel):
     comments: List[Comment]
-
-    class Config(ISODatetimeConfig):
-        pass

@@ -1,12 +1,13 @@
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, UrlStr
+from pydantic import EmailStr, UrlStr
 
 from app.core.security import verify_password, generate_salt, get_password_hash
 from .dbmodel import DBModelMixin
+from .rwmodel import RWModel
 
 
-class UserBase(BaseModel):
+class UserBase(RWModel):
     username: str
     email: EmailStr
     bio: Optional[str] = ""
@@ -29,11 +30,11 @@ class User(UserBase):
     token: str
 
 
-class UserInResponse(BaseModel):
+class UserInResponse(RWModel):
     user: User
 
 
-class UserInLogin(BaseModel):
+class UserInLogin(RWModel):
     email: EmailStr
     password: str
 
@@ -42,7 +43,7 @@ class UserInCreate(UserInLogin):
     username: str
 
 
-class UserInUpdate(BaseModel):
+class UserInUpdate(RWModel):
     username: Optional[str] = None
     email: Optional[EmailStr] = None
     password: Optional[str] = None

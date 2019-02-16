@@ -18,7 +18,7 @@ from .tag import (
 
 
 async def is_article_favorited_by_user(
-    conn: Connection, slug: str, username: str
+        conn: Connection, slug: str, username: str
 ) -> bool:
     return await conn.fetchval(
         """
@@ -74,7 +74,7 @@ async def get_favorites_count_for_article(conn: Connection, slug: str):
 
 
 async def get_article_by_slug(
-    conn: Connection, slug: str, username: Optional[str] = None
+        conn: Connection, slug: str, username: Optional[str] = None
 ) -> ArticleInDB:
     article_info_row = await conn.fetchrow(
         """
@@ -96,14 +96,14 @@ async def get_article_by_slug(
         return ArticleInDB(
             **article_info_row,
             author=author,
-            tagList=[tag.tag for tag in tags],
+            tag_list=[tag.tag for tag in tags],
             favorited=favorited_by_user,
-            favoritesCount=favorites_count,
+            favorites_count=favorites_count,
         )
 
 
 async def create_article_by_slug(
-    conn: Connection, article: ArticleInCreate, username: str
+        conn: Connection, article: ArticleInCreate, username: str
 ) -> ArticleInDB:
     slug = slugify(article.title)
 
@@ -130,17 +130,17 @@ async def create_article_by_slug(
 
     author = await get_profile_for_user(conn, row["author_username"], "")
 
-    if article.tagList:
-        await create_tags_that_not_exist(conn, article.tagList)
-        await link_tags_with_article(conn, slug, article.tagList)
+    if article.tag_list:
+        await create_tags_that_not_exist(conn, article.tag_list)
+        await link_tags_with_article(conn, slug, article.tag_list)
 
     return ArticleInDB(
-        **row, author=author, tagList=article.tagList, favoritesCount=1, favorited=True
+        **row, author=author, tag_list=article.tag_list, favorites_count=1, favorited=True
     )
 
 
 async def update_article_by_slug(
-    conn: Connection, slug: str, article: ArticleInUpdate, username: str
+        conn: Connection, slug: str, article: ArticleInUpdate, username: str
 ) -> ArticleInDB:
     dbarticle = await get_article_by_slug(conn, slug, username)
 
@@ -167,7 +167,7 @@ async def update_article_by_slug(
         username,
     )
 
-    dbarticle.updatedAt = row["updated_at"]
+    dbarticle.updated_at = row["updated_at"]
     return dbarticle
 
 
@@ -183,7 +183,7 @@ async def delete_article_by_slug(conn: Connection, slug: str, username: str):
 
 
 async def get_user_articles(
-    conn: Connection, username: str, limit=20, offset=0
+        conn: Connection, username: str, limit=20, offset=0
 ) -> List[ArticleInDB]:
     articles: List[ArticleInDB] = []
     rows = await conn.fetch(
@@ -211,7 +211,7 @@ async def get_user_articles(
                 **row,
                 author=author,
                 tagList=[tag.tag for tag in tags],
-                favoritesCount=favorites_count,
+                favorites_count=favorites_count,
                 favorited=favorited_by_user,
             )
         )
@@ -219,7 +219,7 @@ async def get_user_articles(
 
 
 async def get_articles_with_filters(
-    conn: Connection, filters: ArticleFilterParams, username: Optional[str] = None
+        conn: Connection, filters: ArticleFilterParams, username: Optional[str] = None
 ) -> List[ArticleInDB]:
     articles: List[ArticleInDB] = []
     query_params_count = 0
@@ -292,8 +292,8 @@ async def get_articles_with_filters(
             ArticleInDB(
                 **row,
                 author=author,
-                tagList=[tag.tag for tag in tags],
-                favoritesCount=favorites_count,
+                tag_list=[tag.tag for tag in tags],
+                favorites_count=favorites_count,
                 favorited=favorited_by_user,
             )
         )

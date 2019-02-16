@@ -1,5 +1,5 @@
-from pydantic import BaseModel
+from .rwmodel import RWModel
 
 
-class TokenPayload(BaseModel):
+class TokenPayload(RWModel):
     username: str = ""

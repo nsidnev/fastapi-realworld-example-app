@@ -1,7 +1,9 @@
 from typing import Optional
 
 from fastapi import APIRouter, Depends, Body, Query, Path
+from fastapi.encoders import jsonable_encoder
 from slugify import slugify
+from starlette.responses import JSONResponse
 from starlette.exceptions import HTTPException
 from starlette.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
@@ -11,6 +13,7 @@ from starlette.status import (
     HTTP_201_CREATED,
 )
 
+from app.core.utils import create_aliased_response
 from app.core.jwt import get_current_user_authorizer
 from app.crud.article import (
     get_article_by_slug,
@@ -41,13 +44,13 @@ router = APIRouter()
 
 @router.get("/articles", response_model=ManyArticlesInResponse, tags=["articles"])
 async def get_articles(
-    tag: str = "",
-    author: str = "",
-    favorited: str = "",
-    limit: int = Query(20, gt=0),
-    offset: int = Query(0, ge=0),
-    user: User = Depends(get_current_user_authorizer(required=False)),
-    db: DataBase = Depends(get_database),
+        tag: str = "",
+        author: str = "",
+        favorited: str = "",
+        limit: int = Query(20, gt=0),
+        offset: int = Query(0, ge=0),
+        user: User = Depends(get_current_user_authorizer(required=False)),
+        db: DataBase = Depends(get_database),
 ):
     filters = ArticleFilterParams(
         tag=tag, author=author, favorited=favorited, limit=limit, offset=offset
@@ -56,30 +59,30 @@ async def get_articles(
         dbarticles = await get_articles_with_filters(
             conn, filters, user.username if user else None
         )
-        return ManyArticlesInResponse(
-            articles=dbarticles, articlesCount=len(dbarticles)
-        )
+        return create_aliased_response(ManyArticlesInResponse(
+            articles=dbarticles, articles_count=len(dbarticles)
+        ))
 
 
 @router.get("/articles/feed", response_model=ManyArticlesInResponse, tags=["articles"])
 async def articles_feed(
-    limit: int = Query(20, gt=0),
-    offset: int = Query(0, ge=0),
-    user: User = Depends(get_current_user_authorizer()),
-    db: DataBase = Depends(get_database),
+        limit: int = Query(20, gt=0),
+        offset: int = Query(0, ge=0),
+        user: User = Depends(get_current_user_authorizer()),
+        db: DataBase = Depends(get_database),
 ):
     async with db.pool.acquire() as conn:
         dbarticles = await get_user_articles(conn, user.username, limit, offset)
-        return ManyArticlesInResponse(
-            articles=dbarticles, articlesCount=len(dbarticles)
-        )
+        return create_aliased_response(ManyArticlesInResponse(
+            articles=dbarticles, articles_count=len(dbarticles)
+        ))
 
 
 @router.get("/articles/{slug}", response_model=ArticleInResponse, tags=["articles"])
 async def get_article(
-    slug: str = Path(..., min_length=1),
-    user: Optional[User] = Depends(get_current_user_authorizer(required=False)),
-    db: DataBase = Depends(get_database),
+        slug: str = Path(..., min_length=1),
+        user: Optional[User] = Depends(get_current_user_authorizer(required=False)),
+        db: DataBase = Depends(get_database),
 ):
     async with db.pool.acquire() as conn:
         dbarticle = await get_article_by_slug(
@@ -91,7 +94,7 @@ async def get_article(
                 detail=f"Article with slug '{slug}' not found",
             )
 
-        return ArticleInResponse(article=dbarticle)
+        return create_aliased_response(ArticleInResponse(article=dbarticle))
 
 
 @router.post(
@@ -101,9 +104,9 @@ async def get_article(
     status_code=HTTP_201_CREATED,
 )
 async def create_new_article(
-    article: ArticleInCreate = Body(..., embed=True),
-    user: User = Depends(get_current_user_authorizer()),
-    db: DataBase = Depends(get_database),
+        article: ArticleInCreate = Body(..., embed=True),
+        user: User = Depends(get_current_user_authorizer()),
+        db: DataBase = Depends(get_database),
 ):
     async with db.pool.acquire() as conn:
         article_by_slug = await get_article_by_slug(
@@ -117,15 +120,15 @@ async def create_new_article(
 
         async with conn.transaction():
             dbarticle = await create_article_by_slug(conn, article, user.username)
-            return ArticleInResponse(article=dbarticle)
+            return create_aliased_response(ArticleInResponse(article=dbarticle))
 
 
 @router.put("/articles/{slug}", response_model=ArticleInResponse, tags=["articles"])
 async def update_article(
-    slug: str = Path(..., min_length=1),
-    article: ArticleInUpdate = Body(..., embed=True),
-    user: User = Depends(get_current_user_authorizer()),
-    db: DataBase = Depends(get_database),
+        slug: str = Path(..., min_length=1),
+        article: ArticleInUpdate = Body(..., embed=True),
+        user: User = Depends(get_current_user_authorizer()),
+        db: DataBase = Depends(get_database),
 ):
     async with db.pool.acquire() as conn:
         await check_article_for_existence_and_modifying_permissions(
@@ -134,14 +137,14 @@ async def update_article(
 
         async with conn.transaction():
             dbarticle = await update_article_by_slug(conn, slug, article, user.username)
-            return ArticleInResponse(article=dbarticle)
+            return create_aliased_response(ArticleInResponse(article=dbarticle))
 
 
 @router.delete("/articles/{slug}", tags=["articles"], status_code=HTTP_204_NO_CONTENT)
 async def delete_article(
-    slug: str = Path(..., min_length=1),
-    user: User = Depends(get_current_user_authorizer()),
-    db: DataBase = Depends(get_database),
+        slug: str = Path(..., min_length=1),
+        user: User = Depends(get_current_user_authorizer()),
+        db: DataBase = Depends(get_database),
 ):
     async with db.pool.acquire() as conn:
         await check_article_for_existence_and_modifying_permissions(
@@ -156,9 +159,9 @@ async def delete_article(
     "/articles/{slug}/favorite", response_model=ArticleInResponse, tags=["articles"]
 )
 async def favorite_article(
-    slug: str = Path(..., min_length=1),
-    user: User = Depends(get_current_user_authorizer()),
-    db: DataBase = Depends(get_database),
+        slug: str = Path(..., min_length=1),
+        user: User = Depends(get_current_user_authorizer()),
+        db: DataBase = Depends(get_database),
 ):
     async with db.pool.acquire() as conn:
         dbarticle = await get_article_or_404(conn, slug, user.username)
@@ -169,20 +172,20 @@ async def favorite_article(
             )
 
         dbarticle.favorited = True
-        dbarticle.favoritesCount += 1
+        dbarticle.favorites_count += 1
 
         async with conn.transaction():
             await add_article_to_favorites(conn, slug, user.username)
-            return ArticleInResponse(article=dbarticle)
+            return create_aliased_response(ArticleInResponse(article=dbarticle))
 
 
 @router.delete(
     "/articles/{slug}/favorite", response_model=ArticleInResponse, tags=["articles"]
 )
 async def delete_article_from_favorites(
-    slug: str = Path(..., min_length=1),
-    user: User = Depends(get_current_user_authorizer()),
-    db: DataBase = Depends(get_database),
+        slug: str = Path(..., min_length=1),
+        user: User = Depends(get_current_user_authorizer()),
+        db: DataBase = Depends(get_database),
 ):
     async with db.pool.acquire() as conn:
         dbarticle = await get_article_or_404(conn, slug, user.username)
@@ -194,8 +197,8 @@ async def delete_article_from_favorites(
             )
 
         dbarticle.favorited = False
-        dbarticle.favoritesCount -= 1
+        dbarticle.favorites_count -= 1
 
         async with conn.transaction():
             await remove_article_from_favorites(conn, slug, user.username)
-            return ArticleInResponse(article=dbarticle)
+            return create_aliased_response(ArticleInResponse(article=dbarticle))

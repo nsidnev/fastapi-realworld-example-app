@@ -1,14 +1,16 @@
 from typing import Optional
 
-from pydantic import BaseModel, UrlStr
+from pydantic import UrlStr
+
+from .rwmodel import RWModel
 
 
-class Profile(BaseModel):
+class Profile(RWModel):
     username: str
     bio: Optional[str] = ""
     image: Optional[UrlStr] = None
     following: bool = False
 
 
-class ProfileInResponse(BaseModel):
+class ProfileInResponse(RWModel):
     profile: Profile

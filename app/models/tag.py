@@ -1,11 +1,10 @@
 from typing import List
 
-from pydantic import BaseModel
-
 from .dbmodel import DBModelMixin
+from .rwmodel import RWModel
 
 
-class Tag(BaseModel):
+class Tag(RWModel):
     tag: str
 
 
@@ -13,5 +12,5 @@ class TagInDB(DBModelMixin, Tag):
     pass
 
 
-class TagsList(BaseModel):
+class TagsList(RWModel):
     tags: List[str] = []

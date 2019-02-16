@@ -1,14 +1,13 @@
-from datetime import datetime
 from typing import List, Optional
 
-from pydantic import BaseModel
+from pydantic import Schema
 
-from .dbmodel import DBModelMixin
-from .dtconfig import ISODatetimeConfig
+from .dbmodel import DBModelMixin, DateTimeModelMixin
 from .profile import Profile
+from .rwmodel import RWModel
 
 
-class ArticleFilterParams(BaseModel):
+class ArticleFilterParams(RWModel):
     tag: str = ""
     author: str = ""
     favorited: str = ""
@@ -16,46 +15,38 @@ class ArticleFilterParams(BaseModel):
     offset: int = 0
 
 
-class ArticleBase(BaseModel):
+class ArticleBase(RWModel):
     title: str
     description: str
     body: str
-    tagList: List[str] = []
+    tag_list: List[str] = Schema([], alias='tagList')
 
 
-class Article(ArticleBase):
+class Article(DateTimeModelMixin, ArticleBase):
     slug: str
     author: Profile
     favorited: bool
-    favoritesCount: int
-    createdAt: datetime
-    updatedAt: datetime
+    favorites_count: int = Schema(..., alias='favoritesCount')
 
 
 class ArticleInDB(DBModelMixin, Article):
     pass
 
 
-class ArticleInResponse(BaseModel):
+class ArticleInResponse(RWModel):
     article: Article
 
-    class Config(ISODatetimeConfig):
-        pass
 
-
-class ManyArticlesInResponse(BaseModel):
+class ManyArticlesInResponse(RWModel):
     articles: List[Article]
-    articlesCount: int
-
-    class Config(ISODatetimeConfig):
-        pass
+    articles_count: int = Schema(..., alias='articlesCount')
 
 
 class ArticleInCreate(ArticleBase):
     pass
 
 
-class ArticleInUpdate(BaseModel):
+class ArticleInUpdate(RWModel):
     title: Optional[str] = None
     description: Optional[str] = None
     body: Optional[str] = None

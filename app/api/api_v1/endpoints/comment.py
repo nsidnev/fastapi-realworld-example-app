@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Path, Depends, Body
 from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
+from app.core.utils import create_aliased_response
 from app.core.jwt import get_current_user_authorizer
 from app.crud.comment import create_comment, get_comments_for_article, delete_comment
 from app.crud.shortcuts import get_article_or_404
@@ -33,7 +34,7 @@ async def create_comment_for_article(
 
         async with conn.transaction():
             dbcomment = await create_comment(conn, slug, comment, user.username)
-            return CommentInResponse(comment=dbcomment)
+            return create_aliased_response(CommentInResponse(comment=dbcomment))
 
 
 @router.get(
@@ -50,7 +51,7 @@ async def get_comment_from_article(
         await get_article_or_404(conn, slug, user.username)
 
         dbcomments = await get_comments_for_article(conn, slug, user.username)
-        return ManyCommentsInResponse(comments=dbcomments)
+        return create_aliased_response(ManyCommentsInResponse(comments=dbcomments))
 
 
 @router.delete(
