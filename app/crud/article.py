@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from asyncpg import Connection
+from slugify import slugify
 
 from app.models.article import (
     ArticleFilterParams,
@@ -8,7 +9,6 @@ from app.models.article import (
     ArticleInDB,
     ArticleInUpdate,
 )
-from slugify import slugify
 
 from .profile import get_profile_for_user
 from .tag import (

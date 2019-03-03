@@ -23,6 +23,23 @@ python-dotenv = "^0.10.1"
 
 [tool.poetry.dev-dependencies]
 
+[tool.black]
+exclued = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | alembic
+)/
+'''
+
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
+

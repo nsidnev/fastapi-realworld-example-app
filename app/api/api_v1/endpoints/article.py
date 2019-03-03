@@ -2,6 +2,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Body, Depends, Path, Query
 from fastapi.encoders import jsonable_encoder
+from slugify import slugify
 from starlette.exceptions import HTTPException
 from starlette.responses import JSONResponse
 from starlette.status import (
@@ -37,7 +38,6 @@ from app.models.article import (
     ManyArticlesInResponse,
 )
 from app.models.user import User
-from slugify import slugify
 
 router = APIRouter()
 
