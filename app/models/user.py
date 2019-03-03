@@ -2,7 +2,8 @@ from typing import Optional
 
 from pydantic import EmailStr, UrlStr
 
-from app.core.security import verify_password, generate_salt, get_password_hash
+from app.core.security import generate_salt, get_password_hash, verify_password
+
 from .dbmodel import DBModelMixin
 from .rwmodel import RWModel
 

@@ -3,6 +3,7 @@ from typing import List, Optional
 from asyncpg import Connection
 
 from app.models.comment import CommentInCreate, CommentInDB
+
 from .profile import get_profile_for_user
 
 

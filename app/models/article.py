@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from pydantic import Schema
 
-from .dbmodel import DBModelMixin, DateTimeModelMixin
+from .dbmodel import DateTimeModelMixin, DBModelMixin
 from .profile import Profile
 from .rwmodel import RWModel
 
@@ -19,14 +19,14 @@ class ArticleBase(RWModel):
     title: str
     description: str
     body: str
-    tag_list: List[str] = Schema([], alias='tagList')
+    tag_list: List[str] = Schema([], alias="tagList")
 
 
 class Article(DateTimeModelMixin, ArticleBase):
     slug: str
     author: Profile
     favorited: bool
-    favorites_count: int = Schema(..., alias='favoritesCount')
+    favorites_count: int = Schema(..., alias="favoritesCount")
 
 
 class ArticleInDB(DBModelMixin, Article):
@@ -39,7 +39,7 @@ class ArticleInResponse(RWModel):
 
 class ManyArticlesInResponse(RWModel):
     articles: List[Article]
-    articles_count: int = Schema(..., alias='articlesCount')
+    articles_count: int = Schema(..., alias="articlesCount")
 
 
 class ArticleInCreate(ArticleBase):

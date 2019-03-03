@@ -2,7 +2,8 @@ import logging
 
 import asyncpg
 
-from app.core.config import DATABASE_URL, MIN_CONNECTIONS_COUNT, MAX_CONNECTIONS_COUNT
+from app.core.config import DATABASE_URL, MAX_CONNECTIONS_COUNT, MIN_CONNECTIONS_COUNT
+
 from .database import db
 
 

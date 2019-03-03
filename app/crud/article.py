@@ -1,24 +1,25 @@
 from typing import List, Optional
 
 from asyncpg import Connection
-from slugify import slugify
 
 from app.models.article import (
-    ArticleInDB,
     ArticleFilterParams,
     ArticleInCreate,
+    ArticleInDB,
     ArticleInUpdate,
 )
+from slugify import slugify
+
 from .profile import get_profile_for_user
 from .tag import (
-    get_tags_for_article,
     create_tags_that_not_exist,
+    get_tags_for_article,
     link_tags_with_article,
 )
 
 
 async def is_article_favorited_by_user(
-        conn: Connection, slug: str, username: str
+    conn: Connection, slug: str, username: str
 ) -> bool:
     return await conn.fetchval(
         """
@@ -74,7 +75,7 @@ async def get_favorites_count_for_article(conn: Connection, slug: str):
 
 
 async def get_article_by_slug(
-        conn: Connection, slug: str, username: Optional[str] = None
+    conn: Connection, slug: str, username: Optional[str] = None
 ) -> ArticleInDB:
     article_info_row = await conn.fetchrow(
         """
@@ -103,7 +104,7 @@ async def get_article_by_slug(
 
 
 async def create_article_by_slug(
-        conn: Connection, article: ArticleInCreate, username: str
+    conn: Connection, article: ArticleInCreate, username: str
 ) -> ArticleInDB:
     slug = slugify(article.title)
 
@@ -135,12 +136,16 @@ async def create_article_by_slug(
         await link_tags_with_article(conn, slug, article.tag_list)
 
     return ArticleInDB(
-        **row, author=author, tag_list=article.tag_list, favorites_count=1, favorited=True
+        **row,
+        author=author,
+        tag_list=article.tag_list,
+        favorites_count=1,
+        favorited=True,
     )
 
 
 async def update_article_by_slug(
-        conn: Connection, slug: str, article: ArticleInUpdate, username: str
+    conn: Connection, slug: str, article: ArticleInUpdate, username: str
 ) -> ArticleInDB:
     dbarticle = await get_article_by_slug(conn, slug, username)
 
@@ -183,7 +188,7 @@ async def delete_article_by_slug(conn: Connection, slug: str, username: str):
 
 
 async def get_user_articles(
-        conn: Connection, username: str, limit=20, offset=0
+    conn: Connection, username: str, limit=20, offset=0
 ) -> List[ArticleInDB]:
     articles: List[ArticleInDB] = []
     rows = await conn.fetch(
@@ -219,7 +224,7 @@ async def get_user_articles(
 
 
 async def get_articles_with_filters(
-        conn: Connection, filters: ArticleFilterParams, username: Optional[str] = None
+    conn: Connection, filters: ArticleFilterParams, username: Optional[str] = None
 ) -> List[ArticleInDB]:
     articles: List[ArticleInDB] = []
     query_params_count = 0

@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Path, Depends, Body
+from fastapi import APIRouter, Body, Depends, Path
 from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
-from app.core.utils import create_aliased_response
 from app.core.jwt import get_current_user_authorizer
-from app.crud.comment import create_comment, get_comments_for_article, delete_comment
+from app.core.utils import create_aliased_response
+from app.crud.comment import create_comment, delete_comment, get_comments_for_article
 from app.crud.shortcuts import get_article_or_404
 from app.db.database import DataBase, get_database
 from app.models.comment import (

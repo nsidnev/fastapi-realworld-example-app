@@ -2,14 +2,14 @@ from datetime import timedelta
 
 from fastapi import APIRouter, Body, Depends
 from starlette.exceptions import HTTPException
-from starlette.status import HTTP_400_BAD_REQUEST, HTTP_201_CREATED
+from starlette.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 
 from app.core.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from app.core.jwt import create_access_token
 from app.crud.shortcuts import check_free_username_and_email
-from app.crud.user import get_user_by_email, create_user
+from app.crud.user import create_user, get_user_by_email
 from app.db.database import DataBase, get_database
-from app.models.user import User, UserInResponse, UserInLogin, UserInCreate
+from app.models.user import User, UserInCreate, UserInLogin, UserInResponse
 
 router = APIRouter()
 

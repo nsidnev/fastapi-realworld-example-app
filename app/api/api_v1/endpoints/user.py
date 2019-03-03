@@ -4,7 +4,7 @@ from app.core.jwt import get_current_user_authorizer
 from app.crud.shortcuts import check_free_username_and_email
 from app.crud.user import update_user
 from app.db.database import DataBase, get_database
-from app.models.user import UserInResponse, User, UserInUpdate
+from app.models.user import User, UserInResponse, UserInUpdate
 
 router = APIRouter()
 
