@@ -2,14 +2,14 @@
 
 |
 
-.. image:: https://circleci.com/gh/nikelwolf/fastapi-realworld-example-app.svg?style=svg
-    :target: https://circleci.com/gh/nikelwolf/fastapi-realworld-example-app
+.. image:: https://circleci.com/gh/nsidnev/fastapi-realworld-example-app.svg?style=svg
+    :target: https://circleci.com/gh/nsidnev/fastapi-realworld-example-app
 
-.. image:: https://travis-ci.org/nikelwolf/fastapi-realworld-example-app.svg?branch=master
-    :target: https://travis-ci.org/nikelwolf/fastapi-realworld-example-app
+.. image:: https://travis-ci.org/nsidnev/fastapi-realworld-example-app.svg?branch=master
+    :target: https://travis-ci.org/nsidnev/fastapi-realworld-example-app
 
 .. image:: https://img.shields.io/github/license/Naereen/StrapDown.js.svg
-   :target: https://github.com/nikelwolf/fastapi-realworld-example-app/blob/master/LICENSE
+   :target: https://github.com/nsidnev/fastapi-realworld-example-app/blob/master/LICENSE
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/ambv/black
@@ -26,7 +26,7 @@ First, run ``PostgreSQL``, set environment variables and create database. For ex
 
 Then run the following commands to bootstrap your environment with ``poetry``: ::
 
-    git clone https://github.com/nikelwolf/fastapi-realworld-example-app
+    git clone https://github.com/nsidnev/fastapi-realworld-example-app
     cd fastapi-realworld-example-app
     poetry install
     poetry shell
