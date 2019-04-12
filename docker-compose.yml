@@ -6,10 +6,13 @@ services:
     env_file:
       - .env
   web_app:
+    build:
+      dockerfile: Dockerfile
+      context: .
     image: nikelwolf/fastapi-realworld
     env_file:
       - .env
     depends_on:
       - db
     ports:
-      - "80:8000"
+      - "8000:8000"

@@ -7,18 +7,19 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.7"
-uvicorn = "0.3.32"
+uvicorn = "^0.6.1"
 gunicorn = "^19.9"
-fastapi = "^0.2.0"
-pydantic = {version = "^0.18.2",extras = ["email"]}
+fastapi = "^0.13.0"
+pydantic = {version = "^0.21.0",extras = ["email"]}
 passlib = {version = "^1.7",extras = ["bcrypt"]}
 pyjwt = "^1.7"
 asyncpg = "^0.18.3"
 alembic = "^1.0"
-psycopg2-binary = "^2.7"
-python-slugify = "^2.0"
+psycopg2-binary = "^2.8"
+python-slugify = "^3.0"
 Unidecode = "^1.0"
 python-dotenv = "^0.10.1"
+databases = "^0.2.1"
 
 
 [tool.poetry.dev-dependencies]

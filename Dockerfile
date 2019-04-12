@@ -8,5 +8,8 @@ RUN pip install poetry && \
 
 COPY . /
 
-CMD alembic upgrade head && gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0
+EXPOSE 8000
+
+CMD alembic upgrade head && \
+    gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0
 

@@ -1,7 +1,8 @@
 import os
 
 from dotenv import load_dotenv
-from starlette.datastructures import CommaSeparatedStrings, DatabaseURL, Secret
+from starlette.datastructures import CommaSeparatedStrings, Secret
+from databases import DatabaseURL
 
 API_V1_STR = "/api"
 

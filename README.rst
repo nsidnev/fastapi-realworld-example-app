@@ -42,7 +42,7 @@ Then create ``.env`` file (or rename and modify ``.env.example``) in project roo
 To run the web application in debug use::
 
     alembic upgrade head
-    uvicorn app.main:app --debug
+    uvicorn app.main:app --reload
 
 
 Deployment with Docker
