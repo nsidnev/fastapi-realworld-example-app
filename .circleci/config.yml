@@ -44,6 +44,6 @@ jobs:
       - run:
           name: build image and push to registry
           command: |
-            docker build -t $DOCKER_USER/fastapi-realworld .
+            docker build -t $DOCKER_USER/fastapi-realworld-example-app .
             docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-            docker push $DOCKER_USER/fastapi-realworld
+            docker push $DOCKER_USER/fastapi-realworld-example-app

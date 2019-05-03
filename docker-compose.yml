@@ -9,7 +9,7 @@ services:
     build:
       dockerfile: Dockerfile
       context: .
-    image: nikelwolf/fastapi-realworld
+    image: nsidnev/fastapi-realworld-example-app
     env_file:
       - .env
     depends_on:
