@@ -3,7 +3,7 @@ from fastapi import APIRouter, Body, Depends
 from app.core.jwt import get_current_user_authorizer
 from app.crud.shortcuts import check_free_username_and_email
 from app.crud.user import update_user
-from app.db.database import DataBase, get_database
+from app.db.mongodb import DataBase, get_database
 from app.models.user import User, UserInResponse, UserInUpdate
 
 router = APIRouter()
@@ -20,7 +20,7 @@ async def update_current_user(
     current_user: User = Depends(get_current_user_authorizer()),
     db: DataBase = Depends(get_database),
 ):
-    async with db.pool.acquire() as conn:
+    async with db.client as conn:
         if user.username == current_user.username:
             user.username = None
         if user.email == current_user.email:

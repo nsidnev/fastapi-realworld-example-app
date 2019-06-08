@@ -5,12 +5,20 @@ description = "Backend logic implementation for https://github.com/gothinkster/r
 authors = ["Nik Sidnev <snive2013@yandex.ru>"]
 license = "MIT"
 
+[[tool.poetry.source]]
+name = 'private'
+url = 'http://cxan.chong.so/simple/'
+
+[[tool.poetry.source]]
+name = 'tsinghua'
+url = 'https://pypi.tuna.tsinghua.edu.cn/simple'
+
 [tool.poetry.dependencies]
 python = "^3.7"
 uvicorn = "^0.6.1"
 gunicorn = "^19.9"
-fastapi = "^0.13.0"
-pydantic = {version = "^0.21.0",extras = ["email"]}
+fastapi = "^0.29"
+pydantic = {version = "^0.26.0",extras = ["email"]}
 passlib = {version = "^1.7",extras = ["bcrypt"]}
 pyjwt = "^1.7"
 asyncpg = "^0.18.3"
@@ -20,9 +28,11 @@ python-slugify = "^3.0"
 Unidecode = "^1.0"
 python-dotenv = "^0.10.1"
 databases = "^0.2.1"
+motor = "^2.0"
 
 
 [tool.poetry.dev-dependencies]
+pytest = "*"
 
 [tool.black]
 exclued = '''

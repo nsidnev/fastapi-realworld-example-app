@@ -1,6 +1,5 @@
 from typing import Optional
 
-from asyncpg import Connection
 from pydantic import EmailStr
 from starlette.exceptions import HTTPException
 from starlette.status import (
@@ -9,14 +8,14 @@ from starlette.status import (
     HTTP_422_UNPROCESSABLE_ENTITY,
 )
 
-from app.models.article import ArticleInDB
-
 from .article import get_article_by_slug
 from .user import get_user, get_user_by_email
+from ..db.mongodb import AsyncIOMotorClient
+from ..models.article import ArticleInDB
 
 
 async def check_free_username_and_email(
-    conn: Connection, username: Optional[str] = None, email: Optional[EmailStr] = None
+        conn: AsyncIOMotorClient, username: Optional[str] = None, email: Optional[EmailStr] = None
 ):
     if username:
         user_by_username = await get_user(conn, username)
@@ -35,7 +34,7 @@ async def check_free_username_and_email(
 
 
 async def get_article_or_404(
-    conn: Connection, slug: str, username: Optional[str] = None
+        conn: AsyncIOMotorClient, slug: str, username: Optional[str] = None
 ) -> ArticleInDB:
     searched_article = await get_article_by_slug(conn, slug, username)
     if not searched_article:
@@ -47,7 +46,7 @@ async def get_article_or_404(
 
 
 async def check_article_for_existence_and_modifying_permissions(
-    conn: Connection, slug: str, username: str = ""
+        conn: AsyncIOMotorClient, slug: str, username: str = ""
 ):
     searched_article = await get_article_by_slug(conn, slug, username)
     if not searched_article:

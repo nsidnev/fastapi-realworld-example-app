@@ -29,7 +29,7 @@ from app.crud.shortcuts import (
     check_article_for_existence_and_modifying_permissions,
     get_article_or_404,
 )
-from app.db.database import DataBase, get_database
+from app.db.mongodb import DataBase, get_database
 from app.models.article import (
     ArticleFilterParams,
     ArticleInCreate,
