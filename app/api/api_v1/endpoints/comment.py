@@ -1,17 +1,17 @@
 from fastapi import APIRouter, Body, Depends, Path
 from starlette.status import HTTP_201_CREATED, HTTP_204_NO_CONTENT
 
-from app.core.jwt import get_current_user_authorizer
-from app.core.utils import create_aliased_response
-from app.crud.comment import create_comment, delete_comment, get_comments_for_article
-from app.crud.shortcuts import get_article_or_404
-from app.db.database import DataBase, get_database
-from app.models.comment import (
+from ....core.jwt import get_current_user_authorizer
+from ....core.utils import create_aliased_response
+from ....crud.comment import create_comment, delete_comment, get_comments_for_article
+from ....crud.shortcuts import get_article_or_404
+from ....db.mongodb import AsyncIOMotorClient, get_database
+from ....models.comment import (
     CommentInCreate,
     CommentInResponse,
     ManyCommentsInResponse,
 )
-from app.models.user import User
+from ....models.user import User
 
 router = APIRouter()
 
@@ -27,14 +27,12 @@ async def create_comment_for_article(
     slug: str = Path(..., min_length=1),
     comment: CommentInCreate = Body(..., embed=True),
     user: User = Depends(get_current_user_authorizer()),
-    db: DataBase = Depends(get_database),
+    db: AsyncIOMotorClient = Depends(get_database),
 ):
-    async with db.pool.acquire() as conn:
-        await get_article_or_404(conn, slug, user.username)
+    await get_article_or_404(db, slug, user.username)
 
-        async with conn.transaction():
-            dbcomment = await create_comment(conn, slug, comment, user.username)
-            return create_aliased_response(CommentInResponse(comment=dbcomment))
+    dbcomment = await create_comment(db, slug, comment, user.username)
+    return create_aliased_response(CommentInResponse(comment=dbcomment))
 
 
 @router.get(
@@ -45,13 +43,12 @@ async def create_comment_for_article(
 async def get_comment_from_article(
     slug: str = Path(..., min_length=1),
     user: User = Depends(get_current_user_authorizer(required=False)),
-    db: DataBase = Depends(get_database),
+    db: AsyncIOMotorClient = Depends(get_database),
 ):
-    async with db.pool.acquire() as conn:
-        await get_article_or_404(conn, slug, user.username)
+    await get_article_or_404(db, slug, user.username)
 
-        dbcomments = await get_comments_for_article(conn, slug, user.username)
-        return create_aliased_response(ManyCommentsInResponse(comments=dbcomments))
+    dbcomments = await get_comments_for_article(db, slug, user.username)
+    return create_aliased_response(ManyCommentsInResponse(comments=dbcomments))
 
 
 @router.delete(
@@ -61,9 +58,8 @@ async def delete_comment_from_article(
     slug: str = Path(..., min_length=1),
     id: int = Path(..., ge=1),
     user: User = Depends(get_current_user_authorizer()),
-    db: DataBase = Depends(get_database),
+    db: AsyncIOMotorClient = Depends(get_database),
 ):
-    async with db.pool.acquire() as conn:
-        await get_article_or_404(conn, slug, user.username)
+    await get_article_or_404(db, slug, user.username)
 
-        await delete_comment(conn, id, user.username)
+    await delete_comment(db, id, user.username)

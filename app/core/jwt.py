@@ -7,10 +7,10 @@ from jwt import PyJWTError
 from starlette.exceptions import HTTPException
 from starlette.status import HTTP_403_FORBIDDEN, HTTP_404_NOT_FOUND
 
-from app.crud.user import get_user
-from app.db.database import DataBase, get_database
-from app.models.token import TokenPayload
-from app.models.user import User
+from ..crud.user import get_user
+from ..db.mongodb import AsyncIOMotorClient, get_database
+from ..models.token import TokenPayload
+from ..models.user import User
 
 from .config import JWT_TOKEN_PREFIX, SECRET_KEY
 
@@ -29,7 +29,7 @@ def _get_authorization_token(authorization: str = Header(...)):
 
 
 async def _get_current_user(
-    db: DataBase = Depends(get_database), token: str = Depends(_get_authorization_token)
+    db: AsyncIOMotorClient = Depends(get_database), token: str = Depends(_get_authorization_token)
 ) -> User:
     try:
         payload = jwt.decode(token, str(SECRET_KEY), algorithms=[ALGORITHM])
@@ -39,13 +39,12 @@ async def _get_current_user(
             status_code=HTTP_403_FORBIDDEN, detail="Could not validate credentials"
         )
 
-    async with db.pool.acquire() as conn:
-        dbuser = await get_user(conn, token_data.username)
-        if not dbuser:
-            raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="User not found")
+    dbuser = await get_user(db, token_data.username)
+    if not dbuser:
+        raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail="User not found")
 
-        user = User(**dbuser.dict(), token=token)
-        return user
+    user = User(**dbuser.dict(), token=token)
+    return user
 
 
 def _get_authorization_token_optional(authorization: str = Header(None)):
@@ -55,7 +54,7 @@ def _get_authorization_token_optional(authorization: str = Header(None)):
 
 
 async def _get_current_user_optional(
-    db: DataBase = Depends(get_database),
+    db: AsyncIOMotorClient = Depends(get_database),
     token: str = Depends(_get_authorization_token_optional),
 ) -> Optional[User]:
     if token:

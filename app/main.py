@@ -6,7 +6,6 @@ from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 from .api.api_v1.api import router as api_router
 from .core.config import ALLOWED_HOSTS, API_V1_STR, PROJECT_NAME
 from .core.errors import http_422_error_handler, http_error_handler
-from .db.db_utils import close_postgres_connection, connect_to_postgres
 from .db.mongodb_utils import close_mongo_connection, connect_to_mongo
 
 app = FastAPI(title=PROJECT_NAME)
@@ -22,8 +21,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# app.add_event_handler("startup", connect_to_postgres)
-# app.add_event_handler("shutdown", close_postgres_connection)
 app.add_event_handler("startup", connect_to_mongo)
 app.add_event_handler("shutdown", close_mongo_connection)
 

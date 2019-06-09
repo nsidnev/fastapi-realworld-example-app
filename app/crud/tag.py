@@ -1,25 +1,23 @@
 from typing import List
 
-from asyncpg import Connection
+from ..db.mongodb import AsyncIOMotorClient
+from ..models.tag import TagInDB
+from ..core.config import MONGO_DB
 
-from app.models.tag import TagInDB
+database_name = MONGO_DB
+collection_name = "tags"
 
 
-async def fetch_all_tags(conn: Connection) -> List[TagInDB]:
+async def fetch_all_tags(conn: AsyncIOMotorClient) -> List[TagInDB]:
     tags = []
-    rows = await conn.fetch(
-        """
-        SELECT id, tag, created_at, updated_at
-        FROM tags
-        """
-    )
+    rows = await conn[database_name][collection_name].find()
     for row in rows:
         tags.append(TagInDB(**row))
 
     return tags
 
 
-async def get_tags_for_article(conn: Connection, slug: str) -> List[TagInDB]:
+async def get_tags_for_article(conn: AsyncIOMotorClient, slug: str) -> List[TagInDB]:
     tags = []
     rows = await conn.fetch(
         """
@@ -37,7 +35,7 @@ async def get_tags_for_article(conn: Connection, slug: str) -> List[TagInDB]:
     return tags
 
 
-async def create_tags_that_not_exist(conn: Connection, tags: List[str]):
+async def create_tags_that_not_exist(conn: AsyncIOMotorClient, tags: List[str]):
     await conn.executemany(
         """
         INSERT INTO tags (tag)
@@ -48,7 +46,7 @@ async def create_tags_that_not_exist(conn: Connection, tags: List[str]):
     )
 
 
-async def link_tags_with_article(conn: Connection, slug: str, tags: List[str]):
+async def link_tags_with_article(conn: AsyncIOMotorClient, slug: str, tags: List[str]):
     await conn.executemany(
         """
         INSERT INTO article_tags (article_id, tag_id)
