@@ -31,3 +31,11 @@ if not MONGODB_URL:
     )
 else:
     MONGODB_URL = DatabaseURL(MONGODB_URL)
+
+database_name = MONGO_DB
+article_collection_name = "articles"
+favorites_collection_name = "favorites"
+tags_collection_name = "tags"
+users_collection_name = "users"
+comments_collection_name = "commentaries"
+followers_collection_name = "followers"

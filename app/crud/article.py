@@ -1,15 +1,16 @@
 from typing import List, Optional
 
-from asyncpg import Connection
 from slugify import slugify
+from datetime import datetime
 
-from app.models.article import (
+from ..models.article import (
     ArticleFilterParams,
     ArticleInCreate,
     ArticleInDB,
     ArticleInUpdate,
 )
-
+from ..db.mongodb import AsyncIOMotorClient
+from ..core.config import database_name, favorites_collection_name, users_collection_name, article_collection_name
 from .profile import get_profile_for_user
 from .tag import (
     create_tags_that_not_exist,
@@ -19,133 +20,85 @@ from .tag import (
 
 
 async def is_article_favorited_by_user(
-    conn: Connection, slug: str, username: str
+    conn: AsyncIOMotorClient, slug: str, username: str
 ) -> bool:
-    return await conn.fetchval(
-        """
-        SELECT CASE WHEN user_id IS NULL THEN FALSE ELSE TRUE END AS favorited
-        FROM favorites
-        WHERE 
-            user_id = (SELECT id FROM users WHERE username = $1) 
-            AND
-            article_id = (SELECT id FROM articles WHERE slug = $2)
-        """,
-        username,
-        slug,
-    )
+    user_doc = await conn[database_name][users_collection_name].find_one({"username": username}, projection={"id": True})
+    article_doc = await conn[database_name][article_collection_name].find_one({"slug": slug}, projection={"id": True})
+    if article_doc and user_doc:
+        count = await conn[database_name][favorites_collection_name].count_documents({"user_id": user_doc['_id'],
+                                                                                     "article_id": article_doc['_id']})
+        return count > 0
+    else:
+        raise RuntimeError(f"没有找到对应的user_id或article_id,"
+                           f" 用户名={username} user={user_doc},slug={slug} article={article_doc}")
 
 
-async def add_article_to_favorites(conn: Connection, slug: str, username: str):
-    await conn.execute(
-        """
-        INSERT INTO favorites (user_id, article_id) 
-        VALUES (
-            (SELECT id FROM users WHERE username = $2),
-            (SELECT id FROM articles WHERE slug = $1) 
-        )
-        """,
-        slug,
-        username,
-    )
+async def add_article_to_favorites(conn: AsyncIOMotorClient, slug: str, username: str):
+    user_doc = await conn[database_name][users_collection_name].find_one({"username": username}, projection={"id": True})
+    article_doc = await conn[database_name][article_collection_name].find_one({"slug": slug}, projection={"id": True})
+    if article_doc and user_doc:
+        await conn[database_name][favorites_collection_name].insert_one({"user_id": user_doc['_id'],
+                                                                                "article_id": article_doc['_id']})
+    else:
+        raise RuntimeError(f"没有找到对应的user_id或article_id,"
+                           f" 用户名={username} user_id={user_doc},slug={slug} article_id={article_doc}")
 
 
-async def remove_article_from_favorites(conn: Connection, slug: str, username: str):
-    await conn.execute(
-        """
-        DELETE FROM favorites
-        WHERE 
-            article_id = (SELECT id FROM articles WHERE slug = $1) 
-            AND 
-            user_id = (SELECT id FROM users WHERE username = $2)
-        """,
-        slug,
-        username,
-    )
+async def remove_article_from_favorites(conn: AsyncIOMotorClient, slug: str, username: str):
+    user_doc = await conn[database_name][users_collection_name].find_one({"username": username})
+    article_doc = await conn[database_name][article_collection_name].find_one({"slug": slug})
+    if article_doc and user_doc:
+        await conn[database_name][favorites_collection_name].delete_many({"user_id": user_doc['_id'],
+                                                                          "article_id": article_doc['_id']})
+    else:
+        raise RuntimeError(f"没有找到对应的user_id或article_id,"
+                           f" 用户名={username} user_id={user_doc},slug={slug} article_id={article_doc}")
 
 
-async def get_favorites_count_for_article(conn: Connection, slug: str):
-    return await conn.fetchval(
-        """
-        SELECT count(*) as favorites_count
-        FROM favorites
-        WHERE article_id = (SELECT id FROM articles WHERE slug = $1)
-        """,
-        slug,
-    )
+async def get_favorites_count_for_article(conn: AsyncIOMotorClient, slug: str) -> int:
+    article_doc = await conn[database_name][article_collection_name].find_one({"slug": slug}, projection={"id": True})
+    if article_doc:
+        return await conn[database_name][favorites_collection_name].count_documents({"article_id": article_doc['_id']})
+    else:
+        raise RuntimeError(f"没有找到对应的article_id,"
+                           f" slug={slug} article_id={article_doc}")
 
 
 async def get_article_by_slug(
-    conn: Connection, slug: str, username: Optional[str] = None
+    conn: AsyncIOMotorClient, slug: str, username: Optional[str] = None
 ) -> ArticleInDB:
-    article_info_row = await conn.fetchrow(
-        """
-        SELECT id, slug, title, description, body, created_at, updated_at,
-            (SELECT username FROM users WHERE id = author_id) AS author_username
-        FROM articles
-        WHERE slug = $1
-        """,
-        slug,
-    )
-    if article_info_row:
-        author = await get_profile_for_user(
-            conn, article_info_row["author_username"], username
-        )
-        tags = await get_tags_for_article(conn, slug)
-        favorites_count = await get_favorites_count_for_article(conn, slug)
-        favorited_by_user = await is_article_favorited_by_user(conn, slug, username)
+    article_doc = await conn[database_name][article_collection_name].find_one({"slug": slug})
+    if article_doc:
+        article_doc["favorites_count"] = await get_favorites_count_for_article(conn, slug)
+        article_doc["favorited"] = await is_article_favorited_by_user(conn, slug, username)
 
         return ArticleInDB(
-            **article_info_row,
-            author=author,
-            tag_list=[tag.tag for tag in tags],
-            favorited=favorited_by_user,
-            favorites_count=favorites_count,
+            **article_doc
         )
 
 
 async def create_article_by_slug(
-    conn: Connection, article: ArticleInCreate, username: str
+    conn: AsyncIOMotorClient, article: ArticleInCreate, username: str
 ) -> ArticleInDB:
     slug = slugify(article.title)
-
-    row = await conn.fetchrow(
-        """
-        INSERT INTO articles (slug, title, description, body, author_id) 
-        VALUES ($1, $2, $3, $4, (SELECT id FROM users WHERE username = $5))
-        RETURNING 
-            id, 
-            slug, 
-            title, 
-            description, 
-            body, 
-            (SELECT username FROM users WHERE id = author_id) as author_username, 
-            created_at, 
-            updated_at
-        """,
-        slug,
-        article.title,
-        article.description,
-        article.body,
-        username,
-    )
-
-    author = await get_profile_for_user(conn, row["author_username"], "")
+    article_doc = article.dict()
+    article_doc["slug"] = slug
+    author = await get_profile_for_user(conn, username, "")
+    article_doc["author"] = author.dict()
+    await conn[database_name][article_collection_name].insert_one(article_doc)
 
     if article.tag_list:
         await create_tags_that_not_exist(conn, article.tag_list)
-        await link_tags_with_article(conn, slug, article.tag_list)
 
     return ArticleInDB(
-        **row,
-        author=author,
-        tag_list=article.tag_list,
+        **article_doc,
         favorites_count=1,
         favorited=True,
     )
 
 
 async def update_article_by_slug(
-    conn: Connection, slug: str, article: ArticleInUpdate, username: str
+    conn: AsyncIOMotorClient, slug: str, article: ArticleInUpdate, username: str
 ) -> ArticleInDB:
     dbarticle = await get_article_by_slug(conn, slug, username)
 
@@ -156,65 +109,36 @@ async def update_article_by_slug(
     dbarticle.description = (
         article.description if article.description else dbarticle.description
     )
+    if article.tag_list:
+        await create_tags_that_not_exist(conn, article.tag_list)
+        dbarticle.tag_list = article.tag_list
 
-    row = await conn.fetchrow(
-        """
-        UPDATE articles
-        SET slug = $1, title = $2, body = $3, description = $4
-        WHERE slug = $5 AND author_id = (SELECT id FROM users WHERE username = $6)
-        RETURNING updated_at
-        """,
-        dbarticle.slug,
-        dbarticle.title,
-        dbarticle.body,
-        dbarticle.description,
-        slug,
-        username,
-    )
+    await conn[database_name][article_collection_name].replace_one({"slug": slug}, dbarticle.dict())
 
-    dbarticle.updated_at = row["updated_at"]
+    dbarticle.updated_at = datetime.now()
     return dbarticle
 
 
-async def delete_article_by_slug(conn: Connection, slug: str, username: str):
-    await conn.execute(
-        """
-        DELETE FROM articles 
-        WHERE slug = $1 AND author_id = (SELECT id FROM users WHERE username = $2)
-        """,
-        slug,
-        username,
-    )
+async def delete_article_by_slug(conn: AsyncIOMotorClient, slug: str, username: str):
+    await conn[database_name][article_collection_name].delete_many({"author.username": username,
+                                                                    "slug": slug})
 
 
 async def get_user_articles(
-    conn: Connection, username: str, limit=20, offset=0
+    conn: AsyncIOMotorClient, username: str, limit=20, offset=0
 ) -> List[ArticleInDB]:
     articles: List[ArticleInDB] = []
-    rows = await conn.fetch(
-        """
-        SELECT a.id, a.slug, a.title, a.description, a.body, a.created_at, a.updated_at,
-            (SELECT username FROM users WHERE id = author_id) AS author_username
-        FROM articles a 
-        INNER JOIN favorites f on a.id = f.article_id AND user_id = (SELECT id FROM users WHERE username = $1)
-        ORDER BY a.created_at
-        LIMIT $2
-        OFFSET $3
-        """,
-        username,
-        limit,
-        offset,
-    )
-    for row in rows:
+    article_docs = conn[database_name][article_collection_name].find({"author.username": username},
+                                                                       limit=limit, skip=offset)
+    async for row in article_docs:
         slug = row["slug"]
-        author = await get_profile_for_user(conn, row["author_username"], username)
+        author = await get_profile_for_user(conn, row["author"]["username"], username)
         tags = await get_tags_for_article(conn, slug)
         favorites_count = await get_favorites_count_for_article(conn, slug)
         favorited_by_user = await is_article_favorited_by_user(conn, slug, username)
         articles.append(
             ArticleInDB(
                 **row,
-                author=author,
                 tagList=[tag.tag for tag in tags],
                 favorites_count=favorites_count,
                 favorited=favorited_by_user,
@@ -224,72 +148,27 @@ async def get_user_articles(
 
 
 async def get_articles_with_filters(
-    conn: Connection, filters: ArticleFilterParams, username: Optional[str] = None
+    conn: AsyncIOMotorClient, filters: ArticleFilterParams, username: Optional[str] = None
 ) -> List[ArticleInDB]:
     articles: List[ArticleInDB] = []
-    query_params_count = 0
-    base_query = """
-        SELECT 
-            a.id, 
-            a.slug, 
-            a.title, 
-            a.description, 
-            a.body, 
-            a.created_at, 
-            a.updated_at, 
-            (SELECT username FROM users WHERE id = a.author_id) AS author_username
-        FROM articles a
-        """
+    base_query = {}
 
     if filters.tag:
-        query_params_count += 1
-        base_query += f"""
-        INNER JOIN article_tags at ON 
-            a.id = at.article_id 
-            AND 
-            at.tag_id = (SELECT id FROM tags WHERE tag = ${query_params_count})
-        """
+        base_query["tag_list"] = f"$all: [\"{filters.tag}\"]"
 
     if filters.favorited:
-        query_params_count += 1
-        base_query += f"""
-        INNER JOIN favorites fav ON 
-            a.id = fav.article_id 
-            AND 
-            fav.user_id = (SELECT id FROM users WHERE username = ${query_params_count})
-        """
+        base_query["slug"] = f"$in: [\"{filters.favorited}\"]"
 
     if filters.author:
-        query_params_count += 1
-        base_query += f"""
-        LEFT OUTER JOIN users u ON 
-            a.author_id = u.id 
-            AND 
-            u.id = (SELECT id FROM users WHERE u.username = ${query_params_count})
-        """
+        base_query["author"] = f"$in: [\"{filters.author}]\""
 
-    base_query += f"""
-        LIMIT ${query_params_count + 1}
-        OFFSET ${query_params_count + 2}
-        """
+    rows = conn[database_name][article_collection_name].find({"author.username": username},
+                                                             limit=filters.limit,
+                                                             skip=filters.offset)
 
-    params = [
-        param
-        for param in [
-            filters.tag or None,
-            filters.favorited or None,
-            filters.author or None,
-            filters.limit,
-            filters.offset,
-        ]
-        if param is not None
-    ]
-
-    rows = await conn.fetch(base_query, *params)
-
-    for row in rows:
+    async for row in rows:
         slug = row["slug"]
-        author = await get_profile_for_user(conn, row["author_username"], username)
+        author = await get_profile_for_user(conn, row["author"]["username"], username)
         tags = await get_tags_for_article(conn, slug)
         favorites_count = await get_favorites_count_for_article(conn, slug)
         favorited_by_user = await is_article_favorited_by_user(conn, slug, username)

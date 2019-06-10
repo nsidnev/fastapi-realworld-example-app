@@ -50,3 +50,4 @@ class ArticleInUpdate(RWModel):
     title: Optional[str] = None
     description: Optional[str] = None
     body: Optional[str] = None
+    tag_list: List[str] = Schema([], alias="tagList")

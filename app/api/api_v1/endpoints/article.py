@@ -111,7 +111,7 @@ async def create_new_article(
     if article_by_slug:
         raise HTTPException(
             status_code=HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"Article with slug '{article_by_slug.slug}' already exists",
+            detail=f"文章已存在 slug='{article_by_slug.slug}'",
         )
 
     dbarticle = await create_article_by_slug(db, article, user.username)

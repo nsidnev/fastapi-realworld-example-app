@@ -21,9 +21,7 @@ fastapi = "^0.29"
 pydantic = {version = "^0.26.0",extras = ["email"]}
 passlib = {version = "^1.7",extras = ["bcrypt"]}
 pyjwt = "^1.7"
-asyncpg = "^0.18.3"
 alembic = "^1.0"
-psycopg2-binary = "^2.8"
 python-slugify = "^3.0"
 Unidecode = "^1.0"
 python-dotenv = "^0.10.1"
