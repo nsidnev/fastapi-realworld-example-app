@@ -1,5 +1,5 @@
 from typing import List, Optional
-
+from bson import ObjectId
 from slugify import slugify
 from datetime import datetime
 
@@ -14,8 +14,7 @@ from ..core.config import database_name, favorites_collection_name, users_collec
 from .profile import get_profile_for_user
 from .tag import (
     create_tags_that_not_exist,
-    get_tags_for_article,
-    link_tags_with_article,
+    get_tags_for_article
 )
 
 
@@ -71,9 +70,11 @@ async def get_article_by_slug(
     if article_doc:
         article_doc["favorites_count"] = await get_favorites_count_for_article(conn, slug)
         article_doc["favorited"] = await is_article_favorited_by_user(conn, slug, username)
+        article_doc["author"] = await get_profile_for_user(conn, article_doc["author_id"])
 
         return ArticleInDB(
-            **article_doc
+            **article_doc,
+            created_at=ObjectId(article_doc["_id"]).generation_time
         )
 
 
@@ -83,15 +84,18 @@ async def create_article_by_slug(
     slug = slugify(article.title)
     article_doc = article.dict()
     article_doc["slug"] = slug
-    author = await get_profile_for_user(conn, username, "")
-    article_doc["author"] = author.dict()
+    article_doc["author_id"] = username
+    article_doc["updated_at"] = datetime.now()
     await conn[database_name][article_collection_name].insert_one(article_doc)
 
     if article.tag_list:
         await create_tags_that_not_exist(conn, article.tag_list)
 
+    author = await get_profile_for_user(conn, username, "")
     return ArticleInDB(
         **article_doc,
+        created_at=ObjectId(article_doc["_id"]).generation_time,
+        author=author,
         favorites_count=1,
         favorited=True,
     )
@@ -113,14 +117,15 @@ async def update_article_by_slug(
         await create_tags_that_not_exist(conn, article.tag_list)
         dbarticle.tag_list = article.tag_list
 
-    await conn[database_name][article_collection_name].replace_one({"slug": slug}, dbarticle.dict())
-
     dbarticle.updated_at = datetime.now()
+    await conn[database_name][article_collection_name].replace_one({"slug": slug, "author_id": username}, dbarticle.dict())
+
+    dbarticle.created_at = ObjectId(dbarticle.id).generation_time
     return dbarticle
 
 
 async def delete_article_by_slug(conn: AsyncIOMotorClient, slug: str, username: str):
-    await conn[database_name][article_collection_name].delete_many({"author.username": username,
+    await conn[database_name][article_collection_name].delete_many({"author_id": username,
                                                                     "slug": slug})
 
 
@@ -128,18 +133,19 @@ async def get_user_articles(
     conn: AsyncIOMotorClient, username: str, limit=20, offset=0
 ) -> List[ArticleInDB]:
     articles: List[ArticleInDB] = []
-    article_docs = conn[database_name][article_collection_name].find({"author.username": username},
+    article_docs = conn[database_name][article_collection_name].find({"author_id": username},
                                                                        limit=limit, skip=offset)
     async for row in article_docs:
         slug = row["slug"]
-        author = await get_profile_for_user(conn, row["author"]["username"], username)
+        author = await get_profile_for_user(conn, row["author_id"], username)
         tags = await get_tags_for_article(conn, slug)
         favorites_count = await get_favorites_count_for_article(conn, slug)
         favorited_by_user = await is_article_favorited_by_user(conn, slug, username)
         articles.append(
             ArticleInDB(
                 **row,
-                tagList=[tag.tag for tag in tags],
+                author=author,
+                created_at=ObjectId(row["_id"]).generation_time,
                 favorites_count=favorites_count,
                 favorited=favorited_by_user,
             )
@@ -162,13 +168,13 @@ async def get_articles_with_filters(
     if filters.author:
         base_query["author"] = f"$in: [\"{filters.author}]\""
 
-    rows = conn[database_name][article_collection_name].find({"author.username": username},
+    rows = conn[database_name][article_collection_name].find({"author_id": username},
                                                              limit=filters.limit,
                                                              skip=filters.offset)
 
     async for row in rows:
         slug = row["slug"]
-        author = await get_profile_for_user(conn, row["author"]["username"], username)
+        author = await get_profile_for_user(conn, row["author_id"], username)
         tags = await get_tags_for_article(conn, slug)
         favorites_count = await get_favorites_count_for_article(conn, slug)
         favorited_by_user = await is_article_favorited_by_user(conn, slug, username)
@@ -176,7 +182,7 @@ async def get_articles_with_filters(
             ArticleInDB(
                 **row,
                 author=author,
-                tag_list=[tag.tag for tag in tags],
+                created_at=ObjectId(row["_id"]).generation_time,
                 favorites_count=favorites_count,
                 favorited=favorited_by_user,
             )

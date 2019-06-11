@@ -26,10 +26,3 @@ async def get_tags_for_article(conn: AsyncIOMotorClient, slug: str) -> List[TagI
 
 async def create_tags_that_not_exist(conn: AsyncIOMotorClient, tags: List[str]):
     await conn[database_name][tags_collection_name].insert_many([{"tag": tag} for tag in tags])
-
-
-async def link_tags_with_article(conn: AsyncIOMotorClient, slug: str, tags: List[str]):
-    article_doc = await conn[database_name][article_collection_name].find_one({"slug": slug},
-                                                                              projection={"tag_list": True})
-    new_tags_list = list(set(article_doc["tags"].append(tags)))
-    await conn[database_name][article_collection_name].update_one({"slug": slug}, {"tag_list": new_tags_list})
