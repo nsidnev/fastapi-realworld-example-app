@@ -2,12 +2,9 @@
 name = "fastapi-realworld-example-app"
 version = "0.1.0"
 description = "Backend logic implementation for https://github.com/gothinkster/realworld with awesome FastAPI"
-authors = ["Nik Sidnev <snive2013@yandex.ru>"]
+authors = ["qiucheng <qiucheng@jinniuai.com"]
 license = "MIT"
 
-[[tool.poetry.source]]
-name = 'private'
-url = 'http://cxan.chong.so/simple/'
 
 [[tool.poetry.source]]
 name = 'tsinghua'

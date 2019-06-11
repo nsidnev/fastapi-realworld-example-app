@@ -3,30 +3,35 @@
 |
 
 .. image:: https://circleci.com/gh/nsidnev/fastapi-realworld-example-app.svg?style=svg
-    :target: https://circleci.com/gh/nsidnev/fastapi-realworld-example-app
+    :target: https://circleci.com/gh/markqiu/fastapi-realworld-example-app
 
 .. image:: https://travis-ci.org/nsidnev/fastapi-realworld-example-app.svg?branch=master
-    :target: https://travis-ci.org/nsidnev/fastapi-realworld-example-app
+    :target: https://travis-ci.org/markqiu/fastapi-realworld-example-app
 
 .. image:: https://img.shields.io/github/license/Naereen/StrapDown.js.svg
-   :target: https://github.com/nsidnev/fastapi-realworld-example-app/blob/master/LICENSE
+   :target: https://github.com/markqiu/fastapi-realworld-example-app/blob/master/LICENSE
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/ambv/black
 
+What for
+----------
+This project is a realworld backend based on fastapi+mongodb. It can be used as a sample backend or a sample fastapi project with mongodb.
+
+
 Quickstart
 ----------
 
-First, run ``PostgreSQL``, set environment variables and create database. For example using ``docker``: ::
+First, set environment variables and create database. For example using ``docker``: ::
 
-    export POSTGRES_DB=rwdb POSTGRES_PORT=5432 POSTGRES_USER=postgres POSTGRES_PASSWORD=postgres
-    docker run --name pgdb --rm -e POSTGRES_USER="$POSTGRES_USER" -e POSTGRES_PASSWORD="$POSTGRES_PASSWORD" -e POSTGRES_DB="$POSTGRES_DB" postgres
-    export POSTGRES_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' pgdb)
-    createdb --host=$POSTGRES_HOST --port=$POSTGRES_PORT --username=$POSTGRES_USER $POSTGRES_DB
+    export MONGO_DB=rwdb MONGO_PORT=5432 MONGO_USER=MONGO MONGO_PASSWORD=MONGO
+    docker run --name mongodb --rm -e MONGO_USER="$MONGO_USER" -e MONGO_PASSWORD="$MONGO_PASSWORD" -e MONGO_DB="$MONGO_DB" MONGO
+    export MONGO_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' pgdb)
+    mongo --host=$MONGO_HOST --port=$MONGO_PORT --username=$MONGO_USER $MONGO_DB
 
 Then run the following commands to bootstrap your environment with ``poetry``: ::
 
-    git clone https://github.com/nsidnev/fastapi-realworld-example-app
+    git clone https://github.com/markqiu/fastapi-realworld-example-app
     cd fastapi-realworld-example-app
     poetry install
     poetry shell
@@ -35,13 +40,12 @@ Then create ``.env`` file (or rename and modify ``.env.example``) in project roo
 
     touch .env
     echo "PROJECT_NAME=FastAPI RealWorld Application Example" >> .env
-    echo DATABASE_URL=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB >> .env
+    echo DATABASE_URL=mongo://$MONGO_USER:$MONGO_PASSWORD@$MONGO_HOST:$MONGO_PORT/$MONGO_DB >> .env
     echo SECRET_KEY=$(openssl rand -hex 32) >> .env
     echo ALLOWED_HOSTS='"127.0.0.1", "localhost"' >> .env
 
 To run the web application in debug use::
 
-    alembic upgrade head
     uvicorn app.main:app --reload
 
 
@@ -49,7 +53,7 @@ Deployment with Docker
 ----------------------
 
 You must have ``docker`` and ``docker-compose`` tools installed to work with material in this section.
-First, create ``.env`` file like in `Quickstart` section or modify ``.env.example``. ``POSTGRES_HOST`` must be specified as `db` or modified in ``docker-compose.yml`` also. Then just run::
+First, create ``.env`` file like in `Quickstart` section or modify ``.env.example``. ``MONGO_HOST`` must be specified as `db` or modified in ``docker-compose.yml`` also. Then just run::
 
     docker-compose up -d
 
@@ -79,4 +83,4 @@ Application parts are:
 
 Todo
 ----
-1) Add python tests
+1) Add more unit test

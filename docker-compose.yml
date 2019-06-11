@@ -2,14 +2,14 @@ version: '3'
 
 services:
   db:
-    image: postgres:11.1
+    image: mongodb
     env_file:
       - .env
   web_app:
     build:
       dockerfile: Dockerfile
       context: .
-    image: nsidnev/fastapi-realworld-example-app
+    image: markqiu/fastapi-realworld-example-app
     env_file:
       - .env
     depends_on:
