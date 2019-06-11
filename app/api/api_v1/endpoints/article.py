@@ -1,10 +1,8 @@
 from typing import Optional
 
 from fastapi import APIRouter, Body, Depends, Path, Query
-from fastapi.encoders import jsonable_encoder
 from slugify import slugify
 from starlette.exceptions import HTTPException
-from starlette.responses import JSONResponse
 from starlette.status import (
     HTTP_201_CREATED,
     HTTP_204_NO_CONTENT,
@@ -44,13 +42,13 @@ router = APIRouter()
 
 @router.get("/articles", response_model=ManyArticlesInResponse, tags=["articles"])
 async def get_articles(
-    tag: str = "",
-    author: str = "",
-    favorited: str = "",
-    limit: int = Query(20, gt=0),
-    offset: int = Query(0, ge=0),
-    user: User = Depends(get_current_user_authorizer(required=False)),
-    db: AsyncIOMotorClient = Depends(get_database),
+        tag: str = "",
+        author: str = "",
+        favorited: str = "",
+        limit: int = Query(20, gt=0),
+        offset: int = Query(0, ge=0),
+        user: User = Depends(get_current_user_authorizer(required=False)),
+        db: AsyncIOMotorClient = Depends(get_database),
 ):
     filters = ArticleFilterParams(
         tag=tag, author=author, favorited=favorited, limit=limit, offset=offset
@@ -65,10 +63,10 @@ async def get_articles(
 
 @router.get("/articles/feed", response_model=ManyArticlesInResponse, tags=["articles"])
 async def articles_feed(
-    limit: int = Query(20, gt=0),
-    offset: int = Query(0, ge=0),
-    user: User = Depends(get_current_user_authorizer()),
-    db: AsyncIOMotorClient = Depends(get_database),
+        limit: int = Query(20, gt=0),
+        offset: int = Query(0, ge=0),
+        user: User = Depends(get_current_user_authorizer()),
+        db: AsyncIOMotorClient = Depends(get_database),
 ):
     dbarticles = await get_user_articles(db, user.username, limit, offset)
     return create_aliased_response(
@@ -78,9 +76,9 @@ async def articles_feed(
 
 @router.get("/articles/{slug}", response_model=ArticleInResponse, tags=["articles"])
 async def get_article(
-    slug: str = Path(..., min_length=1),
-    user: Optional[User] = Depends(get_current_user_authorizer(required=False)),
-    db: AsyncIOMotorClient = Depends(get_database),
+        slug: str = Path(..., min_length=1),
+        user: Optional[User] = Depends(get_current_user_authorizer(required=False)),
+        db: AsyncIOMotorClient = Depends(get_database),
 ):
     dbarticle = await get_article_by_slug(
         db, slug, user.username if user else None
@@ -101,9 +99,9 @@ async def get_article(
     status_code=HTTP_201_CREATED,
 )
 async def create_new_article(
-    article: ArticleInCreate = Body(..., embed=True),
-    user: User = Depends(get_current_user_authorizer()),
-    db: AsyncIOMotorClient = Depends(get_database),
+        article: ArticleInCreate = Body(..., embed=True),
+        user: User = Depends(get_current_user_authorizer()),
+        db: AsyncIOMotorClient = Depends(get_database),
 ):
     article_by_slug = await get_article_by_slug(
         db, slugify(article.title), user.username
@@ -120,10 +118,10 @@ async def create_new_article(
 
 @router.put("/articles/{slug}", response_model=ArticleInResponse, tags=["articles"])
 async def update_article(
-    slug: str = Path(..., min_length=1),
-    article: ArticleInUpdate = Body(..., embed=True),
-    user: User = Depends(get_current_user_authorizer()),
-    db: AsyncIOMotorClient = Depends(get_database),
+        slug: str = Path(..., min_length=1),
+        article: ArticleInUpdate = Body(..., embed=True),
+        user: User = Depends(get_current_user_authorizer()),
+        db: AsyncIOMotorClient = Depends(get_database),
 ):
     await check_article_for_existence_and_modifying_permissions(
         db, slug, user.username
@@ -135,9 +133,9 @@ async def update_article(
 
 @router.delete("/articles/{slug}", tags=["articles"], status_code=HTTP_204_NO_CONTENT)
 async def delete_article(
-    slug: str = Path(..., min_length=1),
-    user: User = Depends(get_current_user_authorizer()),
-    db: AsyncIOMotorClient = Depends(get_database),
+        slug: str = Path(..., min_length=1),
+        user: User = Depends(get_current_user_authorizer()),
+        db: AsyncIOMotorClient = Depends(get_database),
 ):
     await check_article_for_existence_and_modifying_permissions(
         db, slug, user.username
@@ -150,9 +148,9 @@ async def delete_article(
     "/articles/{slug}/favorite", response_model=ArticleInResponse, tags=["articles"]
 )
 async def favorite_article(
-    slug: str = Path(..., min_length=1),
-    user: User = Depends(get_current_user_authorizer()),
-    db: AsyncIOMotorClient = Depends(get_database),
+        slug: str = Path(..., min_length=1),
+        user: User = Depends(get_current_user_authorizer()),
+        db: AsyncIOMotorClient = Depends(get_database),
 ):
     dbarticle = await get_article_or_404(db, slug, user.username)
     if dbarticle.favorited:
@@ -172,9 +170,9 @@ async def favorite_article(
     "/articles/{slug}/favorite", response_model=ArticleInResponse, tags=["articles"]
 )
 async def delete_article_from_favorites(
-    slug: str = Path(..., min_length=1),
-    user: User = Depends(get_current_user_authorizer()),
-    db: AsyncIOMotorClient = Depends(get_database),
+        slug: str = Path(..., min_length=1),
+        user: User = Depends(get_current_user_authorizer()),
+        db: AsyncIOMotorClient = Depends(get_database),
 ):
     dbarticle = await get_article_or_404(db, slug, user.username)
 

@@ -1,18 +1,6 @@
-from starlette.testclient import TestClient
-from app.main import app
-
-user = {
-    "user": {
-        "email": "user@example.com",
-        "password": "string",
-        "username": "string"
-    }
-}
-
-client = TestClient(app)
 
 
-def test_update_current_user():
-    response = client.post("/api/users", user)
-    assert response.status_code == 200
-    assert response.json() == {"name": "Fighters"}
+def test_update_current_user(test_client, test_user):
+    response = test_client.post("/api/users", json=test_user)
+    assert response.status_code == 201
+    assert response.json()["user"]["username"] == test_user["user"]["username"]

@@ -1,15 +1,12 @@
-import asyncio
 import logging
 
 from motor.motor_asyncio import AsyncIOMotorClient
-import uvloop
 from ..core.config import MONGODB_URL, MAX_CONNECTIONS_COUNT, MIN_CONNECTIONS_COUNT
 from .mongodb import db
 
 
 async def connect_to_mongo():
     logging.info("连接数据库中...")
-    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     db.client = AsyncIOMotorClient(str(MONGODB_URL),
                                    maxPoolSize=MAX_CONNECTIONS_COUNT,
                                    minPoolSize=MIN_CONNECTIONS_COUNT)
@@ -18,5 +15,5 @@ async def connect_to_mongo():
 
 async def close_mongo_connection():
     logging.info("关闭数据库连接...")
-    await db.client.close()
+    db.client.close()
     logging.info("数据库连接关闭！")
