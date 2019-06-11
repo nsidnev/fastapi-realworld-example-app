@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends
 
-from app.crud.tag import fetch_all_tags
-from app.db.mongodb import AsyncIOMotorClient, get_database
-from app.models.tag import TagsList
+from ....crud.tag import fetch_all_tags
+from ....db.mongodb import AsyncIOMotorClient, get_database
+from ....models.tag import TagsList
 
 router = APIRouter()
 
