@@ -33,7 +33,9 @@ jobs:
         env:
           SECRET_KEY: secret_key
           DB_CONNECTION: postgres://postgres:postgres@localhost/postgres
-        run: USE_LOCAL_DB_FOR_TEST=False ./scripts/test --cov-report=xml
+        run: |
+          alembic upgrade head
+          USE_LOCAL_DB_FOR_TEST=False ./scripts/test --cov-report=xml
       - name: Upload coverage to Codecov
         run: bash <(curl -s https://codecov.io/bash) -t $TOKEN -B $REF
         env:
