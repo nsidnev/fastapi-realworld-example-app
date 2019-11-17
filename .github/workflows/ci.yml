@@ -64,8 +64,9 @@ jobs:
           poetry config settings.virtualenvs.create false
           poetry install
       - name: Run newman and test service
-        SECRET_KEY: secret_key
-        DB_CONNECTION: postgres://postgres:postgres@localhost/postgres
+        env:
+          SECRET_KEY: secret_key
+          DB_CONNECTION: postgres://postgres:postgres@localhost/postgres
         run: |
           uvicorn app.main:app &
           USE_LOCAL_DB_FOR_TEST=False APIURL=http://localhost:8000/api ./postman/run-api-tests.sh

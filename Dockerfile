@@ -1,4 +1,4 @@
-FROM python:3.7.5-slim-stretch
+FROM python:3.7.5
 
 ENV PYTHONUNBUFFERED 1
 
