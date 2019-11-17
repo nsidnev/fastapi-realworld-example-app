@@ -68,5 +68,5 @@ jobs:
           SECRET_KEY: secret_key
           DB_CONNECTION: postgres://postgres:postgres@localhost/postgres
         run: |
-          uvicorn app.main:app &
+          alembic upgrade head && uvicorn app.main:app &
           USE_LOCAL_DB_FOR_TEST=False APIURL=http://localhost:8000/api ./postman/run-api-tests.sh
