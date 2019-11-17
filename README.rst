@@ -2,11 +2,23 @@
 
 |
 
+.. image:: https://github.com/nsidnev/fastapi-realworld-example-app/workflows/ci/badge.svg
+  :target: https://github.com/nsidnev/fastapi-realworld-example-app
+
+.. image:: https://github.com/nsidnev/fastapi-realworld-example-app/workflows/deploy/badge.svg
+  :target: https://github.com/nsidnev/fastapi-realworld-example-app
+
+.. image:: https://codecov.io/gh/nsidnev/fastapi-realworld-example-app/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/nsidnev/fastapi-realworld-example-app
+
 .. image:: https://img.shields.io/github/license/Naereen/StrapDown.js.svg
    :target: https://github.com/nsidnev/fastapi-realworld-example-app/blob/master/LICENSE
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/ambv/black
+
+.. image:: https://img.shields.io/badge/style-wemake-000000.svg
+   :target: https://github.com/wemake-services/wemake-python-styleguide
 
 Quickstart
 ----------
