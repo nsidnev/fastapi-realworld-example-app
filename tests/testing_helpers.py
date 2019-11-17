@@ -45,7 +45,7 @@ class FakePool:
 
 def do_with_retry(
     catching_exc: Type[Exception], reraised_exc: Type[Exception], error_msg: str
-) -> Callable:
+) -> Callable:  # pragma: no cover
     def outer_wrapper(call: Callable) -> Callable:
         @wraps(call)
         def inner_wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -65,12 +65,12 @@ def do_with_retry(
 
 
 @do_with_retry(docker.errors.APIError, RuntimeError, "cannot pull postgres image")
-def pull_image(client: APIClient, image: str) -> None:
+def pull_image(client: APIClient, image: str) -> None:  # pragma: no cover
     client.pull(image)
 
 
 @do_with_retry(psycopg2.Error, RuntimeError, "cannot start postgres server")
-def ping_postgres(dsn: str) -> None:
+def ping_postgres(dsn: str) -> None:  # pragma: no cover
     conn = psycopg2.connect(dsn)
     cur = conn.cursor()
     cur.execute("CREATE EXTENSION hstore;")
