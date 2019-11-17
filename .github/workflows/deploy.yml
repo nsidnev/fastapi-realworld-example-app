@@ -58,6 +58,9 @@ jobs:
               --name frw_backend \
               --network web \
               --restart always \
+              --label "traefik.enable=true" \
+              --label "traefik.backend=frw-backend" \
+              --label "traefik.frontend.rule=Host:frw.nsidnev.me" \
               -e DB_CONNECTION="$DB_CONNECTION" \
               -e SECRET_KEY="$SECRET_KEY" \
               $IMAGE_NAME"
