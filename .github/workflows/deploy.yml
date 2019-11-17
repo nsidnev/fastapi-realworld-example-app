@@ -1,8 +1,8 @@
 name: Deploy
 
-  push:
-    branches:
-      - master
+push:
+  branches:
+    - master
 
 env:
   IMAGE_NAME: nsidnev/fastapi-realworld-example-app
