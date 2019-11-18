@@ -2,10 +2,10 @@
 
 |
 
-.. image:: https://github.com/nsidnev/fastapi-realworld-example-app/workflows/ci/badge.svg
+.. image:: https://github.com/nsidnev/fastapi-realworld-example-app/workflows/CI/badge.svg
   :target: https://github.com/nsidnev/fastapi-realworld-example-app
 
-.. image:: https://github.com/nsidnev/fastapi-realworld-example-app/workflows/deploy/badge.svg
+.. image:: https://github.com/nsidnev/fastapi-realworld-example-app/workflows/Deploy/badge.svg
   :target: https://github.com/nsidnev/fastapi-realworld-example-app
 
 .. image:: https://codecov.io/gh/nsidnev/fastapi-realworld-example-app/branch/master/graph/badge.svg
