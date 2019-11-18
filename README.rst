@@ -2,17 +2,23 @@
 
 |
 
-.. image:: https://circleci.com/gh/nsidnev/fastapi-realworld-example-app.svg?style=svg
-    :target: https://circleci.com/gh/nsidnev/fastapi-realworld-example-app
+.. image:: https://github.com/nsidnev/fastapi-realworld-example-app/workflows/CI/badge.svg
+  :target: https://github.com/nsidnev/fastapi-realworld-example-app
 
-.. image:: https://travis-ci.org/nsidnev/fastapi-realworld-example-app.svg?branch=master
-    :target: https://travis-ci.org/nsidnev/fastapi-realworld-example-app
+.. image:: https://github.com/nsidnev/fastapi-realworld-example-app/workflows/Deploy/badge.svg
+  :target: https://github.com/nsidnev/fastapi-realworld-example-app
+
+.. image:: https://codecov.io/gh/nsidnev/fastapi-realworld-example-app/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/nsidnev/fastapi-realworld-example-app
 
 .. image:: https://img.shields.io/github/license/Naereen/StrapDown.js.svg
    :target: https://github.com/nsidnev/fastapi-realworld-example-app/blob/master/LICENSE
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/ambv/black
+
+.. image:: https://img.shields.io/badge/style-wemake-000000.svg
+   :target: https://github.com/wemake-services/wemake-python-styleguide
 
 Quickstart
 ----------
@@ -34,10 +40,8 @@ Then run the following commands to bootstrap your environment with ``poetry``: :
 Then create ``.env`` file (or rename and modify ``.env.example``) in project root and set environment variables for application: ::
 
     touch .env
-    echo "PROJECT_NAME=FastAPI RealWorld Application Example" >> .env
-    echo DATABASE_URL=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB >> .env
+    echo DB_CONNECTION=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB >> .env
     echo SECRET_KEY=$(openssl rand -hex 32) >> .env
-    echo ALLOWED_HOSTS='"127.0.0.1", "localhost"' >> .env
 
 To run the web application in debug use::
 
@@ -49,11 +53,14 @@ Deployment with Docker
 ----------------------
 
 You must have ``docker`` and ``docker-compose`` tools installed to work with material in this section.
-First, create ``.env`` file like in `Quickstart` section or modify ``.env.example``. ``POSTGRES_HOST`` must be specified as `db` or modified in ``docker-compose.yml`` also. Then just run::
+First, create ``.env`` file like in `Quickstart` section or modify ``.env.example``.
+``POSTGRES_HOST`` must be specified as `db` or modified in ``docker-compose.yml`` also.
+Then just run::
 
-    docker-compose up -d
+    docker-compose up -d db
+    docker-compose up -d app
 
-Application will be available on ``localhost`` or ``127.0.0.1`` in your browser.
+Application will be available on ``localhost`` in your browser.
 
 Web routes
 ----------
@@ -64,19 +71,23 @@ All routes are available on ``/docs`` or ``/redoc`` paths with Swagger or ReDoc.
 Project structure
 -----------------
 
-Files related to application are in the ``app`` directory. ``alembic`` is directory with sql migrations.
+Files related to application are in the ``app`` or ``tests`` directories.
 Application parts are:
 
 ::
 
-    models  - pydantic models that used in crud or handlers
-    crud    - CRUD for types from models (create new user/article/comment, check if user is followed by another, etc)
-    db      - db specific utils
-    core    - some general components (jwt, security, configuration)
-    api     - handlers for routes
-    main.py - FastAPI application instance, CORS configuration and api router including
-
-
-Todo
-----
-1) Add python tests
+    app
+    ├── api              - web related stuff.
+    │   ├── dependencies - dependencies for routes definition.
+    │   ├── errors       - definition of error handlers.
+    │   └── routes       - web routes.
+    ├── core             - application configuration, startup events, logging.
+    ├── db               - db related stuff.
+    │   ├── migrations   - manually written alembic migrations.
+    │   └── repositories - all crud stuff.
+    ├── models           - pydantic models for this application.
+    │   ├── domain       - main models that are used almost everywhere.
+    │   └── schemas      - schemas for using in web routes.
+    ├── resources        - strings that are used in web responses.
+    ├── services         - logic that is not just crud related.
+    └── main.py          - FastAPI application creation and configuration.

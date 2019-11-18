@@ -1,12 +1,12 @@
 from asyncpg.pool import Pool
 
 
-class DataBase:
-    pool: Pool = None
+class Database:
+    pool: Pool
 
 
-db = DataBase()
+_db = Database()
 
 
-async def get_database():
-    return db
+def get_database() -> Database:
+    return _db

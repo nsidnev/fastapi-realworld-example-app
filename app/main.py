@@ -1,30 +1,38 @@
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
-from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 
-from app.api.api_v1.api import router as api_router
-from app.core.config import ALLOWED_HOSTS, API_V1_STR, PROJECT_NAME
-from app.core.errors import http_422_error_handler, http_error_handler
-from app.db.db_utils import close_postgres_connection, connect_to_postgres
+from app.api.errors.http_error import http_error_handler
+from app.api.errors.validation_error import http422_error_handler
+from app.api.routes.api import router as api_router
+from app.core.config import ALLOWED_HOSTS, API_PREFIX, DEBUG, PROJECT_NAME, VERSION
+from app.core.events import start_app, stop_app
+from app.db.database import get_database
 
-app = FastAPI(title=PROJECT_NAME)
 
-if not ALLOWED_HOSTS:
-    ALLOWED_HOSTS = ["*"]
+def get_application() -> FastAPI:
+    application = FastAPI(title=PROJECT_NAME, debug=DEBUG, version=VERSION)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=ALLOWED_HOSTS,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=ALLOWED_HOSTS or ["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
-app.add_event_handler("startup", connect_to_postgres)
-app.add_event_handler("shutdown", close_postgres_connection)
+    application.add_event_handler("startup", start_app)
+    application.add_event_handler("shutdown", stop_app)
 
-app.add_exception_handler(HTTPException, http_error_handler)
-app.add_exception_handler(HTTP_422_UNPROCESSABLE_ENTITY, http_422_error_handler)
+    application.add_exception_handler(HTTPException, http_error_handler)
+    application.add_exception_handler(RequestValidationError, http422_error_handler)
 
-app.include_router(api_router, prefix=API_V1_STR)
+    application.include_router(api_router, prefix=API_PREFIX)
+
+    application.state.db = get_database()
+
+    return application
+
+
+app = get_application()

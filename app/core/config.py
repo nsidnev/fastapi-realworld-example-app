@@ -1,33 +1,38 @@
-import os
+import logging
+import sys
+from typing import List
 
-from dotenv import load_dotenv
-from starlette.datastructures import CommaSeparatedStrings, Secret
 from databases import DatabaseURL
+from loguru import logger
+from starlette.config import Config
+from starlette.datastructures import CommaSeparatedStrings, Secret
 
-API_V1_STR = "/api"
+from app.core.logging import InterceptHandler
 
-JWT_TOKEN_PREFIX = "Token"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # one week
+API_PREFIX = "/api"
 
-load_dotenv(".env")
+JWT_TOKEN_PREFIX = "Token"  # noqa: S105
+VERSION = "0.0.0"
 
-DATABASE_URL = os.getenv("DATABASE_URL", "")  # deploying without docker-compose
-if not DATABASE_URL:
-    POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
-    POSTGRES_PORT = int(os.getenv("POSTGRES_PORT", 5432))
-    POSTGRES_USER = os.getenv("POSTGRES_USER", "postgres")
-    POSTGRES_PASS = os.getenv("POSTGRES_PASSWORD", "postgres")
-    POSTGRES_NAME = os.getenv("POSTGRES_DB", "postgres")
+config = Config(".env")
 
-    DATABASE_URL = DatabaseURL(
-        f"postgresql://{POSTGRES_USER}:{POSTGRES_PASS}@{POSTGRES_HOST}:{POSTGRES_PORT}/{POSTGRES_NAME}"
-    )
-else:
-    DATABASE_URL = DatabaseURL(DATABASE_URL)
+DEBUG: bool = config("DEBUG", cast=bool, default=False)
 
-MAX_CONNECTIONS_COUNT = int(os.getenv("MAX_CONNECTIONS_COUNT", 10))
-MIN_CONNECTIONS_COUNT = int(os.getenv("MIN_CONNECTIONS_COUNT", 10))
-SECRET_KEY = Secret(os.getenv("SECRET_KEY", "secret key for project"))
+DATABASE_URL: DatabaseURL = config("DB_CONNECTION", cast=DatabaseURL)
+MAX_CONNECTIONS_COUNT: int = config("MAX_CONNECTIONS_COUNT", cast=int, default=10)
+MIN_CONNECTIONS_COUNT: int = config("MIN_CONNECTIONS_COUNT", cast=int, default=10)
 
-PROJECT_NAME = os.getenv("PROJECT_NAME", "FastAPI example application")
-ALLOWED_HOSTS = CommaSeparatedStrings(os.getenv("ALLOWED_HOSTS", ""))
+SECRET_KEY: Secret = config("SECRET_KEY", cast=Secret)
+
+PROJECT_NAME: str = config("PROJECT_NAME", default="FastAPI example application")
+ALLOWED_HOSTS: List[str] = config(
+    "ALLOWED_HOSTS", cast=CommaSeparatedStrings, default=""
+)
+
+# logging configuration
+
+LOGGING_LEVEL = logging.DEBUG if DEBUG else logging.INFO
+logging.basicConfig(
+    handlers=[InterceptHandler(level=LOGGING_LEVEL)], level=LOGGING_LEVEL
+)
+logger.configure(handlers=[{"sink": sys.stderr, "level": LOGGING_LEVEL}])

@@ -1,15 +1,16 @@
-FROM python:3.7
+FROM python:3.7.5
 
-COPY poetry.lock /
-COPY pyproject.toml .
-RUN pip install poetry && \
-    poetry config settings.virtualenvs.create false && \
-    poetry install
-
-COPY . /
+ENV PYTHONUNBUFFERED 1
 
 EXPOSE 8000
+WORKDIR /app
+
+COPY poetry.lock pyproject.toml ./
+RUN pip install poetry && \
+    poetry config settings.virtualenvs.create false && \
+    poetry install --no-dev
+
+COPY . ./
 
 CMD alembic upgrade head && \
-    gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0
-
+    uvicorn --host=0.0.0.0 app.main:app

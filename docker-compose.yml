@@ -1,18 +1,17 @@
 version: '3'
 
 services:
-  db:
-    image: postgres:11.1
-    env_file:
-      - .env
-  web_app:
-    build:
-      dockerfile: Dockerfile
-      context: .
-    image: nsidnev/fastapi-realworld-example-app
+  app:
+    build: .
+    ports:
+      - "8000:8000"
     env_file:
       - .env
     depends_on:
       - db
+  db:
+    image: postgres:11.5-alpine
     ports:
-      - "8000:8000"
+      - "5432:5432"
+    env_file:
+      - .env
