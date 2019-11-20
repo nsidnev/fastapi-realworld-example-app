@@ -29,8 +29,7 @@ async def get_comment_by_id_from_path(
         )
     except EntityDoesNotExist:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=strings.COMMENT_DOES_NOT_EXIST_ERROR,
+            status_code=status.HTTP_404_NOT_FOUND, detail=strings.COMMENT_DOES_NOT_EXIST
         )
 
 

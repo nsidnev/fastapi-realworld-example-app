@@ -32,14 +32,12 @@ async def follow_for_user(
 ) -> ProfileInResponse:
     if user.username == profile.username:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST,
-            detail=strings.UNABLE_TO_FOLLOW_YOURSELF_ERROR,
+            status_code=HTTP_400_BAD_REQUEST, detail=strings.UNABLE_TO_FOLLOW_YOURSELF
         )
 
     if profile.following:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST,
-            detail=strings.USER_IS_ALREADY_FOLLOWED_ERROR,
+            status_code=HTTP_400_BAD_REQUEST, detail=strings.USER_IS_ALREADY_FOLLOWED
         )
 
     await profiles_repo.add_user_into_followers(
@@ -62,12 +60,12 @@ async def unsubscribe_from_user(
     if user.username == profile.username:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
-            detail=strings.UNABLE_TO_UNSUBSCRIBE_FROM_YOURSELF_ERROR,
+            detail=strings.UNABLE_TO_UNSUBSCRIBE_FROM_YOURSELF,
         )
 
     if not profile.following:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=strings.USER_IS_NOT_FOLLOWED_ERROR
+            status_code=HTTP_400_BAD_REQUEST, detail=strings.USER_IS_NOT_FOLLOWED
         )
 
     await profiles_repo.remove_user_from_followers(

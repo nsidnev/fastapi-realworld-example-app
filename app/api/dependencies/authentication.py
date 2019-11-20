@@ -1,7 +1,9 @@
 from typing import Callable, Optional
 
-from fastapi import Depends, Header, HTTPException
-from starlette.status import HTTP_403_FORBIDDEN
+from fastapi import Depends, HTTPException, Security
+from fastapi.security import APIKeyHeader
+from starlette import requests, status
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.dependencies.database import get_repository
 from app.core.config import JWT_TOKEN_PREFIX, SECRET_KEY
@@ -12,6 +14,28 @@ from app.resources import strings
 from app.services import jwt
 
 
+class RWAPIKeyHeader(APIKeyHeader):
+    def __init__(
+        self,
+        *,
+        name: str = "Authorization",
+        scheme_name: str = None,
+        auto_error: bool = True
+    ) -> None:
+        super().__init__(name=name, scheme_name=scheme_name, auto_error=auto_error)
+
+    async def __call__(  # noqa: WPS610
+        self, request: requests.Request
+    ) -> Optional[str]:
+        try:
+            return await super().__call__(request)
+        except StarletteHTTPException as original_auth_exc:
+            raise HTTPException(
+                status_code=original_auth_exc.status_code,
+                detail=strings.AUTHENTICATION_REQUIRED,
+            )
+
+
 def get_current_user_authorizer(*, required: bool = True) -> Callable:
     return _get_current_user if required else _get_current_user_optional
 
@@ -20,18 +44,24 @@ def _get_authorization_header_retriever(*, required: bool = True) -> Callable:
     return _get_authorization_header if required else _get_authorization_header_optional
 
 
-def _get_authorization_header(authorization: str = Header(...)) -> str:
-    token_prefix, token = authorization.split(" ")
+def _get_authorization_header(api_key: str = Security(RWAPIKeyHeader())) -> str:
+    try:
+        token_prefix, token = api_key.split(" ")
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, detail=strings.WRONG_TOKEN_PREFIX
+        )
+
     if token_prefix != JWT_TOKEN_PREFIX:
         raise HTTPException(
-            status_code=HTTP_403_FORBIDDEN, detail=strings.WRONG_TOKEN_PREFIX_ERROR
+            status_code=status.HTTP_403_FORBIDDEN, detail=strings.WRONG_TOKEN_PREFIX
         )
 
     return token
 
 
 def _get_authorization_header_optional(
-    authorization: Optional[str] = Header(None)
+    authorization: Optional[str] = Security(RWAPIKeyHeader(auto_error=False))
 ) -> str:
     if authorization:
         return _get_authorization_header(authorization)
@@ -47,14 +77,14 @@ async def _get_current_user(
         username = jwt.get_username_from_token(token, str(SECRET_KEY))
     except ValueError:
         raise HTTPException(
-            status_code=HTTP_403_FORBIDDEN, detail=strings.MALFORMED_PAYLOAD_ERROR
+            status_code=status.HTTP_403_FORBIDDEN, detail=strings.MALFORMED_PAYLOAD
         )
 
     try:
         return await users_repo.get_user_by_username(username=username)
     except EntityDoesNotExist:
         raise HTTPException(
-            status_code=HTTP_403_FORBIDDEN, detail=strings.MALFORMED_PAYLOAD_ERROR
+            status_code=status.HTTP_403_FORBIDDEN, detail=strings.MALFORMED_PAYLOAD
         )
 
 

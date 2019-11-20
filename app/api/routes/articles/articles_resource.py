@@ -58,7 +58,7 @@ async def create_new_article(
     if await check_article_exists(articles_repo, slug):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=strings.ARTICLE_ALREADY_EXISTS_ERROR,
+            detail=strings.ARTICLE_ALREADY_EXISTS,
         )
 
     article = await articles_repo.create_article(
