@@ -6,7 +6,7 @@
   :target: https://github.com/nsidnev/fastapi-realworld-example-app
 
 .. image:: https://github.com/nsidnev/fastapi-realworld-example-app/workflows/Deploy/badge.svg
-  :target: https://github.com/nsidnev/fastapi-realworld-example-app
+  :target: https://frw.nsidnev.me/
 
 .. image:: https://codecov.io/gh/nsidnev/fastapi-realworld-example-app/branch/master/graph/badge.svg
   :target: https://codecov.io/gh/nsidnev/fastapi-realworld-example-app

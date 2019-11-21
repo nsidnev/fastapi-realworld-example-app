@@ -35,7 +35,7 @@ jobs:
           DB_CONNECTION: postgres://postgres:postgres@localhost/postgres
         run: |
           alembic upgrade head
-          USE_LOCAL_DB_FOR_TEST=False ./scripts/test --cov-report=xml
+          USE_LOCAL_DB_FOR_TEST=False ./scripts/test --cov-report=xml --cov-fail-under=100
       - name: Upload coverage to Codecov
         run: bash <(curl -s https://codecov.io/bash) -t $TOKEN -B $REF
         env:

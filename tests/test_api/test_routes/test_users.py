@@ -11,6 +11,11 @@ from app.models.schemas.users import UserInResponse
 pytestmark = pytest.mark.asyncio
 
 
+@pytest.fixture(params=("", "value", "Token value", "JWT value", "Bearer value"))
+def wrong_authorization_header(request) -> str:
+    return request.param
+
+
 @pytest.mark.parametrize(
     "api_method, route_name",
     (("GET", "users:get-current-user"), ("PUT", "users:update-current-user")),
@@ -23,7 +28,7 @@ async def test_user_can_not_access_own_profile_if_not_logged_in(
     route_name: str,
 ) -> None:
     response = await client.request(api_method, app.url_path_for(route_name))
-    assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+    assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
 @pytest.mark.parametrize(
@@ -34,14 +39,14 @@ async def test_user_can_not_retrieve_own_profile_if_wrong_token(
     app: FastAPI,
     client: AsyncClient,
     test_user: UserInDB,
-    authorization_prefix,
     api_method: str,
     route_name: str,
+    wrong_authorization_header: str,
 ) -> None:
     response = await client.request(
         api_method,
         app.url_path_for(route_name),
-        headers={"Authorization": f"{authorization_prefix} wrong"},
+        headers={"Authorization": wrong_authorization_header},
     )
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
