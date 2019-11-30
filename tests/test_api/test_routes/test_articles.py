@@ -1,9 +1,9 @@
 import pytest
+from asyncpg.pool import Pool
 from fastapi import FastAPI
 from httpx import Client
 from starlette import status
 
-from app.db.database import Database
 from app.db.errors import EntityDoesNotExist
 from app.db.repositories.articles import ArticlesRepository
 from app.db.repositories.profiles import ProfilesRepository
@@ -131,11 +131,11 @@ async def test_user_can_update_article(
 async def test_user_can_not_modify_article_that_is_not_authored_by_him(
     app: FastAPI,
     authorized_client: Client,
-    db: Database,
+    pool: Pool,
     api_method: str,
     route_name: str,
 ) -> None:
-    async with db.pool.acquire() as connection:
+    async with pool.acquire() as connection:
         users_repo = UsersRepository(connection)
         user = await users_repo.create_user(
             username="test_author", email="author@email.com", password="password"
@@ -159,13 +159,13 @@ async def test_user_can_not_modify_article_that_is_not_authored_by_him(
 
 
 async def test_user_can_delete_his_article(
-    app: FastAPI, authorized_client: Client, test_article: Article, db: Database
+    app: FastAPI, authorized_client: Client, test_article: Article, pool: Pool,
 ) -> None:
     await authorized_client.delete(
         app.url_path_for("articles:delete-article", slug=test_article.slug)
     )
 
-    async with db.pool.acquire() as connection:
+    async with pool.acquire() as connection:
         articles_repo = ArticlesRepository(connection)
         with pytest.raises(EntityDoesNotExist):
             await articles_repo.get_article_by_slug(slug=test_article.slug)
@@ -183,13 +183,13 @@ async def test_user_can_change_favorite_state(
     authorized_client: Client,
     test_article: Article,
     test_user: UserInDB,
-    db: Database,
+    pool: Pool,
     api_method: str,
     route_name: str,
     favorite_state: bool,
 ) -> None:
     if not favorite_state:
-        async with db.pool.acquire() as connection:
+        async with pool.acquire() as connection:
             articles_repo = ArticlesRepository(connection)
             await articles_repo.add_article_into_favorites(
                 article=test_article, user=test_user
@@ -221,13 +221,13 @@ async def test_user_can_not_change_article_state_twice(
     authorized_client: Client,
     test_article: Article,
     test_user: UserInDB,
-    db: Database,
+    pool: Pool,
     api_method: str,
     route_name: str,
     favorite_state: bool,
 ) -> None:
     if favorite_state:
-        async with db.pool.acquire() as connection:
+        async with pool.acquire() as connection:
             articles_repo = ArticlesRepository(connection)
             await articles_repo.add_article_into_favorites(
                 article=test_article, user=test_user
@@ -245,9 +245,9 @@ async def test_empty_feed_if_user_has_not_followings(
     authorized_client: Client,
     test_article: Article,
     test_user: UserInDB,
-    db: Database,
+    pool: Pool,
 ) -> None:
-    async with db.pool.acquire() as connection:
+    async with pool.acquire() as connection:
         users_repo = UsersRepository(connection)
         articles_repo = ArticlesRepository(connection)
 
@@ -278,10 +278,10 @@ async def test_user_will_receive_only_following_articles(
     authorized_client: Client,
     test_article: Article,
     test_user: UserInDB,
-    db: Database,
+    pool: Pool,
 ) -> None:
     following_author_username = "user-2"
-    async with db.pool.acquire() as connection:
+    async with pool.acquire() as connection:
         users_repo = UsersRepository(connection)
         profiles_repo = ProfilesRepository(connection)
         articles_repo = ArticlesRepository(connection)
@@ -324,9 +324,9 @@ async def test_user_receiving_feed_with_limit_and_offset(
     authorized_client: Client,
     test_article: Article,
     test_user: UserInDB,
-    db: Database,
+    pool: Pool,
 ) -> None:
-    async with db.pool.acquire() as connection:
+    async with pool.acquire() as connection:
         users_repo = UsersRepository(connection)
         profiles_repo = ProfilesRepository(connection)
         articles_repo = ArticlesRepository(connection)
@@ -365,11 +365,11 @@ async def test_user_receiving_feed_with_limit_and_offset(
 
 
 async def test_article_will_contain_only_attached_tags(
-    app: FastAPI, authorized_client: Client, test_user: UserInDB, db: Database
+    app: FastAPI, authorized_client: Client, test_user: UserInDB, pool: Pool
 ) -> None:
     attached_tags = ["tag1", "tag3"]
 
-    async with db.pool.acquire() as connection:
+    async with pool.acquire() as connection:
         articles_repo = ArticlesRepository(connection)
 
         await articles_repo.create_article(
@@ -406,11 +406,11 @@ async def test_filtering_by_tags(
     app: FastAPI,
     authorized_client: Client,
     test_user: UserInDB,
-    db: Database,
+    pool: Pool,
     tag: str,
     result: int,
 ) -> None:
-    async with db.pool.acquire() as connection:
+    async with pool.acquire() as connection:
         articles_repo = ArticlesRepository(connection)
 
         await articles_repo.create_article(
@@ -454,11 +454,11 @@ async def test_filtering_by_authors(
     app: FastAPI,
     authorized_client: Client,
     test_user: UserInDB,
-    db: Database,
+    pool: Pool,
     author: str,
     result: int,
 ) -> None:
-    async with db.pool.acquire() as connection:
+    async with pool.acquire() as connection:
         users_repo = UsersRepository(connection)
         articles_repo = ArticlesRepository(connection)
 
@@ -502,11 +502,11 @@ async def test_filtering_by_favorited(
     app: FastAPI,
     authorized_client: Client,
     test_user: UserInDB,
-    db: Database,
+    pool: Pool,
     favorited: str,
     result: int,
 ) -> None:
-    async with db.pool.acquire() as connection:
+    async with pool.acquire() as connection:
         users_repo = UsersRepository(connection)
         articles_repo = ArticlesRepository(connection)
 
@@ -545,9 +545,9 @@ async def test_filtering_by_favorited(
 
 
 async def test_filtering_with_limit_and_offset(
-    app: FastAPI, authorized_client: Client, test_user: UserInDB, db: Database
+    app: FastAPI, authorized_client: Client, test_user: UserInDB, pool: Pool
 ) -> None:
-    async with db.pool.acquire() as connection:
+    async with pool.acquire() as connection:
         articles_repo = ArticlesRepository(connection)
 
         for i in range(5, 10):

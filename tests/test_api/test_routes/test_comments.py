@@ -1,9 +1,9 @@
 import pytest
+from asyncpg.pool import Pool
 from fastapi import FastAPI
 from httpx import Client
 from starlette import status
 
-from app.db.database import Database
 from app.db.repositories.comments import CommentsRepository
 from app.db.repositories.users import UsersRepository
 from app.models.domain.articles import Article
@@ -59,9 +59,9 @@ async def test_user_can_delete_own_comment(
 
 
 async def test_user_can_not_delete_not_authored_comment(
-    app: FastAPI, authorized_client: Client, test_article: Article, db: Database
+    app: FastAPI, authorized_client: Client, test_article: Article, pool: Pool
 ) -> None:
-    async with db.pool.acquire() as connection:
+    async with pool.acquire() as connection:
         users_repo = UsersRepository(connection)
         user = await users_repo.create_user(
             username="test_author", email="author@email.com", password="password"

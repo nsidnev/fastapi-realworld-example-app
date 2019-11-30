@@ -1,9 +1,9 @@
 import pytest
+from asyncpg.pool import Pool
 from fastapi import FastAPI
 from httpx import Client
 from starlette import status
 
-from app.db.database import Database
 from app.db.repositories.profiles import ProfilesRepository
 from app.db.repositories.users import UsersRepository
 from app.models.domain.users import UserInDB
@@ -24,9 +24,9 @@ async def test_unregistered_user_will_receive_profile_without_following(
 
 
 async def test_user_that_does_not_follows_another_will_receive_profile_without_follow(
-    app: FastAPI, authorized_client: Client, db: Database
+    app: FastAPI, authorized_client: Client, pool: Pool
 ) -> None:
-    async with db.pool.acquire() as conn:
+    async with pool.acquire() as conn:
         users_repo = UsersRepository(conn)
         user = await users_repo.create_user(
             username="user_for_following",
@@ -43,9 +43,9 @@ async def test_user_that_does_not_follows_another_will_receive_profile_without_f
 
 
 async def test_user_that_follows_another_will_receive_profile_with_follow(
-    app: FastAPI, authorized_client: Client, db: Database, test_user: UserInDB
+    app: FastAPI, authorized_client: Client, pool: Pool, test_user: UserInDB
 ) -> None:
-    async with db.pool.acquire() as conn:
+    async with pool.acquire() as conn:
         users_repo = UsersRepository(conn)
         user = await users_repo.create_user(
             username="user_for_following",
@@ -93,13 +93,13 @@ async def test_user_can_not_retrieve_not_existing_profile(
 async def test_user_can_change_following_for_another_user(
     app: FastAPI,
     authorized_client: Client,
-    db: Database,
+    pool: Pool,
     test_user: UserInDB,
     api_method: str,
     route_name: str,
     following: bool,
 ) -> None:
-    async with db.pool.acquire() as conn:
+    async with pool.acquire() as conn:
         users_repo = UsersRepository(conn)
         user = await users_repo.create_user(
             username="user_for_following",
@@ -136,13 +136,13 @@ async def test_user_can_change_following_for_another_user(
 async def test_user_can_not_change_following_state_to_the_same_twice(
     app: FastAPI,
     authorized_client: Client,
-    db: Database,
+    pool: Pool,
     test_user: UserInDB,
     api_method: str,
     route_name: str,
     following: bool,
 ) -> None:
-    async with db.pool.acquire() as conn:
+    async with pool.acquire() as conn:
         users_repo = UsersRepository(conn)
         user = await users_repo.create_user(
             username="user_for_following",
