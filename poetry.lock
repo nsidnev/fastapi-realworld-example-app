@@ -13,6 +13,14 @@ python-dateutil = "*"
 python-editor = ">=0.3"
 
 [[package]]
+category = "main"
+description = "apipkg: namespace control and lazy-import mechanism"
+name = "apipkg"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "1.5"
+
+[[package]]
 category = "dev"
 description = "A small Python module for determining appropriate platform-specific dirs, e.g. a \"user data dir\"."
 name = "appdirs"
@@ -45,7 +53,7 @@ python-versions = ">=3.5.0"
 version = "0.20.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Atomic file writes."
 marker = "sys_platform == \"win32\""
 name = "atomicwrites"
@@ -54,7 +62,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "1.3.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Classes Without Boilerplate"
 name = "attrs"
 optional = false
@@ -263,6 +271,17 @@ name = "eradicate"
 optional = false
 python-versions = "*"
 version = "1.0"
+
+[[package]]
+category = "main"
+description = "execnet: rapid multi-Python deployment"
+name = "execnet"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "1.7.1"
+
+[package.dependencies]
+apipkg = ">=1.4"
 
 [[package]]
 category = "main"
@@ -633,7 +652,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "2.8"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Read metadata from Python packages"
 marker = "python_version < \"3.8\""
 name = "importlib-metadata"
@@ -703,7 +722,7 @@ python-versions = "*"
 version = "0.6.1"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "More routines for operating on iterables, beyond itertools"
 name = "more-itertools"
 optional = false
@@ -732,7 +751,7 @@ python-versions = "*"
 version = "0.4.3"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Core utilities for Python packages"
 name = "packaging"
 optional = false
@@ -782,7 +801,7 @@ version = "0.9.1"
 flake8-polyfill = ">=1.0.2,<2"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "plugin and hook calling mechanisms for python"
 name = "pluggy"
 optional = false
@@ -804,7 +823,7 @@ python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
 version = "2.8.4"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "library with cross-python path, ini-parsing, io, code, log facilities"
 name = "py"
 optional = false
@@ -875,7 +894,7 @@ python-versions = "*"
 version = "1.7.1"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python parsing module"
 name = "pyparsing"
 optional = false
@@ -895,7 +914,7 @@ version = "223"
 pywin32 = ">=223"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "pytest: simple powerful testing with Python"
 name = "pytest"
 optional = false
@@ -938,6 +957,31 @@ version = "2.8.1"
 [package.dependencies]
 coverage = ">=4.4"
 pytest = ">=3.6"
+
+[[package]]
+category = "main"
+description = "run tests in isolated forked subprocesses"
+name = "pytest-forked"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "1.1.3"
+
+[package.dependencies]
+pytest = ">=3.1.0"
+
+[[package]]
+category = "main"
+description = "pytest xdist plugin for distributed testing and loop-on-failing modes"
+name = "pytest-xdist"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "1.30.0"
+
+[package.dependencies]
+execnet = ">=1.1"
+pytest = ">=4.4.0"
+pytest-forked = "*"
+six = "*"
 
 [[package]]
 category = "main"
@@ -1173,7 +1217,7 @@ python-versions = "*"
 version = "0.14.0"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Measures number of Terminal column cells of wide-character codes"
 name = "wcwidth"
 optional = false
@@ -1247,7 +1291,7 @@ python-versions = ">=3.5"
 version = "1.0.1"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Backport of pathlib-compatible object wrapper for zip files"
 marker = "python_version < \"3.8\""
 name = "zipp"
@@ -1259,11 +1303,12 @@ version = "0.6.0"
 more-itertools = "*"
 
 [metadata]
-content-hash = "5f7a2ee8260d1dfca434b2dd7bc6704e35e181acfb9f52b963bee492da028c46"
+content-hash = "3c80574241eae50ebb0f0d4302c1ebf96b6d69c9b27b8d1c9b1215045cef303d"
 python-versions = "^3.7"
 
 [metadata.hashes]
 alembic = ["49277bb7242192bbb9eac58fed4fe02ec6c3a2a4b4345d2171197459266482b2"]
+apipkg = ["37228cda29411948b422fae072f57e31d3396d2ee1c9783775980ee9c9990af6", "58587dd4dc3daefad0487f6d9ae32b4542b185e1c36db6993290e7c41ca2b47c"]
 appdirs = ["9e5896d1372858f8dd3344faf4e5014d21849c756c8d5701f78f8a103b372d92", "d8b24664561d0d34ddfaec54636d502d7cea6e29c3eaf68f3df6180863e2166e"]
 asgi-lifespan = ["1446bd1f7974044a4af276462d54303797d33a41a300099a6eaca42426e4ab2e", "7f4535466be71c2a0ee1a494f92b7f2b4f88d1edf6909f5e9bcb60125491c6f3"]
 astor = ["0e41295809baf43ae8303350e031aff81ae52189b6f881f36d623fa8b2f1960e", "37a6eed8b371f1228db08234ed7f6cfdc7817a3ed3824797e20cbb11dc2a7862"]
@@ -1289,6 +1334,7 @@ docutils = ["6c4f696463b79f1fb8ba0c594b63840ebd41f059e92b31957c46b74a4599b6d0", 
 email-validator = ["e3e6ede1765d7c1e580d2050d834b2689361f7da2d50ce74df6a5968fca7cb13"]
 entrypoints = ["589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19", "c70dd71abe5a8c85e55e12c19bd91ccfeec11a6e99044204511f9ed547d48451"]
 eradicate = ["4ffda82aae6fd49dfffa777a857cb758d77502a1f2e0f54c9ac5155a39d2d01a"]
+execnet = ["cacb9df31c9680ec5f95553976c4da484d407e85e41c83cb812aa014f0eddc50", "d4efd397930c46415f62f8a31388d6be4f27a91d7550eb79bc64a756e0056547"]
 fastapi = ["2e5a4c5727576492e3cc2d2d09c414e478f95f1566345d87efee957dd71fe44d", "a9c891473091c1f868235c25397cba71fa8b62fae8c8c3a5bc1ad008298e0990"]
 flake8 = ["45681a117ecc81e870cbf1262835ae4af5e7a8b08e40b944a8a6e6b895914cfb", "49356e766643ad15072a789a20915d3c91dc89fd313ccd71802303fd67e4deca"]
 flake8-annotations-complexity = ["e499d2186efcc5f6f2f1c7eb18568d08f4d9313fad15f614645f3f445f70b45c"]
@@ -1352,6 +1398,8 @@ pypiwin32 = ["67adf399debc1d5d14dffc1ab5acacb800da569754fafdc576b2a039485aa775",
 pytest = ["63344a2e3bce2e4d522fd62b4fdebb647c019f1f9e4ca075debbd13219db4418", "f67403f33b2b1d25a6756184077394167fe5e2f9d8bdaab30707d19ccec35427"]
 pytest-asyncio = ["9fac5100fd716cbecf6ef89233e8590a4ad61d729d1732e0a96b84182df1daaf", "d734718e25cfc32d2bf78d346e99d33724deeba774cc4afdf491530c6184b63b"]
 pytest-cov = ["cc6742d8bac45070217169f5f72ceee1e0e55b0221f54bcf24845972d3a47f2b", "cdbdef4f870408ebdbfeb44e63e07eb18bb4619fae852f6e760645fa36172626"]
+pytest-forked = ["1805699ed9c9e60cb7a8179b8d4fa2b8898098e82d229b0825d8095f0f261100", "1ae25dba8ee2e56fb47311c9638f9e58552691da87e82d25b0ce0e4bf52b7d87"]
+pytest-xdist = ["5d1b1d4461518a6023d56dab62fb63670d6f7537f23e2708459a557329accf48", "a8569b027db70112b290911ce2ed732121876632fb3f40b1d39cd2f72f58b147"]
 python-dateutil = ["73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c", "75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a"]
 python-editor = ["1bf6e860a8ad52a14c3ee1252d5dc25b2030618ed80c022598f00176adc8367d", "51fda6bcc5ddbbb7063b2af7509e43bd84bfc32a4ff71349ec7847713882327b", "5f98b069316ea1c2ed3f67e7f5df6c0d8f10b689964a4a811ff64f0106819ec8", "c3da2053dbab6b29c94e43c486ff67206eafbe7eb52dbec7390b5e2fb05aac77", "ea87e17f6ec459e780e4221f295411462e0d0810858e055fc514684350a2f522"]
 python-slugify = ["a8fc3433821140e8f409a9831d13ae5deccd0b033d4744d94b31fea141bdd84c"]
