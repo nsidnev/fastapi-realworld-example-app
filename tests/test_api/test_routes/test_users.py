@@ -1,6 +1,6 @@
 import pytest
 from fastapi import FastAPI
-from httpx import AsyncClient
+from httpx import Client
 from starlette import status
 
 from app.db.database import Database
@@ -22,7 +22,7 @@ def wrong_authorization_header(request) -> str:
 )
 async def test_user_can_not_access_own_profile_if_not_logged_in(
     app: FastAPI,
-    client: AsyncClient,
+    client: Client,
     test_user: UserInDB,
     api_method: str,
     route_name: str,
@@ -37,7 +37,7 @@ async def test_user_can_not_access_own_profile_if_not_logged_in(
 )
 async def test_user_can_not_retrieve_own_profile_if_wrong_token(
     app: FastAPI,
-    client: AsyncClient,
+    client: Client,
     test_user: UserInDB,
     api_method: str,
     route_name: str,
@@ -52,7 +52,7 @@ async def test_user_can_not_retrieve_own_profile_if_wrong_token(
 
 
 async def test_user_can_retrieve_own_profile(
-    app: FastAPI, authorized_client: AsyncClient, test_user: UserInDB, token: str
+    app: FastAPI, authorized_client: Client, test_user: UserInDB, token: str
 ) -> None:
     response = await authorized_client.get(app.url_path_for("users:get-current-user"))
     assert response.status_code == status.HTTP_200_OK
@@ -72,7 +72,7 @@ async def test_user_can_retrieve_own_profile(
 )
 async def test_user_can_update_own_profile(
     app: FastAPI,
-    authorized_client: AsyncClient,
+    authorized_client: Client,
     test_user: UserInDB,
     token: str,
     update_value: str,
@@ -90,7 +90,7 @@ async def test_user_can_update_own_profile(
 
 async def test_user_can_change_password(
     app: FastAPI,
-    authorized_client: AsyncClient,
+    authorized_client: Client,
     test_user: UserInDB,
     token: str,
     db: Database,
@@ -117,7 +117,7 @@ async def test_user_can_change_password(
 )
 async def test_user_can_not_take_already_used_credentials(
     app: FastAPI,
-    authorized_client: AsyncClient,
+    authorized_client: Client,
     db: Database,
     token: str,
     credentials_part: str,

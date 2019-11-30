@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from pydantic import BaseModel, Schema
+from pydantic import BaseModel, Field
 
 from app.models.domain.articles import Article
 from app.models.domain.rwmodel import RWModel
@@ -10,7 +10,7 @@ DEFAULT_ARTICLES_OFFSET = 0
 
 
 class ArticleForResponse(Article):
-    tags: List[str] = Schema(..., alias="tagList")  # type: ignore
+    tags: List[str] = Field(..., alias="tagList")  # type: ignore
 
 
 class ArticleInResponse(RWModel):
@@ -21,7 +21,7 @@ class ArticleInCreate(RWModel):
     title: str
     description: str
     body: str
-    tags: List[str] = Schema([], alias="tagList")  # type: ignore
+    tags: List[str] = Field([], alias="tagList")  # type: ignore
 
 
 class ArticleInUpdate(RWModel):
@@ -39,5 +39,5 @@ class ArticlesFilters(BaseModel):
     tag: Optional[str] = None
     author: Optional[str] = None
     favorited: Optional[str] = None
-    limit: int = Schema(DEFAULT_ARTICLES_LIMIT, ge=1)  # type: ignore
-    offset: int = Schema(DEFAULT_ARTICLES_OFFSET, ge=0)  # type: ignore
+    limit: int = Field(DEFAULT_ARTICLES_LIMIT, ge=1)  # type: ignore
+    offset: int = Field(DEFAULT_ARTICLES_OFFSET, ge=0)  # type: ignore

@@ -9,7 +9,7 @@ from asgi_lifespan import LifespanManager
 from asyncpg import Connection
 from asyncpg.transaction import Transaction
 from fastapi import FastAPI
-from httpx import AsyncClient
+from httpx import Client
 
 from app.db.database import Database, get_database
 from app.db.repositories.articles import ArticlesRepository
@@ -82,14 +82,14 @@ def app() -> FastAPI:
 
 # here starts db transaction that is required for almost all tests
 @pytest.fixture(autouse=True)
-async def client(db: Database, app: FastAPI) -> AsyncClient:
+async def client(db: Database, app: FastAPI) -> Client:
     async with LifespanManager(app):
         db.pool = await FakePool.create_pool(db.pool)
         connection: Connection
         async with db.pool.acquire() as connection:
             transaction: Transaction = connection.transaction()
             await transaction.start()
-            async with AsyncClient(
+            async with Client(
                 app=app,
                 base_url="http://testserver",
                 headers={"Content-Type": "application/json"},
@@ -135,8 +135,8 @@ def token(test_user: UserInDB) -> str:
 
 @pytest.fixture
 def authorized_client(
-    client: AsyncClient, token: str, authorization_prefix: str
-) -> AsyncClient:
+    client: Client, token: str, authorization_prefix: str
+) -> Client:
     client.headers = {
         "Authorization": f"{authorization_prefix} {token}",
         **client.headers,

@@ -1,6 +1,6 @@
 import pytest
 from fastapi import FastAPI
-from httpx import AsyncClient
+from httpx import Client
 from starlette import status
 
 from app.db.database import Database
@@ -13,7 +13,7 @@ pytestmark = pytest.mark.asyncio
 
 
 async def test_user_can_add_comment_for_article(
-    app: FastAPI, authorized_client: AsyncClient, test_article: Article
+    app: FastAPI, authorized_client: Client, test_article: Article
 ) -> None:
     created_comment_response = await authorized_client.post(
         app.url_path_for("comments:create-comment-for-article", slug=test_article.slug),
@@ -32,7 +32,7 @@ async def test_user_can_add_comment_for_article(
 
 
 async def test_user_can_delete_own_comment(
-    app: FastAPI, authorized_client: AsyncClient, test_article: Article
+    app: FastAPI, authorized_client: Client, test_article: Article
 ) -> None:
     created_comment_response = await authorized_client.post(
         app.url_path_for("comments:create-comment-for-article", slug=test_article.slug),
@@ -59,7 +59,7 @@ async def test_user_can_delete_own_comment(
 
 
 async def test_user_can_not_delete_not_authored_comment(
-    app: FastAPI, authorized_client: AsyncClient, test_article: Article, db: Database
+    app: FastAPI, authorized_client: Client, test_article: Article, db: Database
 ) -> None:
     async with db.pool.acquire() as connection:
         users_repo = UsersRepository(connection)
@@ -83,7 +83,7 @@ async def test_user_can_not_delete_not_authored_comment(
 
 
 async def test_user_will_receive_error_for_not_existing_comment(
-    app: FastAPI, authorized_client: AsyncClient, test_article: Article
+    app: FastAPI, authorized_client: Client, test_article: Article
 ) -> None:
     not_found_response = await authorized_client.delete(
         app.url_path_for(

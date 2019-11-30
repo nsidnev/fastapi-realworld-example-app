@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr, UrlStr
+from pydantic import BaseModel, HttpUrl, EmailStr
 
 from app.models.domain.rwmodel import RWModel
 from app.models.domain.users import User
@@ -20,7 +20,7 @@ class UserInUpdate(BaseModel):
     email: Optional[EmailStr] = None
     password: Optional[str] = None
     bio: Optional[str] = None
-    image: Optional[UrlStr] = None
+    image: Optional[HttpUrl] = None
 
 
 class UserWithToken(User):

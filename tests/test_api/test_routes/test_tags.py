@@ -1,6 +1,6 @@
 import pytest
 from fastapi import FastAPI
-from httpx import AsyncClient
+from httpx import Client
 
 from app.db.database import Database
 from app.db.repositories.tags import TagsRepository
@@ -8,13 +8,13 @@ from app.db.repositories.tags import TagsRepository
 pytestmark = pytest.mark.asyncio
 
 
-async def test_empty_list_when_no_tags_exist(app: FastAPI, client: AsyncClient) -> None:
+async def test_empty_list_when_no_tags_exist(app: FastAPI, client: Client) -> None:
     response = await client.get(app.url_path_for("tags:get-all"))
     assert response.json() == {"tags": []}
 
 
 async def test_list_of_tags_when_tags_exist(
-    app: FastAPI, client: AsyncClient, db: Database
+    app: FastAPI, client: Client, db: Database
 ) -> None:
     tags = ["tag1", "tag2", "tag3", "tag4", "tag1"]
 

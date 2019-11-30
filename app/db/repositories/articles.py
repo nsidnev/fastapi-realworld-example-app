@@ -22,7 +22,7 @@ WHERE user_id = (SELECT id FROM users WHERE username = $1)
   AND article_id = (SELECT id FROM articles WHERE slug = $2)
 """
 IS_ARTICLE_FAVORITED_BY_USER_QUERY = """
-SELECT CASE WHEN user_id IS NULL THEN FALSE ELSE TRUE END AS favorited
+SELECT CASE WHEN count(user_id) > 0 THEN TRUE ELSE FALSE END AS favorited
 FROM favorites
 WHERE
     user_id = (SELECT id FROM users WHERE username = $1)
