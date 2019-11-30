@@ -21,11 +21,7 @@ def wrong_authorization_header(request) -> str:
     (("GET", "users:get-current-user"), ("PUT", "users:update-current-user")),
 )
 async def test_user_can_not_access_own_profile_if_not_logged_in(
-    app: FastAPI,
-    client: Client,
-    test_user: UserInDB,
-    api_method: str,
-    route_name: str,
+    app: FastAPI, client: Client, test_user: UserInDB, api_method: str, route_name: str,
 ) -> None:
     response = await client.request(api_method, app.url_path_for(route_name))
     assert response.status_code == status.HTTP_403_FORBIDDEN

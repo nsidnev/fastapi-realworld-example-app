@@ -61,7 +61,7 @@ def _get_authorization_header(api_key: str = Security(RWAPIKeyHeader())) -> str:
 
 
 def _get_authorization_header_optional(
-    authorization: Optional[str] = Security(RWAPIKeyHeader(auto_error=False))
+    authorization: Optional[str] = Security(RWAPIKeyHeader(auto_error=False)),
 ) -> str:
     if authorization:
         return _get_authorization_header(authorization)

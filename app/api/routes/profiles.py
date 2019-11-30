@@ -17,7 +17,7 @@ router = APIRouter()
     "/{username}", response_model=ProfileInResponse, name="profiles:get-profile"
 )
 async def retrieve_profile_by_username(
-    profile: Profile = Depends(get_profile_by_username_from_path)
+    profile: Profile = Depends(get_profile_by_username_from_path),
 ) -> ProfileInResponse:
     return ProfileInResponse(profile=profile)
 

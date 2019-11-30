@@ -74,7 +74,7 @@ async def create_new_article(
 
 @router.get("/{slug}", response_model=ArticleInResponse, name="articles:get-article")
 async def retrieve_article_by_slug(
-    article: Article = Depends(get_article_by_slug_from_path)
+    article: Article = Depends(get_article_by_slug_from_path),
 ) -> ArticleInResponse:
     return ArticleInResponse(article=article)
 

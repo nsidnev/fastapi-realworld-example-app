@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, HttpUrl, EmailStr
+from pydantic import BaseModel, EmailStr, HttpUrl
 
 from app.models.domain.rwmodel import RWModel
 from app.models.domain.users import User

@@ -13,7 +13,7 @@ def get_db(request: Request) -> Database:
 
 def get_repository(repo_type: Type[BaseRepository]) -> Callable:
     async def _get_repo(
-        db: Database = Depends(get_db)
+        db: Database = Depends(get_db),
     ) -> AsyncGenerator[BaseRepository, None]:
         async with db.pool.acquire() as conn:
             yield repo_type(conn)

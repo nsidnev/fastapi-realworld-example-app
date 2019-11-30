@@ -134,9 +134,7 @@ def token(test_user: UserInDB) -> str:
 
 
 @pytest.fixture
-def authorized_client(
-    client: Client, token: str, authorization_prefix: str
-) -> Client:
+def authorized_client(client: Client, token: str, authorization_prefix: str) -> Client:
     client.headers = {
         "Authorization": f"{authorization_prefix} {token}",
         **client.headers,
