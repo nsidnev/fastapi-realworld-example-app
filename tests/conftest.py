@@ -7,11 +7,11 @@ import docker as libdocker
 import pytest
 from asgi_lifespan import LifespanManager
 from asyncpg import Connection
+from asyncpg.pool import Pool
 from asyncpg.transaction import Transaction
 from fastapi import FastAPI
-from httpx import AsyncClient
+from httpx import Client
 
-from app.db.database import Database, get_database
 from app.db.repositories.articles import ArticlesRepository
 from app.db.repositories.users import UsersRepository
 from app.models.domain.articles import Article
@@ -69,34 +69,34 @@ def postgres_server(docker: libdocker.APIClient) -> None:
 
 
 @pytest.fixture
-def db() -> Database:
-    return get_database()
-
-
-@pytest.fixture
 def app() -> FastAPI:
     from app.main import get_application  # local import for testing purpose
 
     return get_application()
 
 
+@pytest.fixture
+def pool(app: FastAPI) -> Pool:
+    return app.state.pool
+
+
 # here starts db transaction that is required for almost all tests
 @pytest.fixture(autouse=True)
-async def client(db: Database, app: FastAPI) -> AsyncClient:
+async def client(app: FastAPI) -> Client:
     async with LifespanManager(app):
-        db.pool = await FakePool.create_pool(db.pool)
+        app.state.pool = await FakePool.create_pool(app.state.pool)
         connection: Connection
-        async with db.pool.acquire() as connection:
+        async with app.state.pool.acquire() as connection:
             transaction: Transaction = connection.transaction()
             await transaction.start()
-            async with AsyncClient(
+            async with Client(
                 app=app,
                 base_url="http://testserver",
                 headers={"Content-Type": "application/json"},
             ) as client:
                 yield client
             await transaction.rollback()
-        await db.pool.close()
+        await app.state.pool.close()
 
 
 @pytest.fixture
@@ -107,16 +107,16 @@ def authorization_prefix() -> str:
 
 
 @pytest.fixture
-async def test_user(db: Database) -> UserInDB:
-    async with db.pool.acquire() as conn:
+async def test_user(pool: Pool) -> UserInDB:
+    async with pool.acquire() as conn:
         return await UsersRepository(conn).create_user(
             email="test@test.com", password="password", username="username"
         )
 
 
 @pytest.fixture
-async def test_article(test_user: UserInDB, db: Database) -> Article:
-    async with db.pool.acquire() as connection:
+async def test_article(test_user: UserInDB, pool: Pool) -> Article:
+    async with pool.acquire() as connection:
         articles_repo = ArticlesRepository(connection)
         return await articles_repo.create_article(
             slug="test-slug",
@@ -134,9 +134,7 @@ def token(test_user: UserInDB) -> str:
 
 
 @pytest.fixture
-def authorized_client(
-    client: AsyncClient, token: str, authorization_prefix: str
-) -> AsyncClient:
+def authorized_client(client: Client, token: str, authorization_prefix: str) -> Client:
     client.headers = {
         "Authorization": f"{authorization_prefix} {token}",
         **client.headers,

@@ -1,6 +1,6 @@
 import pytest
 from fastapi import FastAPI
-from httpx import AsyncClient
+from httpx import Client
 from starlette.status import HTTP_403_FORBIDDEN
 
 from app.models.domain.users import User
@@ -10,7 +10,7 @@ pytestmark = pytest.mark.asyncio
 
 
 async def test_unable_to_login_with_wrong_jwt_prefix(
-    app: FastAPI, client: AsyncClient, token: str
+    app: FastAPI, client: Client, token: str
 ) -> None:
     response = await client.get(
         app.url_path_for("users:get-current-user"),
@@ -20,7 +20,7 @@ async def test_unable_to_login_with_wrong_jwt_prefix(
 
 
 async def test_unable_to_login_when_user_does_not_exist_any_more(
-    app: FastAPI, client: AsyncClient, authorization_prefix: str
+    app: FastAPI, client: Client, authorization_prefix: str
 ) -> None:
     token = create_access_token_for_user(
         User(username="user", email="email@email.com"), "secret"

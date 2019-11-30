@@ -36,7 +36,15 @@ async def login(
         raise wrong_login_error
 
     token = jwt.create_access_token_for_user(user, str(config.SECRET_KEY))
-    return UserInResponse(user=UserWithToken(**user.dict(), token=token))
+    return UserInResponse(
+        user=UserWithToken(
+            username=user.username,
+            email=user.email,
+            bio=user.bio,
+            image=user.image,
+            token=token,
+        )
+    )
 
 
 @router.post(
@@ -62,4 +70,12 @@ async def register(
     user = await users_repo.create_user(**user_create.dict())
 
     token = jwt.create_access_token_for_user(user, str(config.SECRET_KEY))
-    return UserInResponse(user=UserWithToken(**user.dict(), token=token))
+    return UserInResponse(
+        user=UserWithToken(
+            username=user.username,
+            email=user.email,
+            bio=user.bio,
+            image=user.image,
+            token=token,
+        )
+    )

@@ -15,7 +15,7 @@ def convert_field_to_camel_case(string: str) -> str:
 
 
 class RWModel(BaseModel):
-    class Config(BaseConfig):  # noqa: WPS431
-        allow_population_by_alias = True
+    class Config(BaseConfig):
+        allow_population_by_field_name = True
         json_encoders = {datetime.datetime: convert_datetime_to_realword}
         alias_generator = convert_field_to_camel_case

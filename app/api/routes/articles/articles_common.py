@@ -10,6 +10,7 @@ from app.models.domain.users import User
 from app.models.schemas.articles import (
     DEFAULT_ARTICLES_LIMIT,
     DEFAULT_ARTICLES_OFFSET,
+    ArticleForResponse,
     ArticleInResponse,
     ListOfArticlesInResponse,
 )
@@ -32,7 +33,12 @@ async def get_articles_for_user_feed(
     articles = await articles_repo.get_articles_for_user_feed(
         user=user, limit=limit, offset=offset
     )
-    return ListOfArticlesInResponse(articles=articles, articles_count=len(articles))
+    articles_for_response = [
+        ArticleForResponse(**article.dict()) for article in articles
+    ]
+    return ListOfArticlesInResponse(
+        articles=articles_for_response, articles_count=len(articles),
+    )
 
 
 @router.post(
@@ -49,11 +55,13 @@ async def mark_article_as_favorite(
         await articles_repo.add_article_into_favorites(article=article, user=user)
 
         return ArticleInResponse(
-            article=article.copy(
-                update={
-                    "favorited": True,
-                    "favorites_count": article.favorites_count + 1,
-                }
+            article=ArticleForResponse.from_orm(
+                article.copy(
+                    update={
+                        "favorited": True,
+                        "favorites_count": article.favorites_count + 1,
+                    }
+                )
             )
         )
 
@@ -77,11 +85,13 @@ async def remove_article_from_favorites(
         await articles_repo.remove_article_from_favorites(article=article, user=user)
 
         return ArticleInResponse(
-            article=article.copy(
-                update={
-                    "favorited": False,
-                    "favorites_count": article.favorites_count - 1,
-                }
+            article=ArticleForResponse.from_orm(
+                article.copy(
+                    update={
+                        "favorited": False,
+                        "favorites_count": article.favorites_count - 1,
+                    }
+                )
             )
         )
 

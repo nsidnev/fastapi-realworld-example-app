@@ -1,16 +1,16 @@
 from typing import List
 
 from app.models.domain.comments import Comment
-from app.models.domain.rwmodel import RWModel
+from app.models.schemas.rwschema import RWSchema
 
 
-class ListOfCommentsInResponse(RWModel):
+class ListOfCommentsInResponse(RWSchema):
     comments: List[Comment]
 
 
-class CommentInResponse(RWModel):
+class CommentInResponse(RWSchema):
     comment: Comment
 
 
-class CommentInCreate(RWModel):
+class CommentInCreate(RWSchema):
     body: str

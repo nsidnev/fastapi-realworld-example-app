@@ -115,8 +115,11 @@ class CommentsRepository(BaseRepository):
         requested_user: Optional[User],
     ) -> Comment:
         return Comment(
-            **comment_row,
+            id=comment_row["id"],
+            body=comment_row["body"],
             author=await self._profiles_repo.get_profile_by_username(
                 username=author_username, requested_user=requested_user
             ),
+            created_at=comment_row["created_at"],
+            updated_at=comment_row["updated_at"],
         )

@@ -22,7 +22,7 @@ WHERE user_id = (SELECT id FROM users WHERE username = $1)
   AND article_id = (SELECT id FROM articles WHERE slug = $2)
 """
 IS_ARTICLE_FAVORITED_BY_USER_QUERY = """
-SELECT CASE WHEN user_id IS NULL THEN FALSE ELSE TRUE END AS favorited
+SELECT CASE WHEN count(user_id) > 0 THEN TRUE ELSE FALSE END AS favorited
 FROM favorites
 WHERE
     user_id = (SELECT id FROM users WHERE username = $1)
@@ -364,7 +364,11 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
         requested_user: Optional[User],
     ) -> Article:
         return Article(
-            **article_row,
+            id=article_row["id"],
+            slug=slug,
+            title=article_row["title"],
+            description=article_row["description"],
+            body=article_row["body"],
             author=await self._profiles_repo.get_profile_by_username(
                 username=author_username, requested_user=requested_user
             ),
@@ -377,6 +381,8 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
             )
             if requested_user
             else False,
+            created_at=article_row["created_at"],
+            updated_at=article_row["updated_at"],
         )
 
     async def _link_article_with_tags(self, *, slug: str, tags: Sequence[str]) -> None:

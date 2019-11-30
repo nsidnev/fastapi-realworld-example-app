@@ -36,11 +36,13 @@ class RWAPIKeyHeader(APIKeyHeader):
             )
 
 
-def get_current_user_authorizer(*, required: bool = True) -> Callable:
+def get_current_user_authorizer(*, required: bool = True) -> Callable:  # type: ignore
     return _get_current_user if required else _get_current_user_optional
 
 
-def _get_authorization_header_retriever(*, required: bool = True) -> Callable:
+def _get_authorization_header_retriever(
+    *, required: bool = True
+) -> Callable:  # type: ignore
     return _get_authorization_header if required else _get_authorization_header_optional
 
 
@@ -61,7 +63,7 @@ def _get_authorization_header(api_key: str = Security(RWAPIKeyHeader())) -> str:
 
 
 def _get_authorization_header_optional(
-    authorization: Optional[str] = Security(RWAPIKeyHeader(auto_error=False))
+    authorization: Optional[str] = Security(RWAPIKeyHeader(auto_error=False)),
 ) -> str:
     if authorization:
         return _get_authorization_header(authorization)

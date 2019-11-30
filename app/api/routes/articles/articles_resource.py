@@ -14,6 +14,7 @@ from app.db.repositories.articles import ArticlesRepository
 from app.models.domain.articles import Article
 from app.models.domain.users import User
 from app.models.schemas.articles import (
+    ArticleForResponse,
     ArticleInCreate,
     ArticleInResponse,
     ArticleInUpdate,
@@ -40,7 +41,12 @@ async def list_articles(
         offset=articles_filters.offset,
         requested_user=user,
     )
-    return ListOfArticlesInResponse(articles=articles, articles_count=len(articles))
+    articles_for_response = [
+        ArticleForResponse.from_orm(article) for article in articles
+    ]
+    return ListOfArticlesInResponse(
+        articles=articles_for_response, articles_count=len(articles),
+    )
 
 
 @router.post(
@@ -69,14 +75,14 @@ async def create_new_article(
         author=user,
         tags=article_create.tags,
     )
-    return ArticleInResponse(article=article)
+    return ArticleInResponse(article=ArticleForResponse.from_orm(article))
 
 
 @router.get("/{slug}", response_model=ArticleInResponse, name="articles:get-article")
 async def retrieve_article_by_slug(
-    article: Article = Depends(get_article_by_slug_from_path)
+    article: Article = Depends(get_article_by_slug_from_path),
 ) -> ArticleInResponse:
-    return ArticleInResponse(article=article)
+    return ArticleInResponse(article=ArticleForResponse.from_orm(article))
 
 
 @router.put(
@@ -94,7 +100,7 @@ async def update_article_by_slug(
     article = await articles_repo.update_article(
         article=current_article, slug=slug, **article_update.dict()
     )
-    return ArticleInResponse(article=article)
+    return ArticleInResponse(article=ArticleForResponse.from_orm(article))
 
 
 @router.delete(

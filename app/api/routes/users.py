@@ -16,10 +16,18 @@ router = APIRouter()
 
 @router.get("", response_model=UserInResponse, name="users:get-current-user")
 async def retrieve_current_user(
-    user: User = Depends(get_current_user_authorizer())
+    user: User = Depends(get_current_user_authorizer()),
 ) -> UserInResponse:
     token = jwt.create_access_token_for_user(user, str(config.SECRET_KEY))
-    return UserInResponse(user=UserWithToken(**user.dict(), token=token))
+    return UserInResponse(
+        user=UserWithToken(
+            username=user.username,
+            email=user.email,
+            bio=user.bio,
+            image=user.image,
+            token=token,
+        )
+    )
 
 
 @router.put("", response_model=UserInResponse, name="users:update-current-user")
@@ -43,4 +51,12 @@ async def update_current_user(
     user = await users_repo.update_user(user=current_user, **user_update.dict())
 
     token = jwt.create_access_token_for_user(user, str(config.SECRET_KEY))
-    return UserInResponse(user=UserWithToken(**user.dict(), token=token))
+    return UserInResponse(
+        user=UserWithToken(
+            username=user.username,
+            email=user.email,
+            bio=user.bio,
+            image=user.image,
+            token=token,
+        )
+    )
