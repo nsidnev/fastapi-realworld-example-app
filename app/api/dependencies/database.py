@@ -11,7 +11,7 @@ def get_db(request: Request) -> Database:
     return request.app.state.db
 
 
-def get_repository(repo_type: Type[BaseRepository]) -> Callable:
+def get_repository(repo_type: Type[BaseRepository]) -> Callable:  # type: ignore
     async def _get_repo(
         db: Database = Depends(get_db),
     ) -> AsyncGenerator[BaseRepository, None]:
