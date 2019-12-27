@@ -16,15 +16,6 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
-      - name: Set up Python 3.7
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.7
-      - name: Install dependencies
-        run: |
-          pip install poetry
-          poetry config settings.virtualenvs.create false
-          poetry install --no-dev
       - name: Build image and publish to registry
         run: |
           docker build -t $IMAGE_NAME:latest .
