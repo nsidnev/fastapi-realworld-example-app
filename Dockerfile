@@ -1,4 +1,4 @@
-FROM python:3.7.5
+FROM python:3.8.1
 
 ENV PYTHONUNBUFFERED 1
 
@@ -6,7 +6,7 @@ EXPOSE 8000
 WORKDIR /app
 
 COPY poetry.lock pyproject.toml ./
-RUN pip install poetry && \
+RUN pip install poetry==1.0.* && \
     poetry config settings.virtualenvs.create false && \
     poetry install --no-dev
 
