@@ -1,4 +1,4 @@
-FROM python:3.8.1
+FROM python:3.6
 
 ENV PYTHONUNBUFFERED 1
 
@@ -7,7 +7,7 @@ WORKDIR /app
 
 COPY poetry.lock pyproject.toml ./
 RUN pip install poetry==1.0.* && \
-    poetry config settings.virtualenvs.create false && \
+    poetry config virtualenvs.create false && \
     poetry install --no-dev
 
 COPY . ./

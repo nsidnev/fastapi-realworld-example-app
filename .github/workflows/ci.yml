@@ -62,7 +62,7 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
     steps:
       - uses: actions/checkout@v1
-      - name: Set up Python 3.7
+      - name: Set up Python
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
@@ -70,11 +70,11 @@ jobs:
         run: |
           pip install poetry==1.0.*
           poetry config virtualenvs.create false
-          poetry install
+          poetry install --no-dev
       - name: Run newman and test service
         env:
           SECRET_KEY: secret_key
           DB_CONNECTION: postgres://postgres:postgres@localhost/postgres
         run: |
           alembic upgrade head && uvicorn app.main:app &
-          USE_LOCAL_DB_FOR_TEST=False APIURL=http://localhost:8000/api ./postman/run-api-tests.sh
+          APIURL=http://localhost:8000/api ./postman/run-api-tests.sh
