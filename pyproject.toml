@@ -40,7 +40,7 @@ pytest = "^5.3"
 pytest-cov = "^2.8"
 pytest-asyncio = "^0.10.0"
 pytest-xdist = "^1.30"
-docker = "^4.0"
+docker = "^4.2"
 httpx = "^0.9.5"
 asgi-lifespan = "^0.6.0"
 
