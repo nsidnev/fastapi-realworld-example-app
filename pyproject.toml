@@ -24,7 +24,7 @@ databases = { version = "^0.2.6", extras = ["postgresql"] }
 python-slugify = "^4.0"
 Unidecode = "^1.1"
 
-loguru = "^0.4.0"
+loguru = "^0.4.1"
 
 
 [tool.poetry.dev-dependencies]
