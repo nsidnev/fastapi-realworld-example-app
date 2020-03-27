@@ -1,0 +1,63 @@
+name: Tests against Conduit API spec
+
+on: push
+
+jobs:
+  api-spec:
+    name: API spec tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8]
+    services:
+      postgres:
+        image: postgres:11.5-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/cache@v1
+        id: cache-poetry
+        with:
+          path: ~/.cache/pip
+          key: get-poetry-${{ runner.os }}-py-${{ matrix.python-version }}
+          restore-keys: |
+            get-poetry-${{ runner.os }}-py-
+            get-poetry-${{ runner.os }}-
+      - name: Install poetry
+        if: steps.cache-poetry.outputs.cache-hit != 'true'
+        run: |
+          pip install poetry==1.0
+      - uses: actions/cache@v1
+        id: cache-spec-deps
+        with:
+          path: .venv
+          key: venv-conduit-${{ runner.os }}-py-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
+          restore-keys: |
+            venv-conduit-${{ runner.os }}-py-${{ matrix.python-version }}-poetry-
+            venv-conduit-${{ runner.os }}-py-${{ matrix.python-version }}-
+            venv-conduit-${{ runner.os }}-py-
+            venv-conduit-${{ runner.os }}-
+      - name: Install dependencies
+        if: steps.cache-spec-deps.outputs.cache-hit != 'true'
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install --no-dev
+      - name: Run newman and test service
+        env:
+          SECRET_KEY: secret_key
+          DB_CONNECTION: postgres://postgres:postgres@localhost/postgres
+        run: |
+          source .venv/bin/activate
+          alembic upgrade head && uvicorn app.main:app &
+          APIURL=http://localhost:8000/api ./postman/run-api-tests.sh
+          alembic downgrade base
