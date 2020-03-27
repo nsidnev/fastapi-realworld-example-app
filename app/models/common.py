@@ -1,6 +1,6 @@
 import datetime
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, Field, validator
 
 
 class DateTimeModelMixin(BaseModel):
@@ -15,4 +15,4 @@ class DateTimeModelMixin(BaseModel):
 
 
 class IDModelMixin(BaseModel):
-    id: int = 0
+    id_: int = Field(0, alias="id")

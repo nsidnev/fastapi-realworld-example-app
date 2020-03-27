@@ -104,7 +104,7 @@ class CommentsRepository(BaseRepository):
 
     async def delete_comment(self, *, comment: Comment) -> None:
         await self._log_and_execute(
-            DELETE_ARTICLE_QUERY, comment.id, comment.author.username
+            DELETE_ARTICLE_QUERY, comment.id_, comment.author.username
         )
 
     async def _get_comment_from_db_record(
@@ -115,7 +115,7 @@ class CommentsRepository(BaseRepository):
         requested_user: Optional[User],
     ) -> Comment:
         return Comment(
-            id=comment_row["id"],
+            id_=comment_row["id"],
             body=comment_row["body"],
             author=await self._profiles_repo.get_profile_by_username(
                 username=author_username, requested_user=requested_user
