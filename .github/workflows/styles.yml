@@ -1,0 +1,48 @@
+name: Lint code
+
+on: push
+
+jobs:
+  lint:
+    name: Lint code (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/cache@v1
+        id: cache-poetry
+        with:
+          path: ~/.cache/pip
+          key: get-poetry-${{ runner.os }}-py-${{ matrix.python-version }}
+          restore-keys: |
+            get-poetry-${{ runner.os }}-py-
+            get-poetry-${{ runner.os }}-
+      - name: Install poetry
+        if: steps.cache-poetry.outputs.cache-hit != 'true'
+        run: |
+          pip install poetry==1.0
+      - uses: actions/cache@v1
+        id: cache-dev-deps
+        with:
+          path: .venv
+          key: venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
+          restore-keys: |
+            venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-poetry-
+            venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-
+            venv-dev-${{ runner.os }}-py-
+            venv-dev-${{ runner.os }}-
+      - name: Install dependencies
+        if: steps.cache-dev-deps.outputs.cache-hit != 'true'
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install
+      - name: Run linters
+        run: |
+          source .venv/bin/activate
+          ./scripts/lint

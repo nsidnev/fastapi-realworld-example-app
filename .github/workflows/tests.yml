@@ -1,0 +1,65 @@
+name: Pytest tests
+
+on: push
+
+jobs:
+  lint:
+    name: Run tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-18.04
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8]
+    services:
+      postgres:
+        image: postgres:11.5-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@master
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: actions/cache@v1
+        id: cache-poetry
+        with:
+          path: ~/.cache/pip
+          key: get-poetry-${{ runner.os }}-py-${{ matrix.python-version }}
+          restore-keys: |
+            get-poetry-${{ runner.os }}-py-
+            get-poetry-${{ runner.os }}-
+      - name: Install poetry
+        if: steps.cache-poetry.outputs.cache-hit != 'true'
+        run: |
+          pip install poetry==1.0
+      - uses: actions/cache@v1
+        id: cache-dev-deps
+        with:
+          path: .venv
+          key: venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
+          restore-keys: |
+            venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-poetry-
+            venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-
+            venv-dev-${{ runner.os }}-py-
+            venv-dev-${{ runner.os }}-
+      - name: Install dependencies
+        if: steps.cache-dev-deps.outputs.cache-hit != 'true'
+        run: |
+          poetry config virtualenvs.in-project true
+          poetry install
+      - name: Run tests
+        env:
+          SECRET_KEY: secret_key
+          DB_CONNECTION: postgres://postgres:postgres@localhost/postgres
+        run: |
+          source .venv/bin/activate
+          alembic upgrade head
+          USE_LOCAL_DB_FOR_TEST=true ./scripts/test --cov-report=xml --cov-fail-under=100
+          alembic downgrade base
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
