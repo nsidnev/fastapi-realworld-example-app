@@ -36,7 +36,7 @@ wemake-python-styleguide = "^0.13.1"
 mypy = "^0.740"
 flake8-fixme = "^1.1"
 
-pytest = "^5.3"
+pytest = "^5.4"
 pytest-cov = "^2.8"
 pytest-asyncio = "^0.10.0"
 pytest-xdist = "^1.30"
