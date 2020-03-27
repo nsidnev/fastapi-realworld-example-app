@@ -317,7 +317,7 @@ description = "FastAPI framework, high performance, easy to learn, fast to code,
 name = "fastapi"
 optional = false
 python-versions = ">=3.6"
-version = "0.45.0"
+version = "0.49.2"
 
 [package.dependencies]
 pydantic = ">=0.32.2,<2.0.0"
@@ -325,9 +325,9 @@ starlette = "0.12.9"
 
 [package.extras]
 all = ["requests", "aiofiles", "jinja2", "python-multipart", "itsdangerous", "pyyaml", "graphene", "ujson", "email-validator", "uvicorn", "async-exit-stack", "async-generator"]
-dev = ["pyjwt", "passlib"]
+dev = ["pyjwt", "passlib", "autoflake", "flake8", "uvicorn", "graphene"]
 doc = ["mkdocs", "mkdocs-material", "markdown-include"]
-test = ["pytest (>=4.0.0)", "pytest-cov", "mypy", "black", "isort", "requests", "email-validator", "sqlalchemy", "databases", "orjson", "async-exit-stack", "async-generator"]
+test = ["pytest (>=4.0.0)", "pytest-cov", "mypy", "black", "isort", "requests", "email-validator", "sqlalchemy", "peewee", "databases", "orjson", "async-exit-stack", "async-generator", "python-multipart", "aiofiles", "ujson"]
 
 [[package]]
 category = "dev"
@@ -1344,7 +1344,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "349c199e24cba4733ac4ac9430da2d210392e5838a7f3b8d6fc955a5fe0c156c"
+content-hash = "645073e3f34238efdec4908bf1584b81aa9bc83d29951815e1d74f24dc045b13"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -1542,8 +1542,8 @@ execnet = [
     {file = "execnet-1.7.1.tar.gz", hash = "sha256:cacb9df31c9680ec5f95553976c4da484d407e85e41c83cb812aa014f0eddc50"},
 ]
 fastapi = [
-    {file = "fastapi-0.45.0-py3-none-any.whl", hash = "sha256:3f626eda9b6edaa17c90c21a4d0d1a97a2a2fcba43a55f8c425b6b37e832c8bb"},
-    {file = "fastapi-0.45.0.tar.gz", hash = "sha256:44712863ca3899eb812a6869a2efe02d6be6ae972968c76a43d82ec472788f17"},
+    {file = "fastapi-0.49.2-py3-none-any.whl", hash = "sha256:e3b479c61d8a02ec6c80ebbc2ee2d621a32855ffffedd55fd5f2993c6dbdcc1e"},
+    {file = "fastapi-0.49.2.tar.gz", hash = "sha256:68395725aac4342896b4f9aa335c7e7fb773b565df7f96e964e24bffb84dc5a3"},
 ]
 flake8 = [
     {file = "flake8-3.7.9-py2.py3-none-any.whl", hash = "sha256:49356e766643ad15072a789a20915d3c91dc89fd313ccd71802303fd67e4deca"},

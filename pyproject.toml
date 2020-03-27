@@ -10,7 +10,11 @@ license = "MIT"
 python = "^3.7"
 
 uvicorn = "^0.11.3"
-fastapi = "^0.45.0"
+
+# Starlette breaks query params from 0.13.1
+# more info in https://github.com/tiangolo/fastapi/issues/1147
+fastapi = "~0.49.0"
+
 pydantic = { version = "^1.4", extras = ["email"] }
 
 passlib = { version = "^1.7", extras = ["bcrypt"] }

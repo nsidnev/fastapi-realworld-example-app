@@ -24,7 +24,8 @@ USE_LOCAL_DB = getenv("USE_LOCAL_DB_FOR_TEST", False)
 
 @pytest.fixture(scope="session")
 def docker() -> libdocker.APIClient:
-    return libdocker.APIClient(version="auto")
+    with libdocker.APIClient(version="auto") as client:
+        yield client
 
 
 @pytest.fixture(scope="session", autouse=True)
