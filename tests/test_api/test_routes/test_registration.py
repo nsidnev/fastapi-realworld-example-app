@@ -1,7 +1,7 @@
 import pytest
 from asyncpg.pool import Pool
 from fastapi import FastAPI
-from httpx import Client
+from httpx import AsyncClient
 from starlette.status import HTTP_201_CREATED, HTTP_400_BAD_REQUEST
 
 from app.db.repositories.users import UsersRepository
@@ -11,7 +11,7 @@ pytestmark = pytest.mark.asyncio
 
 
 async def test_user_success_registration(
-    app: FastAPI, client: Client, pool: Pool
+    app: FastAPI, client: AsyncClient, pool: Pool
 ) -> None:
     email, username, password = "test@test.com", "username", "password"
     registration_json = {
@@ -36,7 +36,7 @@ async def test_user_success_registration(
 )
 async def test_failed_user_registration_when_some_credentials_are_taken(
     app: FastAPI,
-    client: Client,
+    client: AsyncClient,
     test_user: UserInDB,
     credentials_part: str,
     credentials_value: str,
