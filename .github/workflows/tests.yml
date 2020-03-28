@@ -48,8 +48,6 @@ jobs:
           DB_CONNECTION: postgres://postgres:postgres@localhost/postgres
         run: |
           source .venv/bin/activate
-          alembic upgrade head
           USE_LOCAL_DB_FOR_TEST=true ./scripts/test --cov-report=xml --cov-fail-under=100
-          alembic downgrade base
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
