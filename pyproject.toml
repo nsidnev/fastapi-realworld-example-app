@@ -17,7 +17,7 @@ passlib = { version = "^1.7", extras = ["bcrypt"] }
 
 pyjwt = "^1.7"
 
-asyncpg = "0.20.0"
+asyncpg = "^0.20.1"
 alembic = "^1.4"
 databases = { version = "^0.2.6", extras = ["postgresql"] }
 
@@ -41,7 +41,7 @@ pytest = "~5.3.0"
 pytest-cov = "^2.8"
 pytest-asyncio = "^0.10.0"
 pytest-xdist = "^1.30"
-docker = "^4.0"
+docker = "^4.2"
 httpx = "^0.12.1"
 asgi-lifespan = "^0.6.0"
 
