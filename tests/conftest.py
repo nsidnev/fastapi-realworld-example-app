@@ -68,8 +68,6 @@ async def apply_migrations(postgres_server: None) -> None:
 
 @pytest.fixture
 def app(apply_migrations: None) -> FastAPI:
-    environ["SECRET_KEY"] = "secret"
-
     from app.main import get_application  # local import for testing purpose
 
     return get_application()
