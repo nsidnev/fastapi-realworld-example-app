@@ -6,31 +6,26 @@ import alembic.config
 import docker as libdocker
 import pytest
 from asgi_lifespan import LifespanManager
-from asyncpg import Connection
 from asyncpg.pool import Pool
-from asyncpg.transaction import Transaction
 from fastapi import FastAPI
-from httpx import Client
+from httpx import AsyncClient
 
 from app.db.repositories.articles import ArticlesRepository
 from app.db.repositories.users import UsersRepository
 from app.models.domain.articles import Article
 from app.models.domain.users import UserInDB
 from app.services import jwt
-from tests.testing_helpers import FakePool, ping_postgres, pull_image
+from tests.testing_helpers import ping_postgres, pull_image
 
 POSTGRES_DOCKER_IMAGE = "postgres:11.4-alpine"
-
-environ["MAX_CONNECTIONS_COUNT"] = "1"
-environ["MIN_CONNECTIONS_COUNT"] = "1"
-environ["SECRET_KEY"] = "secret"
 
 USE_LOCAL_DB = getenv("USE_LOCAL_DB_FOR_TEST", False)
 
 
 @pytest.fixture(scope="session")
 def docker() -> libdocker.APIClient:
-    return libdocker.APIClient(version="auto")
+    with libdocker.APIClient(version="auto") as client:
+        yield client
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -55,11 +50,7 @@ def postgres_server(docker: libdocker.APIClient) -> None:
             ping_postgres(dsn)
             environ["DB_CONNECTION"] = dsn
 
-            alembic.config.main(argv=["upgrade", "head"])
-
             yield container
-
-            alembic.config.main(argv=["downgrade", "base"])
         finally:
             docker.kill(container["Id"])
             docker.remove_container(container["Id"])
@@ -68,35 +59,39 @@ def postgres_server(docker: libdocker.APIClient) -> None:
         return
 
 
+@pytest.fixture(autouse=True)
+async def apply_migrations(postgres_server: None) -> None:
+    alembic.config.main(argv=["upgrade", "head"])
+    yield
+    alembic.config.main(argv=["downgrade", "base"])
+
+
 @pytest.fixture
-def app() -> FastAPI:
+def app(apply_migrations: None) -> FastAPI:
     from app.main import get_application  # local import for testing purpose
 
     return get_application()
 
 
 @pytest.fixture
-def pool(app: FastAPI) -> Pool:
-    return app.state.pool
-
-
-# here starts db transaction that is required for almost all tests
-@pytest.fixture(autouse=True)
-async def client(app: FastAPI) -> Client:
+async def initialized_app(app: FastAPI) -> FastAPI:
     async with LifespanManager(app):
-        app.state.pool = await FakePool.create_pool(app.state.pool)
-        connection: Connection
-        async with app.state.pool.acquire() as connection:
-            transaction: Transaction = connection.transaction()
-            await transaction.start()
-            async with Client(
-                app=app,
-                base_url="http://testserver",
-                headers={"Content-Type": "application/json"},
-            ) as client:
-                yield client
-            await transaction.rollback()
-        await app.state.pool.close()
+        yield app
+
+
+@pytest.fixture
+def pool(initialized_app: FastAPI) -> Pool:
+    return initialized_app.state.pool
+
+
+@pytest.fixture
+async def client(initialized_app: FastAPI) -> AsyncClient:
+    async with AsyncClient(
+        app=initialized_app,
+        base_url="http://testserver",
+        headers={"Content-Type": "application/json"},
+    ) as client:
+        yield client
 
 
 @pytest.fixture
@@ -134,7 +129,9 @@ def token(test_user: UserInDB) -> str:
 
 
 @pytest.fixture
-def authorized_client(client: Client, token: str, authorization_prefix: str) -> Client:
+def authorized_client(
+    client: AsyncClient, token: str, authorization_prefix: str
+) -> AsyncClient:
     client.headers = {
         "Authorization": f"{authorization_prefix} {token}",
         **client.headers,

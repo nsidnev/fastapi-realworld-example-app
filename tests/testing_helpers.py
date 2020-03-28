@@ -1,46 +1,10 @@
 import time
 from functools import wraps
-from inspect import Traceback
-from typing import Any, Callable, Optional, Type
+from typing import Any, Callable, Type
 
 import docker.errors
 import psycopg2
-from asyncpg import Connection
-from asyncpg.pool import Pool
 from docker import APIClient
-
-
-class FakePoolAcquireContext:
-    def __init__(self, pool: "FakePool") -> None:
-        self.pool = pool
-
-    async def __aenter__(self) -> Connection:
-        return self.pool.connection
-
-    async def __aexit__(
-        self, exc_type: Type[Exception], exc_val: Exception, exc_tb: Traceback
-    ) -> None:
-        pass
-
-
-class FakePool:
-    def __init__(self, pool: Pool) -> None:
-        self.pool: Pool = pool
-        self.connection: Optional[Connection] = None
-
-    @classmethod
-    async def create_pool(cls, pool: Pool) -> "FakePool":
-        fake = cls(pool)
-        fake.connection = await pool.acquire()
-        return fake
-
-    def acquire(self) -> FakePoolAcquireContext:
-        return FakePoolAcquireContext(self)
-
-    async def close(self) -> None:
-        if self.connection:  # pragma: no cover
-            await self.pool.release(self.connection)
-        await self.pool.close()
 
 
 def do_with_retry(
@@ -50,7 +14,7 @@ def do_with_retry(
         @wraps(call)
         def inner_wrapper(*args: Any, **kwargs: Any) -> Any:
             delay = 0.001
-            for i in range(100):
+            for i in range(15):
                 try:
                     return call(*args, **kwargs)
                 except catching_exc:

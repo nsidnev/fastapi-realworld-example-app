@@ -13,17 +13,10 @@ from app.models.domain.users import User
 from app.resources import strings
 from app.services import jwt
 
+HEADER_KEY = "Authorization"
+
 
 class RWAPIKeyHeader(APIKeyHeader):
-    def __init__(
-        self,
-        *,
-        name: str = "Authorization",
-        scheme_name: str = None,
-        auto_error: bool = True
-    ) -> None:
-        super().__init__(name=name, scheme_name=scheme_name, auto_error=auto_error)
-
     async def __call__(  # noqa: WPS610
         self, request: requests.Request
     ) -> Optional[str]:
@@ -46,7 +39,9 @@ def _get_authorization_header_retriever(
     return _get_authorization_header if required else _get_authorization_header_optional
 
 
-def _get_authorization_header(api_key: str = Security(RWAPIKeyHeader())) -> str:
+def _get_authorization_header(
+    api_key: str = Security(RWAPIKeyHeader(name=HEADER_KEY)),
+) -> str:
     try:
         token_prefix, token = api_key.split(" ")
     except ValueError:
@@ -63,7 +58,9 @@ def _get_authorization_header(api_key: str = Security(RWAPIKeyHeader())) -> str:
 
 
 def _get_authorization_header_optional(
-    authorization: Optional[str] = Security(RWAPIKeyHeader(auto_error=False)),
+    authorization: Optional[str] = Security(
+        RWAPIKeyHeader(name=HEADER_KEY, auto_error=False)
+    ),
 ) -> str:
     if authorization:
         return _get_authorization_header(authorization)

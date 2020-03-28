@@ -285,7 +285,7 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
             *[
                 query_param
                 for query_param in (tag, author, favorited, limit, offset)
-                if query_param is not None
+                if query_param is not None and query_param != ""
             ],
         )
 
@@ -364,7 +364,7 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
         requested_user: Optional[User],
     ) -> Article:
         return Article(
-            id=article_row["id"],
+            id_=article_row["id"],
             slug=slug,
             title=article_row["title"],
             description=article_row["description"],

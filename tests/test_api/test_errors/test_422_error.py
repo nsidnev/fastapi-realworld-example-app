@@ -1,6 +1,6 @@
 import pytest
 from fastapi import FastAPI
-from httpx import Client
+from httpx import AsyncClient
 from starlette.status import HTTP_422_UNPROCESSABLE_ENTITY
 
 pytestmark = pytest.mark.asyncio
@@ -11,7 +11,7 @@ async def test_frw_validation_error_format(app: FastAPI):
     def route_for_test(param: int) -> None:  # pragma: no cover
         pass
 
-    client = Client(base_url="http://testserver", app=app)
+    client = AsyncClient(base_url="http://testserver", app=app)
     response = await client.get("/wrong_path/asd")
     assert response.status_code == HTTP_422_UNPROCESSABLE_ENTITY
 

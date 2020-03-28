@@ -1,7 +1,7 @@
 import pytest
 from asyncpg.pool import Pool
 from fastapi import FastAPI
-from httpx import Client
+from httpx import AsyncClient
 from starlette import status
 
 from app.db.repositories.profiles import ProfilesRepository
@@ -13,7 +13,7 @@ pytestmark = pytest.mark.asyncio
 
 
 async def test_unregistered_user_will_receive_profile_without_following(
-    app: FastAPI, client: Client, test_user: UserInDB
+    app: FastAPI, client: AsyncClient, test_user: UserInDB
 ) -> None:
     response = await client.get(
         app.url_path_for("profiles:get-profile", username=test_user.username)
@@ -24,7 +24,7 @@ async def test_unregistered_user_will_receive_profile_without_following(
 
 
 async def test_user_that_does_not_follows_another_will_receive_profile_without_follow(
-    app: FastAPI, authorized_client: Client, pool: Pool
+    app: FastAPI, authorized_client: AsyncClient, pool: Pool
 ) -> None:
     async with pool.acquire() as conn:
         users_repo = UsersRepository(conn)
@@ -43,7 +43,7 @@ async def test_user_that_does_not_follows_another_will_receive_profile_without_f
 
 
 async def test_user_that_follows_another_will_receive_profile_with_follow(
-    app: FastAPI, authorized_client: Client, pool: Pool, test_user: UserInDB
+    app: FastAPI, authorized_client: AsyncClient, pool: Pool, test_user: UserInDB
 ) -> None:
     async with pool.acquire() as conn:
         users_repo = UsersRepository(conn)
@@ -75,7 +75,7 @@ async def test_user_that_follows_another_will_receive_profile_with_follow(
     ),
 )
 async def test_user_can_not_retrieve_not_existing_profile(
-    app: FastAPI, authorized_client: Client, api_method: str, route_name: str
+    app: FastAPI, authorized_client: AsyncClient, api_method: str, route_name: str
 ) -> None:
     response = await authorized_client.request(
         api_method, app.url_path_for(route_name, username="not_existing_user")
@@ -92,7 +92,7 @@ async def test_user_can_not_retrieve_not_existing_profile(
 )
 async def test_user_can_change_following_for_another_user(
     app: FastAPI,
-    authorized_client: Client,
+    authorized_client: AsyncClient,
     pool: Pool,
     test_user: UserInDB,
     api_method: str,
@@ -135,7 +135,7 @@ async def test_user_can_change_following_for_another_user(
 )
 async def test_user_can_not_change_following_state_to_the_same_twice(
     app: FastAPI,
-    authorized_client: Client,
+    authorized_client: AsyncClient,
     pool: Pool,
     test_user: UserInDB,
     api_method: str,
@@ -169,7 +169,7 @@ async def test_user_can_not_change_following_state_to_the_same_twice(
 )
 async def test_user_can_not_change_following_state_for_him_self(
     app: FastAPI,
-    authorized_client: Client,
+    authorized_client: AsyncClient,
     test_user: UserInDB,
     api_method: str,
     route_name: str,
