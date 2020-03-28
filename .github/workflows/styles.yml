@@ -15,18 +15,8 @@ jobs:
         uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
-      - uses: actions/cache@v1
-        id: cache-poetry
-        with:
-          path: ~/.cache/pip
-          key: get-poetry-${{ runner.os }}-py-${{ matrix.python-version }}
-          restore-keys: |
-            get-poetry-${{ runner.os }}-py-
-            get-poetry-${{ runner.os }}-
       - name: Install poetry
-        if: steps.cache-poetry.outputs.cache-hit != 'true'
-        run: |
-          pip install poetry==1.0
+        run: pip install poetry==1.0
       - uses: actions/cache@v1
         id: cache-dev-deps
         with:
