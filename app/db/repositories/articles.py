@@ -285,7 +285,7 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
             *[
                 query_param
                 for query_param in (tag, author, favorited, limit, offset)
-                if query_param is not None and query_param != ''
+                if query_param is not None and query_param != ""
             ],
         )
 
