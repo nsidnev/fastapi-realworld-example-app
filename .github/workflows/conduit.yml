@@ -1,4 +1,4 @@
-name: Tests against Conduit API spec
+name: API spec
 
 on: push
 
