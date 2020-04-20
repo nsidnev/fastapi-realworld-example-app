@@ -32,7 +32,11 @@ ALLOWED_HOSTS: List[str] = config(
 # logging configuration
 
 LOGGING_LEVEL = logging.DEBUG if DEBUG else logging.INFO
-logging.basicConfig(
-    handlers=[InterceptHandler(level=LOGGING_LEVEL)], level=LOGGING_LEVEL
-)
+LOGGERS = ("uvicorn.asgi", "uvicorn.access")
+
+logging.getLogger().handlers = [InterceptHandler()]
+for logger_name in LOGGERS:
+    logging_logger = logging.getLogger(logger_name)
+    logging_logger.handlers = [InterceptHandler(level=LOGGING_LEVEL)]
+
 logger.configure(handlers=[{"sink": sys.stderr, "level": LOGGING_LEVEL}])
