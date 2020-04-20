@@ -21,5 +21,5 @@ class TagsRepository(BaseRepository):
 
     async def create_tags_that_dont_exist(self, *, tags: Sequence[str]) -> None:
         await self._log_and_execute_many(
-            CREATE_TAGS_THAT_DONT_EXIST, [(tag,) for tag in tags]
+            CREATE_TAGS_THAT_DONT_EXIST, [(tag,) for tag in tags],
         )

@@ -14,7 +14,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/{username}", response_model=ProfileInResponse, name="profiles:get-profile"
+    "/{username}", response_model=ProfileInResponse, name="profiles:get-profile",
 )
 async def retrieve_profile_by_username(
     profile: Profile = Depends(get_profile_by_username_from_path),
@@ -23,7 +23,7 @@ async def retrieve_profile_by_username(
 
 
 @router.post(
-    "/{username}/follow", response_model=ProfileInResponse, name="profiles:follow-user"
+    "/{username}/follow", response_model=ProfileInResponse, name="profiles:follow-user",
 )
 async def follow_for_user(
     profile: Profile = Depends(get_profile_by_username_from_path),
@@ -32,16 +32,16 @@ async def follow_for_user(
 ) -> ProfileInResponse:
     if user.username == profile.username:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=strings.UNABLE_TO_FOLLOW_YOURSELF
+            status_code=HTTP_400_BAD_REQUEST, detail=strings.UNABLE_TO_FOLLOW_YOURSELF,
         )
 
     if profile.following:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=strings.USER_IS_ALREADY_FOLLOWED
+            status_code=HTTP_400_BAD_REQUEST, detail=strings.USER_IS_ALREADY_FOLLOWED,
         )
 
     await profiles_repo.add_user_into_followers(
-        target_user=profile, requested_user=user
+        target_user=profile, requested_user=user,
     )
 
     return ProfileInResponse(profile=profile.copy(update={"following": True}))
@@ -65,11 +65,11 @@ async def unsubscribe_from_user(
 
     if not profile.following:
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=strings.USER_IS_NOT_FOLLOWED
+            status_code=HTTP_400_BAD_REQUEST, detail=strings.USER_IS_NOT_FOLLOWED,
         )
 
     await profiles_repo.remove_user_from_followers(
-        target_user=profile, requested_user=user
+        target_user=profile, requested_user=user,
     )
 
     return ProfileInResponse(profile=profile.copy(update={"following": False}))

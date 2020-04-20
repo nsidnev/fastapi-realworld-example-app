@@ -194,7 +194,7 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
     ) -> Article:
         async with self.connection.transaction():
             article_row = await self._log_and_fetch_row(
-                CREATE_ARTICLE_QUERY, slug, title, description, body, author.username
+                CREATE_ARTICLE_QUERY, slug, title, description, body, author.username,
             )
 
             if tags:
@@ -239,7 +239,7 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
     async def delete_article(self, *, article: Article) -> None:
         async with self.connection.transaction():
             await self._log_and_execute(
-                DELETE_ARTICLE_QUERY, article.slug, article.author.username
+                DELETE_ARTICLE_QUERY, article.slug, article.author.username,
             )
 
     async def filter_articles(  # noqa: WPS211
@@ -258,23 +258,23 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
         if tag:
             query_params_count += 1
             query = EMPTY_STRING.join((query, _FILTER_BY_TAG_QUERY)).format(
-                tag_param_index=query_params_count
+                tag_param_index=query_params_count,
             )
 
         if author:
             query_params_count += 1
             query = EMPTY_STRING.join((query, _FILTER_BY_AUTHOR_QUERY)).format(
-                author_param_index=query_params_count
+                author_param_index=query_params_count,
             )
 
         if favorited:
             query_params_count += 1
             query = EMPTY_STRING.join((query, _FILTER_BY_FAVORITED_QUERY)).format(
-                favorited_param_index=query_params_count
+                favorited_param_index=query_params_count,
             )
 
         query = EMPTY_STRING.join(
-            (query, _ORDER_QUERY, _LIMIT_QUERY, _OFFSET_QUERY)
+            (query, _ORDER_QUERY, _LIMIT_QUERY, _OFFSET_QUERY),
         ).format(
             limit_param_index=query_params_count + 1,
             offset_param_index=query_params_count + 2,
@@ -300,10 +300,10 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
         ]
 
     async def get_articles_for_user_feed(
-        self, *, user: User, limit: int = 20, offset: int = 0
+        self, *, user: User, limit: int = 20, offset: int = 0,
     ) -> List[Article]:
         articles_rows = await self._log_and_fetch(
-            GET_ARTICLES_FOR_USER_FEED_QUERY, user.username, limit, offset
+            GET_ARTICLES_FOR_USER_FEED_QUERY, user.username, limit, offset,
         )
         return [
             await self._get_article_from_db_record(
@@ -316,7 +316,7 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
         ]
 
     async def get_article_by_slug(
-        self, *, slug: str, requested_user: Optional[User] = None
+        self, *, slug: str, requested_user: Optional[User] = None,
     ) -> Article:
         article_row = await self._log_and_fetch_row(GET_ARTICLE_BY_SLUG_QUERY, slug)
         if article_row:
@@ -335,24 +335,24 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
 
     async def get_favorites_count_for_article_by_slug(self, *, slug: str) -> int:
         return await self._log_and_fetch_value(
-            GET_FAVORITES_COUNT_FOR_ARTICLE_QUERY, slug
+            GET_FAVORITES_COUNT_FOR_ARTICLE_QUERY, slug,
         )
 
     async def is_article_favorited_by_user(self, *, slug: str, user: User) -> bool:
         return await self._log_and_fetch_value(
-            IS_ARTICLE_FAVORITED_BY_USER_QUERY, user.username, slug
+            IS_ARTICLE_FAVORITED_BY_USER_QUERY, user.username, slug,
         )
 
     async def add_article_into_favorites(self, *, article: Article, user: User) -> None:
         await self._log_and_execute(
-            ADD_ARTICLE_INTO_FAVORITES_QUERY, user.username, article.slug
+            ADD_ARTICLE_INTO_FAVORITES_QUERY, user.username, article.slug,
         )
 
     async def remove_article_from_favorites(
-        self, *, article: Article, user: User
+        self, *, article: Article, user: User,
     ) -> None:
         await self._log_and_execute(
-            REMOVE_ARTICLE_FROM_FAVORITES_QUERY, user.username, article.slug
+            REMOVE_ARTICLE_FROM_FAVORITES_QUERY, user.username, article.slug,
         )
 
     async def _get_article_from_db_record(
@@ -370,14 +370,14 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
             description=article_row["description"],
             body=article_row["body"],
             author=await self._profiles_repo.get_profile_by_username(
-                username=author_username, requested_user=requested_user
+                username=author_username, requested_user=requested_user,
             ),
             tags=await self.get_tags_for_article_by_slug(slug=slug),
             favorites_count=await self.get_favorites_count_for_article_by_slug(
-                slug=slug
+                slug=slug,
             ),
             favorited=await self.is_article_favorited_by_user(
-                slug=slug, user=requested_user
+                slug=slug, user=requested_user,
             )
             if requested_user
             else False,
@@ -387,5 +387,5 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
 
     async def _link_article_with_tags(self, *, slug: str, tags: Sequence[str]) -> None:
         await self._log_and_execute_many(
-            LINK_ARTICLE_WITH_TAGS, [(slug, tag) for tag in tags]
+            LINK_ARTICLE_WITH_TAGS, [(slug, tag) for tag in tags],
         )

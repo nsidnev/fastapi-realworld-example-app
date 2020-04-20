@@ -26,13 +26,13 @@ SECRET_KEY: Secret = config("SECRET_KEY", cast=Secret)
 
 PROJECT_NAME: str = config("PROJECT_NAME", default="FastAPI example application")
 ALLOWED_HOSTS: List[str] = config(
-    "ALLOWED_HOSTS", cast=CommaSeparatedStrings, default=""
+    "ALLOWED_HOSTS", cast=CommaSeparatedStrings, default="",
 )
 
 # logging configuration
 
 LOGGING_LEVEL = logging.DEBUG if DEBUG else logging.INFO
 logging.basicConfig(
-    handlers=[InterceptHandler(level=LOGGING_LEVEL)], level=LOGGING_LEVEL
+    handlers=[InterceptHandler(level=LOGGING_LEVEL)], level=LOGGING_LEVEL,
 )
 logger.configure(handlers=[{"sink": sys.stderr, "level": LOGGING_LEVEL}])

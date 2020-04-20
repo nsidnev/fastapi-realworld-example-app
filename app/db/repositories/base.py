@@ -34,7 +34,7 @@ class BaseRepository:
         await self._conn.execute(query, *query_params)
 
     async def _log_and_execute_many(
-        self, query: str, *query_params: Sequence[Tuple[Any, ...]]
+        self, query: str, *query_params: Sequence[Tuple[Any, ...]],
     ) -> None:
         _log_query(query, query_params)
         await self._conn.executemany(query, *query_params)

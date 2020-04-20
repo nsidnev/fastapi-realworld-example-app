@@ -26,7 +26,7 @@ async def retrieve_current_user(
             bio=user.bio,
             image=user.image,
             token=token,
-        )
+        ),
     )
 
 
@@ -39,13 +39,13 @@ async def update_current_user(
     if user_update.username and user_update.username != current_user.username:
         if await check_username_is_taken(users_repo, user_update.username):
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST, detail=strings.USERNAME_TAKEN
+                status_code=HTTP_400_BAD_REQUEST, detail=strings.USERNAME_TAKEN,
             )
 
     if user_update.email and user_update.email != current_user.email:
         if await check_email_is_taken(users_repo, user_update.email):
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST, detail=strings.EMAIL_TAKEN
+                status_code=HTTP_400_BAD_REQUEST, detail=strings.EMAIL_TAKEN,
             )
 
     user = await users_repo.update_user(user=current_user, **user_update.dict())
@@ -58,5 +58,5 @@ async def update_current_user(
             bio=user.bio,
             image=user.image,
             token=token,
-        )
+        ),
     )
