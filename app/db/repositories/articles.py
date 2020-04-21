@@ -1,179 +1,28 @@
-from typing import List, Optional, Sequence
+from typing import List, Optional, Sequence, Union
 
 from asyncpg import Connection, Record
+from pypika import Query
 
 from app.db.errors import EntityDoesNotExist
+from app.db.queries.queries import queries
+from app.db.queries.tables import (
+    Parameter,
+    articles,
+    articles_to_tags,
+    favorites,
+    tags as tags_table,
+    users,
+)
 from app.db.repositories.base import BaseRepository
 from app.db.repositories.profiles import ProfilesRepository
 from app.db.repositories.tags import TagsRepository
 from app.models.domain.articles import Article
 from app.models.domain.users import User
 
-ADD_ARTICLE_INTO_FAVORITES_QUERY = """
-INSERT INTO favorites (user_id, article_id)
-VALUES ((SELECT id FROM users WHERE username = $1),
-        (SELECT id FROM articles WHERE slug = $2))
-ON CONFLICT DO NOTHING
-"""
-REMOVE_ARTICLE_FROM_FAVORITES_QUERY = """
-DELETE
-FROM favorites
-WHERE user_id = (SELECT id FROM users WHERE username = $1)
-  AND article_id = (SELECT id FROM articles WHERE slug = $2)
-"""
-IS_ARTICLE_FAVORITED_BY_USER_QUERY = """
-SELECT CASE WHEN count(user_id) > 0 THEN TRUE ELSE FALSE END AS favorited
-FROM favorites
-WHERE
-    user_id = (SELECT id FROM users WHERE username = $1)
-    AND
-    article_id = (SELECT id FROM articles WHERE slug = $2)
-"""
-GET_FAVORITES_COUNT_FOR_ARTICLE_QUERY = """
-SELECT count(*) as favorites_count
-FROM favorites
-WHERE article_id = (SELECT id FROM articles WHERE slug = $1)
-"""
-GET_TAGS_FOR_ARTICLE_QUERY = """
-SELECT t.tag
-FROM tags t
-INNER JOIN articles_to_tags att ON
-t.tag = att.tag
-AND
-att.article_id = (SELECT id FROM articles WHERE slug = $1)
-"""
-GET_ARTICLE_BY_SLUG_QUERY = """
-SELECT id,
-       slug,
-       title,
-       description,
-       body,
-       created_at,
-       updated_at,
-       (SELECT username FROM users WHERE id = author_id) AS author_username
-FROM articles
-WHERE slug = $1
-"""
-CREATE_ARTICLE_QUERY = """
-WITH author_subquery AS (
-    SELECT id, username
-    FROM users
-    WHERE username = $5
-)
-INSERT
-INTO articles (slug, title, description, body, author_id)
-VALUES ($1, $2, $3, $4, (SELECT id FROM author_subquery))
-RETURNING
-    id,
-    slug,
-    title,
-    description,
-    body,
-        (SELECT username FROM author_subquery) as author_username,
-    created_at,
-    updated_at
-"""
-LINK_ARTICLE_WITH_TAGS = """
-INSERT INTO articles_to_tags (article_id, tag)
-VALUES ((SELECT id FROM articles WHERE slug = $1),
-        (SELECT tag FROM tags WHERE tag = $2))
-ON CONFLICT DO NOTHING
-"""
-UPDATE_ARTICLE_QUERY = """
-UPDATE articles
-SET slug        = $1,
-    title       = $2,
-    body        = $3,
-    description = $4
-WHERE slug = $5
-  AND author_id = (SELECT id FROM users WHERE username = $6)
-RETURNING updated_at
-"""
-DELETE_ARTICLE_QUERY = """
-DELETE
-FROM articles
-WHERE slug = $1
-  AND author_id = (SELECT id FROM users WHERE username = $2)
-"""
-GET_ARTICLES_FOR_USER_FEED_QUERY = """
-SELECT a.id,
-       a.slug,
-       a.title,
-       a.description,
-       a.body,
-       a.created_at,
-       a.updated_at,
-       (
-           SELECT username
-           FROM users
-           WHERE id = a.author_id
-       ) AS author_username
-FROM articles a
-         INNER JOIN followers_to_followings f ON
-        f.following_id = a.author_id AND
-        f.follower_id = (SELECT id FROM users WHERE username = $1)
-ORDER BY a.created_at
-LIMIT $2
-OFFSET
-$3
-"""
-GET_ARTICLES_QUERY = """
-SELECT a.id,
-       a.slug,
-       a.title,
-       a.description,
-       a.body,
-       a.created_at,
-       a.updated_at,
-       (
-           SELECT username
-           FROM users
-           WHERE id = a.author_id
-       ) AS author_username
-FROM articles a
-"""
-_FILTER_BY_TAG_QUERY = """
-INNER JOIN articles_to_tags at ON
-a.id = at.article_id
-AND
-at.tag = (
-    SELECT tag
-    FROM tags
-    WHERE tag = ${tag_param_index}
-)
-"""
-_FILTER_BY_FAVORITED_QUERY = """
-INNER JOIN favorites fav ON
-a.id = fav.article_id
-AND
-fav.user_id = (
-    SELECT id
-    FROM users
-    WHERE username = ${favorited_param_index}
-)
-"""
-_FILTER_BY_AUTHOR_QUERY = """
-INNER JOIN users u ON
-a.author_id = u.id
-AND
-u.id = (
-    SELECT id
-    FROM users
-    WHERE username = ${author_param_index}
-)
-"""
-_LIMIT_QUERY = """
-LIMIT ${limit_param_index}
-"""
-_OFFSET_QUERY = """
-OFFSET ${offset_param_index}
-"""
-_ORDER_QUERY = """
-ORDER BY a.created_at
-"""
-
-EMPTY_STRING = ""
 AUTHOR_USERNAME_ALIAS = "author_username"
+SLUG_ALIAS = "slug"
+
+CAMEL_OR_SNAKE_CASE_TO_WORDS = r"^[a-z\d_\-]+|[A-Z\d_\-][^A-Z\d_\-]*"
 
 
 class ArticlesRepository(BaseRepository):  # noqa: WPS214
@@ -193,8 +42,13 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
         tags: Optional[Sequence[str]] = None,
     ) -> Article:
         async with self.connection.transaction():
-            article_row = await self._log_and_fetch_row(
-                CREATE_ARTICLE_QUERY, slug, title, description, body, author.username
+            article_row = await queries.create_new_article(
+                self.connection,
+                slug=slug,
+                title=title,
+                description=description,
+                body=body,
+                author_username=author.username,
             )
 
             if tags:
@@ -224,22 +78,24 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
         updated_article.description = description or article.description
 
         async with self.connection.transaction():
-            updated_article.updated_at = await self._log_and_fetch_value(
-                UPDATE_ARTICLE_QUERY,
-                updated_article.slug,
-                updated_article.title,
-                updated_article.body,
-                updated_article.description,
-                article.slug,
-                article.author.username,
+            updated_article.updated_at = await queries.update_article(
+                self.connection,
+                slug=article.slug,
+                author_username=article.author.username,
+                new_slug=updated_article.slug,
+                new_title=updated_article.title,
+                new_body=updated_article.body,
+                new_description=updated_article.description,
             )
 
         return updated_article
 
     async def delete_article(self, *, article: Article) -> None:
         async with self.connection.transaction():
-            await self._log_and_execute(
-                DELETE_ARTICLE_QUERY, article.slug, article.author.username
+            await queries.delete_article(
+                self.connection,
+                slug=article.slug,
+                author_username=article.author.username,
             )
 
     async def filter_articles(  # noqa: WPS211
@@ -252,47 +108,101 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
         offset: int = 0,
         requested_user: Optional[User] = None,
     ) -> List[Article]:
+        query_params: List[Union[str, int]] = []
         query_params_count = 0
-        query = GET_ARTICLES_QUERY
+
+        # fmt: off
+        query = Query.from_(
+            articles
+        ).select(
+            articles.id,
+            articles.slug,
+            articles.title,
+            articles.description,
+            articles.body,
+            articles.created_at,
+            articles.updated_at,
+            Query.from_(
+                users
+            ).where(
+                users.id == articles.author_id
+            ).select(
+                users.username
+            ).as_(
+                AUTHOR_USERNAME_ALIAS
+            ),
+        )
+        # fmt: on
 
         if tag:
+            query_params.append(tag)
             query_params_count += 1
-            query = EMPTY_STRING.join((query, _FILTER_BY_TAG_QUERY)).format(
-                tag_param_index=query_params_count
+
+            # fmt: off
+            query = query.join(
+                articles_to_tags
+            ).on(
+                (articles.id == articles_to_tags.article_id) & (
+                    articles_to_tags.tag == Query.from_(
+                        tags_table
+                    ).where(
+                        tags_table.tag == Parameter(query_params_count)
+                    ).select(
+                        tags_table.tag
+                    )
+                )
             )
+            # fmt: on
 
         if author:
+            query_params.append(author)
             query_params_count += 1
-            query = EMPTY_STRING.join((query, _FILTER_BY_AUTHOR_QUERY)).format(
-                author_param_index=query_params_count
+
+            # fmt: off
+            query = query.join(
+                users
+            ).on(
+                (articles.author_id == users.id) & (
+                    users.id == Query.from_(
+                        users
+                    ).where(
+                        users.username == Parameter(query_params_count)
+                    ).select(
+                        users.id
+                    )
+                )
             )
+            # fmt: on
 
         if favorited:
+            query_params.append(favorited)
             query_params_count += 1
-            query = EMPTY_STRING.join((query, _FILTER_BY_FAVORITED_QUERY)).format(
-                favorited_param_index=query_params_count
+
+            # fmt: off
+            query = query.join(
+                favorites
+            ).on(
+                (articles.id == favorites.article_id) & (
+                    favorites.user_id == Query.from_(
+                        users
+                    ).where(
+                        users.username == Parameter(query_params_count)
+                    ).select(users.id)
+                )
             )
+            # fmt: on
 
-        query = EMPTY_STRING.join(
-            (query, _ORDER_QUERY, _LIMIT_QUERY, _OFFSET_QUERY)
-        ).format(
-            limit_param_index=query_params_count + 1,
-            offset_param_index=query_params_count + 2,
+        query = query.limit(Parameter(query_params_count + 1)).offset(
+            Parameter(query_params_count + 2)
         )
+        query_params.extend([limit, offset])
 
-        articles_rows = await self._log_and_fetch(
-            query,
-            *[
-                query_param
-                for query_param in (tag, author, favorited, limit, offset)
-                if query_param is not None and query_param != ""
-            ],
-        )
+        articles_rows = await self.connection.fetch(query.get_sql(), *query_params)
 
         return [
             await self._get_article_from_db_record(
                 article_row=article_row,
-                slug=article_row["slug"],
+                slug=article_row[SLUG_ALIAS],
                 author_username=article_row[AUTHOR_USERNAME_ALIAS],
                 requested_user=requested_user,
             )
@@ -302,13 +212,13 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
     async def get_articles_for_user_feed(
         self, *, user: User, limit: int = 20, offset: int = 0
     ) -> List[Article]:
-        articles_rows = await self._log_and_fetch(
-            GET_ARTICLES_FOR_USER_FEED_QUERY, user.username, limit, offset
+        articles_rows = await queries.get_articles_for_feed(
+            self.connection, follower_username=user.username, limit=limit, offset=offset
         )
         return [
             await self._get_article_from_db_record(
                 article_row=article_row,
-                slug=article_row["slug"],
+                slug=article_row[SLUG_ALIAS],
                 author_username=article_row[AUTHOR_USERNAME_ALIAS],
                 requested_user=user,
             )
@@ -318,11 +228,11 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
     async def get_article_by_slug(
         self, *, slug: str, requested_user: Optional[User] = None
     ) -> Article:
-        article_row = await self._log_and_fetch_row(GET_ARTICLE_BY_SLUG_QUERY, slug)
+        article_row = await queries.get_article_by_slug(self.connection, slug=slug)
         if article_row:
             return await self._get_article_from_db_record(
                 article_row=article_row,
-                slug=article_row["slug"],
+                slug=article_row[SLUG_ALIAS],
                 author_username=article_row[AUTHOR_USERNAME_ALIAS],
                 requested_user=requested_user,
             )
@@ -330,29 +240,33 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
         raise EntityDoesNotExist("article with slug {0} does not exist".format(slug))
 
     async def get_tags_for_article_by_slug(self, *, slug: str) -> List[str]:
-        tag_rows = await self._log_and_fetch(GET_TAGS_FOR_ARTICLE_QUERY, slug)
+        tag_rows = await queries.get_tags_for_article_by_slug(
+            self.connection, slug=slug
+        )
         return [row["tag"] for row in tag_rows]
 
     async def get_favorites_count_for_article_by_slug(self, *, slug: str) -> int:
-        return await self._log_and_fetch_value(
-            GET_FAVORITES_COUNT_FOR_ARTICLE_QUERY, slug
-        )
+        return (
+            await queries.get_favorites_count_for_article(self.connection, slug=slug)
+        )["favorites_count"]
 
     async def is_article_favorited_by_user(self, *, slug: str, user: User) -> bool:
-        return await self._log_and_fetch_value(
-            IS_ARTICLE_FAVORITED_BY_USER_QUERY, user.username, slug
-        )
+        return (
+            await queries.is_article_in_favorites(
+                self.connection, username=user.username, slug=slug
+            )
+        )["favorited"]
 
     async def add_article_into_favorites(self, *, article: Article, user: User) -> None:
-        await self._log_and_execute(
-            ADD_ARTICLE_INTO_FAVORITES_QUERY, user.username, article.slug
+        await queries.add_article_to_favorites(
+            self.connection, username=user.username, slug=article.slug
         )
 
     async def remove_article_from_favorites(
         self, *, article: Article, user: User
     ) -> None:
-        await self._log_and_execute(
-            REMOVE_ARTICLE_FROM_FAVORITES_QUERY, user.username, article.slug
+        await queries.remove_article_from_favorites(
+            self.connection, username=user.username, slug=article.slug
         )
 
     async def _get_article_from_db_record(
@@ -386,6 +300,6 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
         )
 
     async def _link_article_with_tags(self, *, slug: str, tags: Sequence[str]) -> None:
-        await self._log_and_execute_many(
-            LINK_ARTICLE_WITH_TAGS, [(slug, tag) for tag in tags]
+        await queries.add_tags_to_article(
+            self.connection, [{SLUG_ALIAS: slug, "tag": tag} for tag in tags]
         )
