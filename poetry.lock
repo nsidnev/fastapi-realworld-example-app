@@ -213,7 +213,7 @@ description = "Async database support for Python."
 name = "databases"
 optional = false
 python-versions = ">=3.6"
-version = "0.2.6"
+version = "0.3.2"
 
 [package.dependencies]
 sqlalchemy = "*"
@@ -229,6 +229,7 @@ version = "*"
 [package.extras]
 mysql = ["aiomysql", "pymysql"]
 postgresql = ["asyncpg", "psycopg2-binary"]
+postgresql_aiopg = ["aiopg"]
 sqlite = ["aiosqlite"]
 
 [[package]]
@@ -1327,7 +1328,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "fd95165f6a8fb22d2f17db7d26162d1ea26b9c28d531e72c08493d8c6c9b4ec9"
+content-hash = "0528ef8ad96b2729b14f89debddb960c904e91afcd05be42306ebac28c6a1c33"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -1496,7 +1497,8 @@ darglint = [
     {file = "darglint-1.2.3.tar.gz", hash = "sha256:d1ab063da91987342c0e51b41028b4b5fc7fb72b04789e4534f7368a9146cd92"},
 ]
 databases = [
-    {file = "databases-0.2.6.tar.gz", hash = "sha256:a04db1d158a91db7bd49db16e14266e8e6c7336f06f88c700147690683c769a3"},
+    {file = "databases-0.3.2-py3-none-any.whl", hash = "sha256:ee8dcece15a86359ef06414a6afcc15da15f5d078dc09af2e3a5f9dbfee4dce9"},
+    {file = "databases-0.3.2.tar.gz", hash = "sha256:78b758884ca585b81272af1de697e0c8a3034de92bdd08e9ac47436ef0cdca56"},
 ]
 dnspython = [
     {file = "dnspython-1.16.0-py2.py3-none-any.whl", hash = "sha256:f69c21288a962f4da86e56c4905b49d11aba7938d3d740e80d9e366ee4f1632d"},
