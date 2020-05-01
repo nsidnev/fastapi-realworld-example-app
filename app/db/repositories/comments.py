@@ -17,10 +17,10 @@ class CommentsRepository(BaseRepository):
         self._profiles_repo = ProfilesRepository(conn)
 
     async def get_comment_by_id(
-        self, *, comment_id: int, article: Article, user: Optional[User] = None
+        self, *, comment_id: int, article: Article, user: Optional[User] = None,
     ) -> Comment:
         comment_row = await queries.get_comment_by_id_and_slug(
-            self.connection, comment_id=comment_id, article_slug=article.slug
+            self.connection, comment_id=comment_id, article_slug=article.slug,
         )
         if comment_row:
             return await self._get_comment_from_db_record(
@@ -30,14 +30,14 @@ class CommentsRepository(BaseRepository):
             )
 
         raise EntityDoesNotExist(
-            "comment with id {0} does not exist".format(comment_id)
+            "comment with id {0} does not exist".format(comment_id),
         )
 
     async def get_comments_for_article(
-        self, *, article: Article, user: Optional[User] = None
+        self, *, article: Article, user: Optional[User] = None,
     ) -> List[Comment]:
         comments_rows = await queries.get_comments_for_article_by_slug(
-            self.connection, slug=article.slug
+            self.connection, slug=article.slug,
         )
         return [
             await self._get_comment_from_db_record(
@@ -49,7 +49,7 @@ class CommentsRepository(BaseRepository):
         ]
 
     async def create_comment_for_article(
-        self, *, body: str, article: Article, user: User
+        self, *, body: str, article: Article, user: User,
     ) -> Comment:
         comment_row = await queries.create_new_comment(
             self.connection,
@@ -81,7 +81,7 @@ class CommentsRepository(BaseRepository):
             id_=comment_row["id"],
             body=comment_row["body"],
             author=await self._profiles_repo.get_profile_by_username(
-                username=author_username, requested_user=requested_user
+                username=author_username, requested_user=requested_user,
             ),
             created_at=comment_row["created_at"],
             updated_at=comment_row["updated_at"],

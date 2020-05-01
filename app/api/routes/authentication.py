@@ -24,7 +24,7 @@ async def login(
     users_repo: UsersRepository = Depends(get_repository(UsersRepository)),
 ) -> UserInResponse:
     wrong_login_error = HTTPException(
-        status_code=HTTP_400_BAD_REQUEST, detail=strings.INCORRECT_LOGIN_INPUT
+        status_code=HTTP_400_BAD_REQUEST, detail=strings.INCORRECT_LOGIN_INPUT,
     )
 
     try:
@@ -43,7 +43,7 @@ async def login(
             bio=user.bio,
             image=user.image,
             token=token,
-        )
+        ),
     )
 
 
@@ -59,12 +59,12 @@ async def register(
 ) -> UserInResponse:
     if await check_username_is_taken(users_repo, user_create.username):
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=strings.USERNAME_TAKEN
+            status_code=HTTP_400_BAD_REQUEST, detail=strings.USERNAME_TAKEN,
         )
 
     if await check_email_is_taken(users_repo, user_create.email):
         raise HTTPException(
-            status_code=HTTP_400_BAD_REQUEST, detail=strings.EMAIL_TAKEN
+            status_code=HTTP_400_BAD_REQUEST, detail=strings.EMAIL_TAKEN,
         )
 
     user = await users_repo.create_user(**user_create.dict())
@@ -77,5 +77,5 @@ async def register(
             bio=user.bio,
             image=user.image,
             token=token,
-        )
+        ),
     )

@@ -113,7 +113,7 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
 
         # fmt: off
         query = Query.from_(
-            articles
+            articles,
         ).select(
             articles.id,
             articles.slug,
@@ -123,13 +123,13 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
             articles.created_at,
             articles.updated_at,
             Query.from_(
-                users
+                users,
             ).where(
-                users.id == articles.author_id
+                users.id == articles.author_id,
             ).select(
-                users.username
+                users.username,
             ).as_(
-                AUTHOR_USERNAME_ALIAS
+                AUTHOR_USERNAME_ALIAS,
             ),
         )
         # fmt: on
@@ -140,17 +140,17 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
 
             # fmt: off
             query = query.join(
-                articles_to_tags
+                articles_to_tags,
             ).on(
                 (articles.id == articles_to_tags.article_id) & (
                     articles_to_tags.tag == Query.from_(
-                        tags_table
+                        tags_table,
                     ).where(
-                        tags_table.tag == Parameter(query_params_count)
+                        tags_table.tag == Parameter(query_params_count),
                     ).select(
-                        tags_table.tag
+                        tags_table.tag,
                     )
-                )
+                ),
             )
             # fmt: on
 
@@ -160,17 +160,17 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
 
             # fmt: off
             query = query.join(
-                users
+                users,
             ).on(
                 (articles.author_id == users.id) & (
                     users.id == Query.from_(
-                        users
+                        users,
                     ).where(
-                        users.username == Parameter(query_params_count)
+                        users.username == Parameter(query_params_count),
                     ).select(
-                        users.id
+                        users.id,
                     )
-                )
+                ),
             )
             # fmt: on
 
@@ -180,20 +180,22 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
 
             # fmt: off
             query = query.join(
-                favorites
+                favorites,
             ).on(
                 (articles.id == favorites.article_id) & (
                     favorites.user_id == Query.from_(
-                        users
+                        users,
                     ).where(
-                        users.username == Parameter(query_params_count)
-                    ).select(users.id)
-                )
+                        users.username == Parameter(query_params_count),
+                    ).select(
+                        users.id,
+                    )
+                ),
             )
             # fmt: on
 
         query = query.limit(Parameter(query_params_count + 1)).offset(
-            Parameter(query_params_count + 2)
+            Parameter(query_params_count + 2),
         )
         query_params.extend([limit, offset])
 
@@ -210,10 +212,13 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
         ]
 
     async def get_articles_for_user_feed(
-        self, *, user: User, limit: int = 20, offset: int = 0
+        self, *, user: User, limit: int = 20, offset: int = 0,
     ) -> List[Article]:
         articles_rows = await queries.get_articles_for_feed(
-            self.connection, follower_username=user.username, limit=limit, offset=offset
+            self.connection,
+            follower_username=user.username,
+            limit=limit,
+            offset=offset,
         )
         return [
             await self._get_article_from_db_record(
@@ -226,7 +231,7 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
         ]
 
     async def get_article_by_slug(
-        self, *, slug: str, requested_user: Optional[User] = None
+        self, *, slug: str, requested_user: Optional[User] = None,
     ) -> Article:
         article_row = await queries.get_article_by_slug(self.connection, slug=slug)
         if article_row:
@@ -241,7 +246,7 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
 
     async def get_tags_for_article_by_slug(self, *, slug: str) -> List[str]:
         tag_rows = await queries.get_tags_for_article_by_slug(
-            self.connection, slug=slug
+            self.connection, slug=slug,
         )
         return [row["tag"] for row in tag_rows]
 
@@ -253,20 +258,20 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
     async def is_article_favorited_by_user(self, *, slug: str, user: User) -> bool:
         return (
             await queries.is_article_in_favorites(
-                self.connection, username=user.username, slug=slug
+                self.connection, username=user.username, slug=slug,
             )
         )["favorited"]
 
     async def add_article_into_favorites(self, *, article: Article, user: User) -> None:
         await queries.add_article_to_favorites(
-            self.connection, username=user.username, slug=article.slug
+            self.connection, username=user.username, slug=article.slug,
         )
 
     async def remove_article_from_favorites(
-        self, *, article: Article, user: User
+        self, *, article: Article, user: User,
     ) -> None:
         await queries.remove_article_from_favorites(
-            self.connection, username=user.username, slug=article.slug
+            self.connection, username=user.username, slug=article.slug,
         )
 
     async def _get_article_from_db_record(
@@ -284,14 +289,14 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
             description=article_row["description"],
             body=article_row["body"],
             author=await self._profiles_repo.get_profile_by_username(
-                username=author_username, requested_user=requested_user
+                username=author_username, requested_user=requested_user,
             ),
             tags=await self.get_tags_for_article_by_slug(slug=slug),
             favorites_count=await self.get_favorites_count_for_article_by_slug(
-                slug=slug
+                slug=slug,
             ),
             favorited=await self.is_article_favorited_by_user(
-                slug=slug, user=requested_user
+                slug=slug, user=requested_user,
             )
             if requested_user
             else False,
@@ -301,5 +306,5 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
 
     async def _link_article_with_tags(self, *, slug: str, tags: Sequence[str]) -> None:
         await queries.add_tags_to_article(
-            self.connection, [{SLUG_ALIAS: slug, "tag": tag} for tag in tags]
+            self.connection, [{SLUG_ALIAS: slug, "tag": tag} for tag in tags],
         )

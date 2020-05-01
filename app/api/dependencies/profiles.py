@@ -19,9 +19,9 @@ async def get_profile_by_username_from_path(
 ) -> Profile:
     try:
         return await profiles_repo.get_profile_by_username(
-            username=username, requested_user=user
+            username=username, requested_user=user,
         )
     except EntityDoesNotExist:
         raise HTTPException(
-            status_code=HTTP_404_NOT_FOUND, detail=strings.USER_DOES_NOT_EXIST_ERROR
+            status_code=HTTP_404_NOT_FOUND, detail=strings.USER_DOES_NOT_EXIST_ERROR,
         )

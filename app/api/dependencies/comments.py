@@ -17,19 +17,20 @@ async def get_comment_by_id_from_path(
     comment_id: int = Path(..., ge=1),
     article: Article = Depends(articles.get_article_by_slug_from_path),
     user: Optional[User] = Depends(
-        authentication.get_current_user_authorizer(required=False)
+        authentication.get_current_user_authorizer(required=False),
     ),
     comments_repo: CommentsRepository = Depends(
-        database.get_repository(CommentsRepository)
+        database.get_repository(CommentsRepository),
     ),
 ) -> Comment:
     try:
         return await comments_repo.get_comment_by_id(
-            comment_id=comment_id, article=article, user=user
+            comment_id=comment_id, article=article, user=user,
         )
     except EntityDoesNotExist:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=strings.COMMENT_DOES_NOT_EXIST
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=strings.COMMENT_DOES_NOT_EXIST,
         )
 
 

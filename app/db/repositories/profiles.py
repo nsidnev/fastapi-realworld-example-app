@@ -17,20 +17,20 @@ class ProfilesRepository(BaseRepository):
         self._users_repo = UsersRepository(conn)
 
     async def get_profile_by_username(
-        self, *, username: str, requested_user: Optional[UserLike]
+        self, *, username: str, requested_user: Optional[UserLike],
     ) -> Profile:
         user = await self._users_repo.get_user_by_username(username=username)
 
         profile = Profile(username=user.username, bio=user.bio, image=user.image)
         if requested_user:
             profile.following = await self.is_user_following_for_another_user(
-                target_user=user, requested_user=requested_user
+                target_user=user, requested_user=requested_user,
             )
 
         return profile
 
     async def is_user_following_for_another_user(
-        self, *, target_user: UserLike, requested_user: UserLike
+        self, *, target_user: UserLike, requested_user: UserLike,
     ) -> bool:
         return (
             await queries.is_user_following_for_another(
@@ -41,7 +41,7 @@ class ProfilesRepository(BaseRepository):
         )["is_following"]
 
     async def add_user_into_followers(
-        self, *, target_user: UserLike, requested_user: UserLike
+        self, *, target_user: UserLike, requested_user: UserLike,
     ) -> None:
         async with self.connection.transaction():
             await queries.subscribe_user_to_another(
@@ -51,7 +51,7 @@ class ProfilesRepository(BaseRepository):
             )
 
     async def remove_user_from_followers(
-        self, *, target_user: UserLike, requested_user: UserLike
+        self, *, target_user: UserLike, requested_user: UserLike,
     ) -> None:
         async with self.connection.transaction():
             await queries.unsubscribe_user_from_another(

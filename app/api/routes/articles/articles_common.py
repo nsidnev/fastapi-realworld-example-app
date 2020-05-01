@@ -31,7 +31,7 @@ async def get_articles_for_user_feed(
     articles_repo: ArticlesRepository = Depends(get_repository(ArticlesRepository)),
 ) -> ListOfArticlesInResponse:
     articles = await articles_repo.get_articles_for_user_feed(
-        user=user, limit=limit, offset=offset
+        user=user, limit=limit, offset=offset,
     )
     articles_for_response = [
         ArticleForResponse(**article.dict()) for article in articles
@@ -60,9 +60,9 @@ async def mark_article_as_favorite(
                     update={
                         "favorited": True,
                         "favorites_count": article.favorites_count + 1,
-                    }
-                )
-            )
+                    },
+                ),
+            ),
         )
 
     raise HTTPException(
@@ -90,11 +90,12 @@ async def remove_article_from_favorites(
                     update={
                         "favorited": False,
                         "favorites_count": article.favorites_count - 1,
-                    }
-                )
-            )
+                    },
+                ),
+            ),
         )
 
     raise HTTPException(
-        status_code=status.HTTP_400_BAD_REQUEST, detail=strings.ARTICLE_IS_NOT_FAVORITED
+        status_code=status.HTTP_400_BAD_REQUEST,
+        detail=strings.ARTICLE_IS_NOT_FAVORITED,
     )
