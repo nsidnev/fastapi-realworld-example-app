@@ -9,7 +9,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.7"
 
-uvicorn = "^0.11.3"
+uvicorn = "^0.11.5"
 fastapi = "^0.53.2"
 pydantic = { version = "^1.4", extras = ["email"] }
 
