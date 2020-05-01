@@ -20,7 +20,7 @@ class CommentsRepository(BaseRepository):
         self, *, comment_id: int, article: Article, user: Optional[User] = None,
     ) -> Comment:
         comment_row = await queries.get_comment_by_id_and_slug(
-            self.connection, comment_id=comment_id, article_slug=article.slug
+            self.connection, comment_id=comment_id, article_slug=article.slug,
         )
         if comment_row:
             return await self._get_comment_from_db_record(
@@ -37,7 +37,7 @@ class CommentsRepository(BaseRepository):
         self, *, article: Article, user: Optional[User] = None,
     ) -> List[Comment]:
         comments_rows = await queries.get_comments_for_article_by_slug(
-            self.connection, slug=article.slug
+            self.connection, slug=article.slug,
         )
         return [
             await self._get_comment_from_db_record(
