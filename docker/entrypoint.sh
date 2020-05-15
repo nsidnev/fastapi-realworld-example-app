@@ -1,7 +1,12 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 set -ex
 
-until nc -w 1 -z db 5432; do
+arg="$1"
+
+HOST="${arg%%:*}"
+PORT="${arg#*:}"
+
+until nc -w 1 -z ${HOST} ${PORT}; do
   >&2 echo "Postgres is unavailable - sleeping"
   sleep 1
 done

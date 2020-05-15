@@ -8,14 +8,13 @@ WORKDIR /app
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends netcat && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-COPY entrypoint.sh ./
 COPY poetry.lock pyproject.toml ./
 RUN pip install poetry==1.0.* && \
     poetry config virtualenvs.create false && \
     poetry install --no-dev
 
-COPY . ./
+COPY docker/entrypoint.sh docker/entrypoint.sh
 
-CMD ["sh", "/app/entrypoint.sh"]
+COPY . ./
