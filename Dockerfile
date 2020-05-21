@@ -18,3 +18,6 @@ RUN pip install poetry==1.0.* && \
 COPY docker/entrypoint.sh docker/entrypoint.sh
 
 COPY . ./
+
+CMD alembic upgrade head && \
+    uvicorn --host=0.0.0.0 app.main:app
