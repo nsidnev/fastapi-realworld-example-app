@@ -1,6 +1,6 @@
 name: API spec
 
-on: push
+on: [push, pull_request]
 
 jobs:
   api-spec:

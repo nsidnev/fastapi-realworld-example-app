@@ -1,7 +1,6 @@
 name: Tests
 
-on: push
-
+on: [push, pull_request]
 jobs:
   lint:
     name: Run tests (Python ${{ matrix.python-version }})
