@@ -5,48 +5,36 @@ description = "Backend logic implementation for https://github.com/gothinkster/r
 authors = ["Nik Sidnev <sidnev.nick@gmail.com>"]
 license = "MIT"
 
-
 [tool.poetry.dependencies]
 python = "^3.7"
-
 uvicorn = "^0.11.3"
 fastapi = "^0.55.1"
 pydantic = { version = "^1.4", extras = ["email"] }
-
 passlib = { version = "^1.7", extras = ["bcrypt"] }
-
 pyjwt = "^1.7"
-
 asyncpg = "^0.20.1"
 aiosql = "^3.0.0"
 pypika = "^0.37.7"
 alembic = "^1.4"
 databases = { version = "^0.3.2", extras = ["postgresql"] }
-
 python-slugify = "^4.0"
 Unidecode = "^1.1"
-
 loguru = "^0.5.0"
-
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
 isort = "^4.3"
 autoflake = "^1.3"
-
 wemake-python-styleguide = "^0.14.0"
 mypy = "^0.770"
 flake8-fixme = "^1.1"
-
-# pytest breaks some plugins from 5.4
-pytest = "~5.3.0"
+pytest = "^5.4"
 pytest-cov = "^2.9"
-pytest-asyncio = "^0.10.0"
+pytest-asyncio = "^0.12.0"
 pytest-env = "^0.6.2"
 docker = "^4.2"
 httpx = "^0.13.3"
 asgi-lifespan = "^1.0.0"
-
 
 [build-system]
 requires = ["poetry>=1.0"]
