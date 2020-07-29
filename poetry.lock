@@ -1227,7 +1227,7 @@ description = "The lightning-fast ASGI server."
 name = "uvicorn"
 optional = false
 python-versions = "*"
-version = "0.11.5"
+version = "0.11.7"
 
 [package.dependencies]
 click = ">=7.0.0,<8.0.0"
@@ -1334,7 +1334,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "b3eb6c0606fe644c6b8daed3173152927066b90e28e4ad7ca8432a1c478561c2"
+content-hash = "8912aaa26a118a29e2a6689c805603f292044e2389a917429fc3c8c3ad2ee4aa"
 python-versions = "^3.7"
 
 [metadata.files]
@@ -2026,8 +2026,8 @@ urllib3 = [
     {file = "urllib3-1.25.9.tar.gz", hash = "sha256:3018294ebefce6572a474f0604c2021e33b3fd8006ecd11d62107a5d2a963527"},
 ]
 uvicorn = [
-    {file = "uvicorn-0.11.5-py3-none-any.whl", hash = "sha256:50577d599775dac2301bac8bd5b540d19a9560144143c5bdab13cba92783b6e7"},
-    {file = "uvicorn-0.11.5.tar.gz", hash = "sha256:596eaa8645b6dbc24d6610e335f8ddf5f925b4c4b86fdc7146abb0bf0da65d17"},
+    {file = "uvicorn-0.11.7-py3-none-any.whl", hash = "sha256:1d46a22cc55a52f5567e0c66f000ae56f26263e44cef59b7c885bf10f487ce6e"},
+    {file = "uvicorn-0.11.7.tar.gz", hash = "sha256:b50f7f4c0c499c9b8d0280924cfbd24b90ba02456e3dc80934b9a786a291f09f"},
 ]
 uvloop = [
     {file = "uvloop-0.14.0-cp35-cp35m-macosx_10_11_x86_64.whl", hash = "sha256:08b109f0213af392150e2fe6f81d33261bb5ce968a288eb698aad4f46eb711bd"},
