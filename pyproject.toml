@@ -13,7 +13,7 @@ pydantic = { version = "^1.4", extras = ["email"] }
 passlib = { version = "^1.7", extras = ["bcrypt"] }
 pyjwt = "^1.7"
 asyncpg = "^0.20.1"
-aiosql = "^3.0.0"
+aiosql = "^3.1.0"
 pypika = "^0.37.15"
 alembic = "^1.4"
 databases = { version = "^0.3.2", extras = ["postgresql"] }
