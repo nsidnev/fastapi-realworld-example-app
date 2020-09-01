@@ -12,7 +12,7 @@ fastapi = "^0.60.1"
 pydantic = { version = "^1.6", extras = ["email"] }
 passlib = { version = "^1.7", extras = ["bcrypt"] }
 pyjwt = "^1.7"
-asyncpg = "^0.20.1"
+asyncpg = "^0.21.0"
 aiosql = "^3.1.2"
 pypika = "^0.38.0"
 alembic = "^1.4"
