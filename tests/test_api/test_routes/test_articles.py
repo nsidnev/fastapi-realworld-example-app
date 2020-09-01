@@ -159,7 +159,10 @@ async def test_user_can_not_modify_article_that_is_not_authored_by_him(
 
 
 async def test_user_can_delete_his_article(
-    app: FastAPI, authorized_client: AsyncClient, test_article: Article, pool: Pool,
+    app: FastAPI,
+    authorized_client: AsyncClient,
+    test_article: Article,
+    pool: Pool,
 ) -> None:
     await authorized_client.delete(
         app.url_path_for("articles:delete-article", slug=test_article.slug)

@@ -16,7 +16,8 @@ class UsersRepository(BaseRepository):
 
     async def get_user_by_username(self, *, username: str) -> UserInDB:
         user_row = await queries.get_user_by_username(
-            self.connection, username=username,
+            self.connection,
+            username=username,
         )
         if user_row:
             return UserInDB(**user_row)
@@ -26,7 +27,11 @@ class UsersRepository(BaseRepository):
         )
 
     async def create_user(
-        self, *, username: str, email: str, password: str,
+        self,
+        *,
+        username: str,
+        email: str,
+        password: str,
     ) -> UserInDB:
         user = UserInDB(username=username, email=email)
         user.change_password(password)

@@ -26,7 +26,9 @@ SECRET_KEY: Secret = config("SECRET_KEY", cast=Secret)
 
 PROJECT_NAME: str = config("PROJECT_NAME", default="FastAPI example application")
 ALLOWED_HOSTS: List[str] = config(
-    "ALLOWED_HOSTS", cast=CommaSeparatedStrings, default="",
+    "ALLOWED_HOSTS",
+    cast=CommaSeparatedStrings,
+    default="",
 )
 
 # logging configuration

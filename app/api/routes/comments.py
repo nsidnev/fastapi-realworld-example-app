@@ -50,7 +50,9 @@ async def create_comment_for_article(
     comments_repo: CommentsRepository = Depends(get_repository(CommentsRepository)),
 ) -> CommentInResponse:
     comment = await comments_repo.create_comment_for_article(
-        body=comment_create.body, article=article, user=user,
+        body=comment_create.body,
+        article=article,
+        user=user,
     )
     return CommentInResponse(comment=comment)
 

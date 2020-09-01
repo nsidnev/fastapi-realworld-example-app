@@ -212,7 +212,11 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
         ]
 
     async def get_articles_for_user_feed(
-        self, *, user: User, limit: int = 20, offset: int = 0,
+        self,
+        *,
+        user: User,
+        limit: int = 20,
+        offset: int = 0,
     ) -> List[Article]:
         articles_rows = await queries.get_articles_for_feed(
             self.connection,
@@ -231,7 +235,10 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
         ]
 
     async def get_article_by_slug(
-        self, *, slug: str, requested_user: Optional[User] = None,
+        self,
+        *,
+        slug: str,
+        requested_user: Optional[User] = None,
     ) -> Article:
         article_row = await queries.get_article_by_slug(self.connection, slug=slug)
         if article_row:
@@ -246,7 +253,8 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
 
     async def get_tags_for_article_by_slug(self, *, slug: str) -> List[str]:
         tag_rows = await queries.get_tags_for_article_by_slug(
-            self.connection, slug=slug,
+            self.connection,
+            slug=slug,
         )
         return [row["tag"] for row in tag_rows]
 
@@ -258,20 +266,29 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
     async def is_article_favorited_by_user(self, *, slug: str, user: User) -> bool:
         return (
             await queries.is_article_in_favorites(
-                self.connection, username=user.username, slug=slug,
+                self.connection,
+                username=user.username,
+                slug=slug,
             )
         )["favorited"]
 
     async def add_article_into_favorites(self, *, article: Article, user: User) -> None:
         await queries.add_article_to_favorites(
-            self.connection, username=user.username, slug=article.slug,
+            self.connection,
+            username=user.username,
+            slug=article.slug,
         )
 
     async def remove_article_from_favorites(
-        self, *, article: Article, user: User,
+        self,
+        *,
+        article: Article,
+        user: User,
     ) -> None:
         await queries.remove_article_from_favorites(
-            self.connection, username=user.username, slug=article.slug,
+            self.connection,
+            username=user.username,
+            slug=article.slug,
         )
 
     async def _get_article_from_db_record(
@@ -289,14 +306,16 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
             description=article_row["description"],
             body=article_row["body"],
             author=await self._profiles_repo.get_profile_by_username(
-                username=author_username, requested_user=requested_user,
+                username=author_username,
+                requested_user=requested_user,
             ),
             tags=await self.get_tags_for_article_by_slug(slug=slug),
             favorites_count=await self.get_favorites_count_for_article_by_slug(
                 slug=slug,
             ),
             favorited=await self.is_article_favorited_by_user(
-                slug=slug, user=requested_user,
+                slug=slug,
+                user=requested_user,
             )
             if requested_user
             else False,
@@ -306,5 +325,6 @@ class ArticlesRepository(BaseRepository):  # noqa: WPS214
 
     async def _link_article_with_tags(self, *, slug: str, tags: Sequence[str]) -> None:
         await queries.add_tags_to_article(
-            self.connection, [{SLUG_ALIAS: slug, "tag": tag} for tag in tags],
+            self.connection,
+            [{SLUG_ALIAS: slug, "tag": tag} for tag in tags],
         )
