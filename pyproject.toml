@@ -8,7 +8,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.7"
 uvicorn = "^0.11.8"
-fastapi = "^0.60.1"
+fastapi = "^0.61.1"
 pydantic = { version = "^1.6", extras = ["email"] }
 passlib = { version = "^1.7", extras = ["bcrypt"] }
 pyjwt = "^1.7"
