@@ -45,7 +45,8 @@ async def list_articles(
         ArticleForResponse.from_orm(article) for article in articles
     ]
     return ListOfArticlesInResponse(
-        articles=articles_for_response, articles_count=len(articles),
+        articles=articles_for_response,
+        articles_count=len(articles),
     )
 
 
@@ -98,7 +99,9 @@ async def update_article_by_slug(
 ) -> ArticleInResponse:
     slug = get_slug_for_article(article_update.title) if article_update.title else None
     article = await articles_repo.update_article(
-        article=current_article, slug=slug, **article_update.dict(),
+        article=current_article,
+        slug=slug,
+        **article_update.dict(),
     )
     return ArticleInResponse(article=ArticleForResponse.from_orm(article))
 

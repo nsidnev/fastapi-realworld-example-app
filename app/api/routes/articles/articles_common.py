@@ -31,13 +31,16 @@ async def get_articles_for_user_feed(
     articles_repo: ArticlesRepository = Depends(get_repository(ArticlesRepository)),
 ) -> ListOfArticlesInResponse:
     articles = await articles_repo.get_articles_for_user_feed(
-        user=user, limit=limit, offset=offset,
+        user=user,
+        limit=limit,
+        offset=offset,
     )
     articles_for_response = [
         ArticleForResponse(**article.dict()) for article in articles
     ]
     return ListOfArticlesInResponse(
-        articles=articles_for_response, articles_count=len(articles),
+        articles=articles_for_response,
+        articles_count=len(articles),
     )
 
 

@@ -3,13 +3,13 @@ import warnings
 from os import environ, getenv
 
 import alembic.config
-import docker as libdocker
 import pytest
 from asgi_lifespan import LifespanManager
 from asyncpg.pool import Pool
 from fastapi import FastAPI
 from httpx import AsyncClient
 
+import docker as libdocker
 from app.db.repositories.articles import ArticlesRepository
 from app.db.repositories.users import UsersRepository
 from app.models.domain.articles import Article

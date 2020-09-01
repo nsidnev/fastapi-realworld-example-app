@@ -25,7 +25,9 @@ async def get_comment_by_id_from_path(
 ) -> Comment:
     try:
         return await comments_repo.get_comment_by_id(
-            comment_id=comment_id, article=article, user=user,
+            comment_id=comment_id,
+            article=article,
+            user=user,
         )
     except EntityDoesNotExist:
         raise HTTPException(

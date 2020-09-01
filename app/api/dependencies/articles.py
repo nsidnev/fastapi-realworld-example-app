@@ -26,7 +26,11 @@ def get_articles_filters(
     offset: int = Query(DEFAULT_ARTICLES_OFFSET, ge=0),
 ) -> ArticlesFilters:
     return ArticlesFilters(
-        tag=tag, author=author, favorited=favorited, limit=limit, offset=offset,
+        tag=tag,
+        author=author,
+        favorited=favorited,
+        limit=limit,
+        offset=offset,
     )
 
 
