@@ -8,4 +8,4 @@ flake8 app --exclude=app/db/migrations
 mypy app
 
 black --check app --diff
-isort --recursive --check-only app
+isort --check-only app

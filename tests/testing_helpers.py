@@ -2,9 +2,8 @@ import time
 from functools import wraps
 from typing import Any, Callable, Type
 
-import psycopg2
-
 import docker.errors
+import psycopg2
 from docker import APIClient
 
 
