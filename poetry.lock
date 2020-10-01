@@ -4,7 +4,7 @@ description = "Simple SQL in Python."
 name = "aiosql"
 optional = false
 python-versions = ">=3.6,<4.0"
-version = "3.1.2"
+version = "3.2.0"
 
 [package.dependencies]
 typing_extensions = ">=3.7.4,<4.0.0"
@@ -1301,14 +1301,14 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "bf208dfbf69389a2827df8f4bec3b7e922b8089e21c87d814e827f5cb47d4d44"
+content-hash = "ac2e58def6d6e488f4ec817abe7fbf1d6762eca340658663fb6082f0105ec7ec"
 lock-version = "1.0"
 python-versions = "^3.7"
 
 [metadata.files]
 aiosql = [
-    {file = "aiosql-3.1.2-py3-none-any.whl", hash = "sha256:d8b804008981f6cf4170906c10146151fba08fc1a6dbc6c1cb5e52415d38687c"},
-    {file = "aiosql-3.1.2.tar.gz", hash = "sha256:565ea71a280df7f1af76ee604ef99991c6c55142b3a44c2e6887884836844cf3"},
+    {file = "aiosql-3.2.0-py3-none-any.whl", hash = "sha256:1a9daa9003bdf3f3e6a19fb934c9f7b0f7d41270c45488b21bd8b727b9cc602f"},
+    {file = "aiosql-3.2.0.tar.gz", hash = "sha256:f6e4fded66753dd82b020a9ea936ce8acb63e73640b4ac9026c6ad6874940a91"},
 ]
 alembic = [
     {file = "alembic-1.4.2.tar.gz", hash = "sha256:035ab00497217628bf5d0be82d664d8713ab13d37b630084da8e1f98facf4dbf"},
@@ -1389,7 +1389,6 @@ bcrypt = [
     {file = "bcrypt-3.1.7.tar.gz", hash = "sha256:0b0069c752ec14172c5f78208f1863d7ad6755a6fae6fe76ec2c80d13be41e42"},
 ]
 black = [
-    {file = "black-20.8b1-py3-none-any.whl", hash = "sha256:70b62ef1527c950db59062cda342ea224d772abdf6adc58b86a45421bab20a6b"},
     {file = "black-20.8b1.tar.gz", hash = "sha256:1c02557aa099101b9d21496f8a914e9ed2222ef70336404eeeac8edba836fbea"},
 ]
 certifi = [
