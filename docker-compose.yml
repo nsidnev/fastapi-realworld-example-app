@@ -3,13 +3,15 @@ version: '3'
 services:
   app:
     build: .
+    restart: on-failure
     ports:
       - "8000:8000"
+    environment:
+      DB_CONNECTION: "postgres://postgres:postgres@db/postgres"
     env_file:
       - .env
     depends_on:
       - db
-    command: ['./docker/entrypoint.sh', "db:5432"]
   db:
     image: postgres:11.5-alpine
     ports:
@@ -17,4 +19,4 @@ services:
     env_file:
       - .env
     volumes:
-      - ./dbdata:/var/lib/postgresql/data:cached
+      - ./postgres-data:/var/lib/postgresql/data:cached

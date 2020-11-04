@@ -11,13 +11,11 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY poetry.lock pyproject.toml ./
-RUN pip install poetry==1.0.* && \
-    poetry config virtualenvs.create false && \
+RUN pip install poetry==1.1 && \
+    poetry config virtualenvs.in-project true && \
     poetry install --no-dev
-
-COPY docker/entrypoint.sh docker/entrypoint.sh
 
 COPY . ./
 
-CMD alembic upgrade head && \
-    uvicorn --host=0.0.0.0 app.main:app
+CMD poetry run alembic upgrade head && \
+    poetry run uvicorn --host=0.0.0.0 app.main:app

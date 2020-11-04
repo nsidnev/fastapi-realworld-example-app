@@ -18,3 +18,4 @@ coverage.xml
 tests
 scripts
 postman
+./postgres-data

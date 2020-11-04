@@ -25,7 +25,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install poetry
-        run: pip install poetry==1.0
+        run: pip install poetry==1.1
       - uses: actions/cache@v1
         id: cache-dev-deps
         with:
@@ -46,7 +46,6 @@ jobs:
           SECRET_KEY: secret_key
           DB_CONNECTION: postgres://postgres:postgres@localhost/postgres
         run: |
-          source .venv/bin/activate
-          USE_LOCAL_DB_FOR_TEST=true ./scripts/test --cov-report=xml --cov-fail-under=100
+          USE_LOCAL_DB_FOR_TEST=true poetry run ./scripts/test
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
