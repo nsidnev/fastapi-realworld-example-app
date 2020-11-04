@@ -107,4 +107,4 @@ venv.bak/
 .vscode/
 
 # Project
-dbdata
+postgres-data

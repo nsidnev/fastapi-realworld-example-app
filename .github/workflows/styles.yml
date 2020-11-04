@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install poetry
-        run: pip install poetry==1.0
+        run: pip install poetry==1.1
       - uses: actions/cache@v1
         id: cache-dev-deps
         with:
@@ -34,5 +34,4 @@ jobs:
           poetry install
       - name: Run linters
         run: |
-          source .venv/bin/activate
-          ./scripts/lint
+          poetry run ./scripts/lint
