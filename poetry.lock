@@ -846,7 +846,7 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "pypika"
-version = "0.38.0"
+version = "0.43.0"
 description = "A SQL query builder API for Python"
 category = "main"
 optional = false
@@ -1263,7 +1263,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "e9ae73a78bfe15b86de592386cba407a585041c7e20835ab3f3c58b42fdea2b4"
+content-hash = "2aed51c776c77ea9b7133e628f544efa5af5da504df1af4f974e82e3a26dc9d9"
 
 [metadata.files]
 aiosql = [
@@ -1745,7 +1745,7 @@ pyparsing = [
     {file = "pyparsing-2.4.7.tar.gz", hash = "sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1"},
 ]
 pypika = [
-    {file = "PyPika-0.38.0.tar.gz", hash = "sha256:abf85d7fc3da6c4213125b58ca989a1eabfcc1e9b1f5fc3f524eba5cd7a25107"},
+    {file = "pypika-0.43.0.tar.gz", hash = "sha256:ecb69cf6774732b514a59be834c785776047ed35ffd68389f9d26f69aa59c989"},
 ]
 pytest = [
     {file = "pytest-6.1.2-py3-none-any.whl", hash = "sha256:4288fed0d9153d9646bfcdf0c0428197dba1ecb27a33bb6e031d002fa88653fe"},
