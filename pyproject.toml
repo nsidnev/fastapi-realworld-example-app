@@ -16,7 +16,7 @@ asyncpg = "^0.21.0"
 aiosql = "^3.1.2"
 pypika = "^0.43.0"
 alembic = "^1.4"
-databases = { version = "^0.3.2", extras = ["postgresql"] }
+databases = { version = "^0.4.1", extras = ["postgresql"] }
 python-slugify = "^4.0"
 Unidecode = "^1.1"
 loguru = "^0.5.1"
