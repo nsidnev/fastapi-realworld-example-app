@@ -12,11 +12,12 @@ fastapi = "^0.61.1"
 pydantic = { version = "^1.6", extras = ["email"] }
 passlib = { version = "^1.7", extras = ["bcrypt"] }
 pyjwt = "^1.7"
+databases = "^0.4.1"
 asyncpg = "^0.21.0"
+psycopg2-binary = "^2.8.6"
 aiosql = "^3.1.2"
 pypika = "^0.43.0"
 alembic = "^1.4"
-databases = { version = "^0.4.1", extras = ["postgresql"] }
 python-slugify = "^4.0"
 Unidecode = "^1.1"
 loguru = "^0.5.1"
@@ -25,7 +26,7 @@ loguru = "^0.5.1"
 black = "^20.8b1"
 isort = "^5.0"
 autoflake = "^1.4"
-wemake-python-styleguide = { git = "https://github.com/wemake-services/wemake-python-styleguide", rev = "a787ee1" }
+wemake-python-styleguide = "^0.15.0"
 mypy = "^0.790"
 flake8-fixme = "^1.1"
 pytest = "^6.1"
@@ -45,7 +46,7 @@ combine_as_imports = true
 testpaths = "tests"
 filterwarnings = "error"
 addopts = '''
-  --strict
+  --strict-markers
   --tb=short
   --cov=app
   --cov=tests
