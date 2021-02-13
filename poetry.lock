@@ -169,6 +169,14 @@ python-versions = "*"
 pycparser = "*"
 
 [[package]]
+name = "chardet"
+version = "4.0.0"
+description = "Universal encoding detector for Python 2 and 3"
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+
+[[package]]
 name = "click"
 version = "7.1.2"
 description = "Composable command line interface toolkit"
@@ -275,7 +283,7 @@ idna = ">=2.0.0"
 
 [[package]]
 name = "eradicate"
-version = "1.0"
+version = "2.0.0"
 description = "Removes commented-out code."
 category = "dev"
 optional = false
@@ -329,7 +337,7 @@ pycodestyle = "*"
 
 [[package]]
 name = "flake8-broken-line"
-version = "0.2.1"
+version = "0.3.0"
 description = "Flake8 plugin to forbid backslashes for line breaks"
 category = "dev"
 optional = false
@@ -378,15 +386,16 @@ importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
 
 [[package]]
 name = "flake8-debugger"
-version = "3.2.1"
+version = "4.0.0"
 description = "ipdb/pdb statement checker plugin for flake8"
 category = "dev"
 optional = false
-python-versions = "*"
+python-versions = ">=3.6"
 
 [package.dependencies]
-flake8 = ">=1.5"
+flake8 = ">=3.0"
 pycodestyle = "*"
+six = "*"
 
 [[package]]
 name = "flake8-docstrings"
@@ -402,15 +411,15 @@ pydocstyle = ">=2.1"
 
 [[package]]
 name = "flake8-eradicate"
-version = "0.4.0"
+version = "1.0.0"
 description = "Flake8 plugin to find commented out code"
 category = "dev"
 optional = false
-python-versions = ">=3.5,<4.0"
+python-versions = ">=3.6,<4.0"
 
 [package.dependencies]
 attrs = "*"
-eradicate = ">=1.0,<2.0"
+eradicate = ">=2.0,<3.0"
 flake8 = ">=3.5,<4.0"
 
 [[package]]
@@ -547,11 +556,11 @@ http2 = ["h2 (>=3.0.0,<4.0.0)"]
 
 [[package]]
 name = "idna"
-version = "3.1"
+version = "2.10"
 description = "Internationalized Domain Names in Applications (IDNA)"
 category = "main"
 optional = false
-python-versions = ">=3.4"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
 name = "importlib-metadata"
@@ -954,14 +963,20 @@ python-versions = "*"
 
 [[package]]
 name = "requests"
-version = "2.15.1"
+version = "2.25.1"
 description = "Python HTTP for Humans."
 category = "dev"
 optional = false
-python-versions = "*"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+
+[package.dependencies]
+certifi = ">=2017.4.17"
+chardet = ">=3.0.2,<5"
+idna = ">=2.5,<3"
+urllib3 = ">=1.21.1,<1.27"
 
 [package.extras]
-security = ["cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0.14)"]
+security = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)"]
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7)", "win-inet-pton"]
 
 [[package]]
@@ -1118,6 +1133,19 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
+name = "urllib3"
+version = "1.26.3"
+description = "HTTP library with thread-safe connection pooling, file post, and more."
+category = "dev"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
+
+[package.extras]
+brotli = ["brotlipy (>=0.6.0)"]
+secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "ipaddress"]
+socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
+
+[[package]]
 name = "uvicorn"
 version = "0.13.3"
 description = "The lightning-fast ASGI server."
@@ -1146,39 +1174,33 @@ six = "*"
 
 [[package]]
 name = "wemake-python-styleguide"
-version = "0.14.1"
+version = "0.15.1"
 description = "The strictest and most opinionated python linter ever"
 category = "dev"
 optional = false
-python-versions = "^3.6"
+python-versions = ">=3.6,<4.0"
 
 [package.dependencies]
-astor = "^0.8"
+astor = ">=0.8,<0.9"
 attrs = "*"
-darglint = "^1.2"
-flake8 = "^3.7"
-flake8-bandit = "^2.1"
-flake8-broken-line = "^0.2"
-flake8-bugbear = "^20.1"
-flake8-commas = "^2.0"
-flake8-comprehensions = "^3.1.0"
-flake8-debugger = "^3.1"
-flake8-docstrings = "^1.3.1"
-flake8-eradicate = ">=0.3,<0.5"
-flake8-isort = ">=3.0.1,<5.0"
-flake8-quotes = "^3.0"
-flake8-rst-docstrings = ">=0.0.13,<0.0.15"
-flake8-string-format = "^0.3"
+darglint = ">=1.2,<2.0"
+flake8 = ">=3.7,<4.0"
+flake8-bandit = ">=2.1,<3.0"
+flake8-broken-line = ">=0.3,<0.4"
+flake8-bugbear = ">=20.1,<21.0"
+flake8-commas = ">=2.0,<3.0"
+flake8-comprehensions = ">=3.1,<4.0"
+flake8-debugger = ">=4.0,<5.0"
+flake8-docstrings = ">=1.3,<2.0"
+flake8-eradicate = ">=1.0,<2.0"
+flake8-isort = ">=4.0,<5.0"
+flake8-quotes = ">=3.0,<4.0"
+flake8-rst-docstrings = ">=0.0.14,<0.0.15"
+flake8-string-format = ">=0.3,<0.4"
 importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
-pep8-naming = ">=0.10,<0.12"
-pygments = "^2.4"
-typing_extensions = "^3.6"
-
-[package.source]
-type = "git"
-url = "https://github.com/wemake-services/wemake-python-styleguide"
-reference = "a787ee1"
-resolved_reference = "a787ee18004f8807401d5b159218d3848cb96306"
+pep8-naming = ">=0.11,<0.12"
+pygments = ">=2.4,<3.0"
+typing_extensions = ">=3.6,<4.0"
 
 [[package]]
 name = "win32-setctime"
@@ -1206,7 +1228,7 @@ testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2.3)", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "4e88bf0b846bf8b7dc9b9e588b2fc9a0c2ff3d4a46e81c63ec1f877a25e075f9"
+content-hash = "c29528b8d886ef9c1435794fccd579a687396100c02a9bb3869cca6d159a780e"
 
 [metadata.files]
 aiosql = [
@@ -1326,6 +1348,10 @@ cffi = [
     {file = "cffi-1.14.5-cp39-cp39-win_amd64.whl", hash = "sha256:f2d45f97ab6bb54753eab54fffe75aaf3de4ff2341c9daee1987ee1837636f1d"},
     {file = "cffi-1.14.5.tar.gz", hash = "sha256:fd78e5fee591709f32ef6edb9a015b4aa1a5022598e36227500c8f4e02328d9c"},
 ]
+chardet = [
+    {file = "chardet-4.0.0-py2.py3-none-any.whl", hash = "sha256:f864054d66fd9118f2e67044ac8981a54775ec5b67aed0441892edb553d21da5"},
+    {file = "chardet-4.0.0.tar.gz", hash = "sha256:0d6f53a15db4120f2b08c94f11e7d93d2c911ee118b6b30a04ec3ee8310179fa"},
+]
 click = [
     {file = "click-7.1.2-py2.py3-none-any.whl", hash = "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"},
     {file = "click-7.1.2.tar.gz", hash = "sha256:d2b5255c7c6349bc1bd1e59e08cd12acbbd63ce649f2588755783aa94dfb6b1a"},
@@ -1410,7 +1436,7 @@ email-validator = [
     {file = "email_validator-1.1.2-py2.py3-none-any.whl", hash = "sha256:094b1d1c60d790649989d38d34f69e1ef07792366277a2cf88684d03495d018f"},
 ]
 eradicate = [
-    {file = "eradicate-1.0.tar.gz", hash = "sha256:4ffda82aae6fd49dfffa777a857cb758d77502a1f2e0f54c9ac5155a39d2d01a"},
+    {file = "eradicate-2.0.0.tar.gz", hash = "sha256:27434596f2c5314cc9b31410c93d8f7e8885747399773cd088d3adea647a60c8"},
 ]
 fastapi = [
     {file = "fastapi-0.61.2-py3-none-any.whl", hash = "sha256:8c8517680a221e69eb34073adf46c503092db2f24845b7bdc7f85b54f24ff0df"},
@@ -1424,8 +1450,8 @@ flake8-bandit = [
     {file = "flake8_bandit-2.1.2.tar.gz", hash = "sha256:687fc8da2e4a239b206af2e54a90093572a60d0954f3054e23690739b0b0de3b"},
 ]
 flake8-broken-line = [
-    {file = "flake8-broken-line-0.2.1.tar.gz", hash = "sha256:414477070231a5aa05468d48db2742a594b53fbc1ecba28044646706a11fb861"},
-    {file = "flake8_broken_line-0.2.1-py3-none-any.whl", hash = "sha256:75858359e3ccd4f1d92a9e7582aa5c9e4485cbc920dd05954703900cf907667e"},
+    {file = "flake8-broken-line-0.3.0.tar.gz", hash = "sha256:f74e052833324a9e5f0055032f7ccc54b23faabafe5a26241c2f977e70b10b50"},
+    {file = "flake8_broken_line-0.3.0-py3-none-any.whl", hash = "sha256:611f79c7f27118e7e5d3dc098ef7681c40aeadf23783700c5dbee840d2baf3af"},
 ]
 flake8-bugbear = [
     {file = "flake8-bugbear-20.11.1.tar.gz", hash = "sha256:528020129fea2dea33a466b9d64ab650aa3e5f9ffc788b70ea4bc6cf18283538"},
@@ -1440,15 +1466,16 @@ flake8-comprehensions = [
     {file = "flake8_comprehensions-3.3.1-py3-none-any.whl", hash = "sha256:6d80dfafda0d85633f88ea5bc7de949485f71f1e28db7af7719563fe5f62dcb1"},
 ]
 flake8-debugger = [
-    {file = "flake8-debugger-3.2.1.tar.gz", hash = "sha256:712d7c1ff69ddf3f0130e94cc88c2519e720760bce45e8c330bfdcb61ab4090d"},
+    {file = "flake8-debugger-4.0.0.tar.gz", hash = "sha256:e43dc777f7db1481db473210101ec2df2bd39a45b149d7218a618e954177eda6"},
+    {file = "flake8_debugger-4.0.0-py3-none-any.whl", hash = "sha256:82e64faa72e18d1bdd0000407502ebb8ecffa7bc027c62b9d4110ce27c091032"},
 ]
 flake8-docstrings = [
     {file = "flake8-docstrings-1.5.0.tar.gz", hash = "sha256:3d5a31c7ec6b7367ea6506a87ec293b94a0a46c0bce2bb4975b7f1d09b6f3717"},
     {file = "flake8_docstrings-1.5.0-py2.py3-none-any.whl", hash = "sha256:a256ba91bc52307bef1de59e2a009c3cf61c3d0952dbe035d6ff7208940c2edc"},
 ]
 flake8-eradicate = [
-    {file = "flake8-eradicate-0.4.0.tar.gz", hash = "sha256:be5ea4521dfd4cb76837635f9ace57e12a7336c4b82054c99fd0394c00eef8ce"},
-    {file = "flake8_eradicate-0.4.0-py3-none-any.whl", hash = "sha256:804a39aef145c193e8d77770efc45df82e631b29c4456ecb5ff2e2e5996cf09a"},
+    {file = "flake8-eradicate-1.0.0.tar.gz", hash = "sha256:fe7167226676823d50cf540532302a6f576c5a398c5260692571a05ef72c5f5b"},
+    {file = "flake8_eradicate-1.0.0-py3-none-any.whl", hash = "sha256:0fc4ab858a18c7ed630621b5345254c8f55be6060ea5c44a25e384d613618d1f"},
 ]
 flake8-fixme = [
     {file = "flake8-fixme-1.1.1.tar.gz", hash = "sha256:50cade07d27a4c30d4f12351478df87339e67640c83041b664724bda6d16f33a"},
@@ -1493,8 +1520,8 @@ httpx = [
     {file = "httpx-0.16.1.tar.gz", hash = "sha256:126424c279c842738805974687e0518a94c7ae8d140cd65b9c4f77ac46ffa537"},
 ]
 idna = [
-    {file = "idna-3.1-py3-none-any.whl", hash = "sha256:5205d03e7bcbb919cc9c19885f9920d622ca52448306f2377daede5cf3faac16"},
-    {file = "idna-3.1.tar.gz", hash = "sha256:c5b02147e01ea9920e6b0a3f1f7bb833612d507592c837a6c49552768f4054e1"},
+    {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
+    {file = "idna-2.10.tar.gz", hash = "sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6"},
 ]
 importlib-metadata = [
     {file = "importlib_metadata-3.4.0-py3-none-any.whl", hash = "sha256:ace61d5fc652dc280e7b6b4ff732a9c2d40db2c0f92bc6cb74e07b73d53a1771"},
@@ -1796,8 +1823,8 @@ regex = [
     {file = "regex-2020.11.13.tar.gz", hash = "sha256:83d6b356e116ca119db8e7c6fc2983289d87b27b3fac238cfe5dca529d884562"},
 ]
 requests = [
-    {file = "requests-2.15.1-py2.py3-none-any.whl", hash = "sha256:ff753b2196cd18b1bbeddc9dcd5c864056599f7a7d9a4fb5677e723efa2b7fb9"},
-    {file = "requests-2.15.1.tar.gz", hash = "sha256:e5659b9315a0610505e050bb7190bf6fa2ccee1ac295f2b760ef9d8a03ebbb2e"},
+    {file = "requests-2.25.1-py2.py3-none-any.whl", hash = "sha256:c210084e36a42ae6b9219e00e48287def368a26d03a048ddad7bfee44f75871e"},
+    {file = "requests-2.25.1.tar.gz", hash = "sha256:27973dd4a904a4f13b263a19c866c13b92a39ed1c964655f025f3f8d3d75b804"},
 ]
 restructuredtext-lint = [
     {file = "restructuredtext_lint-1.3.2.tar.gz", hash = "sha256:d3b10a1fe2ecac537e51ae6d151b223b78de9fafdd50e5eb6b08c243df173c80"},
@@ -1923,6 +1950,10 @@ unidecode = [
     {file = "Unidecode-1.2.0-py2.py3-none-any.whl", hash = "sha256:12435ef2fc4cdfd9cf1035a1db7e98b6b047fe591892e81f34e94959591fad00"},
     {file = "Unidecode-1.2.0.tar.gz", hash = "sha256:8d73a97d387a956922344f6b74243c2c6771594659778744b2dbdaad8f6b727d"},
 ]
+urllib3 = [
+    {file = "urllib3-1.26.3-py2.py3-none-any.whl", hash = "sha256:1b465e494e3e0d8939b50680403e3aedaa2bc434b7d5af64dfd3c958d7f5ae80"},
+    {file = "urllib3-1.26.3.tar.gz", hash = "sha256:de3eedaad74a2683334e282005cd8d7f22f4d55fa690a2a1020a416cb0a47e73"},
+]
 uvicorn = [
     {file = "uvicorn-0.13.3-py3-none-any.whl", hash = "sha256:1079c50a06f6338095b4f203e7861dbff318dde5f22f3a324fc6e94c7654164c"},
     {file = "uvicorn-0.13.3.tar.gz", hash = "sha256:ef1e0bb5f7941c6fe324e06443ddac0331e1632a776175f87891c7bd02694355"},
@@ -1931,7 +1962,10 @@ websocket-client = [
     {file = "websocket_client-0.57.0-py2.py3-none-any.whl", hash = "sha256:0fc45c961324d79c781bab301359d5a1b00b13ad1b10415a4780229ef71a5549"},
     {file = "websocket_client-0.57.0.tar.gz", hash = "sha256:d735b91d6d1692a6a181f2a8c9e0238e5f6373356f561bb9dc4c7af36f452010"},
 ]
-wemake-python-styleguide = []
+wemake-python-styleguide = [
+    {file = "wemake-python-styleguide-0.15.1.tar.gz", hash = "sha256:fe3c867e8960d4a755cbee09fcbeabd7f35b37289aaa6acce931b2ccd806300e"},
+    {file = "wemake_python_styleguide-0.15.1-py3-none-any.whl", hash = "sha256:d0fc6a62533903531cbb77a45822090a71052ce3f340fe1a11886f10bc1131f8"},
+]
 win32-setctime = [
     {file = "win32_setctime-1.0.3-py3-none-any.whl", hash = "sha256:dc925662de0a6eb987f0b01f599c01a8236cb8c62831c22d9cada09ad958243e"},
     {file = "win32_setctime-1.0.3.tar.gz", hash = "sha256:4e88556c32fdf47f64165a2180ba4552f8bb32c1103a2fafd05723a0bd42bd4b"},
