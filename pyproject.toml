@@ -46,7 +46,7 @@ combine_as_imports = true
 testpaths = "tests"
 filterwarnings = "error"
 addopts = '''
-  --strict
+  --strict-markers
   --tb=short
   --cov=app
   --cov=tests
