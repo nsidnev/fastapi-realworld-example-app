@@ -881,7 +881,7 @@ python-versions = "*"
 
 [[package]]
 name = "pytest"
-version = "6.2.2"
+version = "6.2.4"
 description = "pytest: simple powerful testing with Python"
 category = "dev"
 optional = false
@@ -1267,7 +1267,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "b954907ecebfc1d1d576a435eedd88d14c4f4fa0863b75b7f091d24cc398e131"
+content-hash = "be205fdab20d7dfbb8671ae01338e06d89b4ab331cd445e5bb683c00d00f24b6"
 
 [metadata.files]
 aiosql = [
@@ -1774,8 +1774,8 @@ pypika = [
     {file = "pypika-0.48.2.tar.gz", hash = "sha256:a05a33f7d3a8c6fe26270cb071112847e2aa094a2592e9c15cd3c00be509cec2"},
 ]
 pytest = [
-    {file = "pytest-6.2.2-py3-none-any.whl", hash = "sha256:b574b57423e818210672e07ca1fa90aaf194a4f63f3ab909a2c67ebb22913839"},
-    {file = "pytest-6.2.2.tar.gz", hash = "sha256:9d1edf9e7d0b84d72ea3dbcdfd22b35fb543a5e8f2a60092dd578936bf63d7f9"},
+    {file = "pytest-6.2.4-py3-none-any.whl", hash = "sha256:91ef2131a9bd6be8f76f1f08eac5c5317221d6ad1e143ae03894b862e8976890"},
+    {file = "pytest-6.2.4.tar.gz", hash = "sha256:50bcad0a0b9c5a72c8e4e7c9855a3ad496ca6a881a3641b4260605450772c54b"},
 ]
 pytest-asyncio = [
     {file = "pytest-asyncio-0.15.1.tar.gz", hash = "sha256:2564ceb9612bbd560d19ca4b41347b54e7835c2f792c504f698e05395ed63f6f"},
