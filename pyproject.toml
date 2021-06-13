@@ -11,7 +11,7 @@ uvicorn = "^0.14.0"
 fastapi = "^0.65.2"
 pydantic = { version = "^1.7", extras = ["email"] }
 passlib = { version = "^1.7", extras = ["bcrypt"] }
-pyjwt = "^1.7"
+pyjwt = "^2.1"
 databases = "^0.4.3"
 asyncpg = "^0.23.0"
 psycopg2-binary = "^2.8.6"
