@@ -186,7 +186,7 @@ def create_commentaries_table() -> None:
         """
         CREATE TRIGGER update_comment_modtime
             BEFORE UPDATE
-            ON commentaries 
+            ON commentaries
             FOR EACH ROW
         EXECUTE PROCEDURE update_updated_at_column();
         """
@@ -204,7 +204,7 @@ def upgrade() -> None:
     create_commentaries_table()
 
 
-def downgrade():
+def downgrade() -> None:
     op.drop_table("commentaries")
     op.drop_table("favorites")
     op.drop_table("articles_to_tags")
