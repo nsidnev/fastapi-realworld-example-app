@@ -1,25 +1,24 @@
 version: 2
+
 updates:
-- package-ecosystem: pip
-  directory: "/"
-  schedule:
-    interval: monthly
-    time: "02:00"
-  pull-request-branch-name:
-    separator: "-"
-  open-pull-requests-limit: 10
-  reviewers:
-  - nsidnev
-  allow:
-  - dependency-type: direct
-  - dependency-type: indirect
-  ignore:
-  - dependency-name: darglint
-    versions:
-    - 1.5.8
-  - dependency-name: urllib3
-    versions:
-    - 1.26.2
-  - dependency-name: httpcore
-    versions:
-    - 0.12.2
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: monthly
+      time: "12:00"
+    pull-request-branch-name:
+      separator: "-"
+    open-pull-requests-limit: 10
+    reviewers:
+      - nsidnev
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: monthly
+      time: "12:00"
+    pull-request-branch-name:
+      separator: "-"
+    open-pull-requests-limit: 10
+    reviewers:
+      - nsidnev
