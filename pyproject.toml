@@ -24,7 +24,7 @@ loguru = "^0.5.1"
 
 [tool.poetry.dev-dependencies]
 black = "^21.6b0"
-isort = "^5.8"
+isort = "^5.9"
 autoflake = "^1.4"
 wemake-python-styleguide = "^0.15.2"
 mypy = "^0.902"
