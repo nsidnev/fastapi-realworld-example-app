@@ -14,7 +14,7 @@ passlib = { version = "^1.7", extras = ["bcrypt"] }
 pyjwt = "^2.1"
 databases = "^0.4.3"
 asyncpg = "^0.23.0"
-psycopg2-binary = "^2.8.6"
+psycopg2-binary = "^2.9.1"
 aiosql = "^3.1.2"
 pypika = "^0.48.5"
 alembic = "^1.6"
