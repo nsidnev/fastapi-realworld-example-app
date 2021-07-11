@@ -54,6 +54,19 @@ To run the web application in debug use::
     alembic upgrade head
     uvicorn app.main:app --reload
 
+If you run into the following error in your docker container:
+
+   sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) could not connect to server: No such file or directory
+   Is the server running locally and accepting
+   connections on Unix domain socket "/tmp/.s.PGSQL.5432"?
+
+Ensure the DB_CONNECTION variable is set correctly in the `.env` file. 
+It is most likely caused by POSTGRES_HOST not pointing to its localhost.
+
+   DB_CONNECTION=postgresql://postgres:postgres@0.0.0.0:5432/rwdb
+
+
+
 Run tests
 ---------
 
