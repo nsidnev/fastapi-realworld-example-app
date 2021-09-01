@@ -291,7 +291,7 @@ trio = ["trio (>=0.14.0)", "sniffio (>=1.1)"]
 
 [[package]]
 name = "docker"
-version = "5.0.0"
+version = "5.0.1"
 description = "A Python library for the Docker Engine API."
 category = "dev"
 optional = false
@@ -1500,8 +1500,8 @@ dnspython = [
     {file = "dnspython-2.1.0.zip", hash = "sha256:e4a87f0b573201a0f3727fa18a516b055fd1107e0e5477cded4a2de497df1dd4"},
 ]
 docker = [
-    {file = "docker-5.0.0-py2.py3-none-any.whl", hash = "sha256:fc961d622160e8021c10d1bcabc388c57d55fb1f917175afbe24af442e6879bd"},
-    {file = "docker-5.0.0.tar.gz", hash = "sha256:3e8bc47534e0ca9331d72c32f2881bb13b93ded0bcdeab3c833fb7cf61c0a9a5"},
+    {file = "docker-5.0.1-py2.py3-none-any.whl", hash = "sha256:b88eef725b33c0ed59c67506631bbb09b480b7ca5a739bbbb948b446443fe914"},
+    {file = "docker-5.0.1.tar.gz", hash = "sha256:5aafaec0d2a1de0e32010b43b5eac9f6f851c9db99a46ad32b8e44eeeb55616d"},
 ]
 docutils = [
     {file = "docutils-0.16-py2.py3-none-any.whl", hash = "sha256:0c5b78adfbf7762415433f5515cd5c9e762339e23369dbe8000d84a4bf4ab3af"},
