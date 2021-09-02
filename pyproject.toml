@@ -34,7 +34,7 @@ pytest-cov = "^2.12"
 pytest-asyncio = "^0.15.1"
 pytest-env = "^0.6.2"
 pytest-xdist = "^2.3.0"
-httpx = "^0.18.2"
+httpx = "^0.19.0"
 asgi-lifespan = "^1.0.1"
 
 [tool.isort]
