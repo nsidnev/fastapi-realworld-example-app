@@ -52,7 +52,7 @@ jobs:
       - name: Run newman and test service
         env:
           SECRET_KEY: secret_key
-          DB_CONNECTION: postgres://postgres:postgres@localhost/postgres
+          DB_CONNECTION: postgresql://postgres:postgres@localhost/postgres
         run: |
           poetry run alembic upgrade head
           poetry run uvicorn app.main:app &
