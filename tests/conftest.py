@@ -1,6 +1,5 @@
 from os import environ
 
-import alembic.config
 import pytest
 from asgi_lifespan import LifespanManager
 from asyncpg.pool import Pool
@@ -12,17 +11,11 @@ from app.db.repositories.users import UsersRepository
 from app.models.domain.articles import Article
 from app.models.domain.users import UserInDB
 from app.services import jwt
-
-
-@pytest.fixture(autouse=True)
-async def apply_migrations() -> None:
-    alembic.config.main(argv=["upgrade", "head"])
-    yield
-    alembic.config.main(argv=["downgrade", "base"])
+from tests.fake_asyncpg_pool import FakeAsyncPGPool
 
 
 @pytest.fixture
-def app(apply_migrations: None) -> FastAPI:
+def app() -> FastAPI:
     from app.main import get_application  # local import for testing purpose
 
     return get_application()
@@ -31,6 +24,7 @@ def app(apply_migrations: None) -> FastAPI:
 @pytest.fixture
 async def initialized_app(app: FastAPI) -> FastAPI:
     async with LifespanManager(app):
+        app.state.pool = await FakeAsyncPGPool.create_pool(app.state.pool)
         yield app
 
 

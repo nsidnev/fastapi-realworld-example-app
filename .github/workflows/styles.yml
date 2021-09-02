@@ -8,12 +8,16 @@ jobs:
 
     runs-on: ubuntu-18.04
 
+    strategy:
+      matrix:
+        python-version: [3.9]
+
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2.2.2
         with:
-          python-version: 3.9
+          python-version: ${{ matrix.python-version }}
 
       - name: Install poetry
         run: pip install poetry==1.1
@@ -22,10 +26,10 @@ jobs:
         id: cache-dev-deps
         with:
           path: .venv
-          key: venv-dev-${{ runner.os }}-py-3.9-poetry-${{ hashFiles('poetry.lock') }}
+          key: venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
           restore-keys: |
-            venv-dev-${{ runner.os }}-py-3.9-poetry-
-            venv-dev-${{ runner.os }}-py-3.9-
+            venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-poetry-
+            venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-
             venv-dev-${{ runner.os }}-py-
             venv-dev-${{ runner.os }}-
 

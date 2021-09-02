@@ -9,7 +9,7 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parents[3]))
 
 from app.core.config import DATABASE_URL  # isort:skip
 
-config = context.config
+config = context.config  # type: ignore
 
 fileConfig(config.config_file_name)
 
