@@ -60,7 +60,7 @@ If you run into the following error in your docker container:
    Is the server running locally and accepting
    connections on Unix domain socket "/tmp/.s.PGSQL.5432"?
 
-Ensure the DB_CONNECTION variable is set correctly in the `.env` file. 
+Ensure the DB_CONNECTION variable is set correctly in the `.env` file.
 It is most likely caused by POSTGRES_HOST not pointing to its localhost.
 
    DB_CONNECTION=postgresql://postgres:postgres@0.0.0.0:5432/rwdb
@@ -70,7 +70,7 @@ It is most likely caused by POSTGRES_HOST not pointing to its localhost.
 Run tests
 ---------
 
-Tests for this project are defined in the ``tests/`` folder. 
+Tests for this project are defined in the ``tests/`` folder.
 
 This project uses `pytest
 <https://docs.pytest.org/>`_ to define tests because it allows you to use the ``assert`` keyword with good formatting for failed assertations.
@@ -101,13 +101,6 @@ To run all the tests of a project, simply run the ``pytest`` command: ::
 
     ============================================ 90 passed in 70.50s (0:01:10) =============================================
     $
-
-This project does not use your local ``PostgreSQL`` by default, but creates it in ``docker`` as a container (you can see it if you type ``docker ps`` when the tests are executed, the docker container for ``PostgreSQL`` should be launched with with a name like ``test-postgres-725b4bd4-04f5-4c59-9870-af747d3b182f``). But there are cases when you don't want to use ``docker`` for tests as a database provider (which takes an additional +- 5-10 seconds for its bootstrap before executing the tests), for example, in CI, or if you have problems with the ``docker`` driver or for any other reason. In this case, you can run the tests using your already running database with the following command: ::
-
-   $ USE_LOCAL_DB_FOR_TEST=True pytest
-
-Which will use your local database with DSN from the environment variable ``DB_CONNECTION``.
-
 
 If you want to run a specific test, you can do this with `this
 <https://docs.pytest.org/en/latest/usage.html#specifying-tests-selecting-tests>`_ pytest feature: ::

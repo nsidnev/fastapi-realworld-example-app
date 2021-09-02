@@ -1,9 +1,6 @@
-import uuid
-import warnings
-from os import environ, getenv
+from os import environ
 
 import alembic.config
-import docker as libdocker
 import pytest
 from asgi_lifespan import LifespanManager
 from asyncpg.pool import Pool
@@ -15,52 +12,10 @@ from app.db.repositories.users import UsersRepository
 from app.models.domain.articles import Article
 from app.models.domain.users import UserInDB
 from app.services import jwt
-from tests.testing_helpers import ping_postgres, pull_image
-
-POSTGRES_DOCKER_IMAGE = "postgres:11.4-alpine"
-
-USE_LOCAL_DB = getenv("USE_LOCAL_DB_FOR_TEST", False)
-
-
-@pytest.fixture(scope="session")
-def docker() -> libdocker.APIClient:
-    with libdocker.APIClient(version="auto") as client:
-        yield client
-
-
-@pytest.fixture(scope="session", autouse=True)
-def postgres_server(docker: libdocker.APIClient) -> None:
-    warnings.filterwarnings("ignore", category=DeprecationWarning)
-
-    if not USE_LOCAL_DB:  # pragma: no cover
-        pull_image(docker, POSTGRES_DOCKER_IMAGE)
-
-        container = docker.create_container(
-            image=POSTGRES_DOCKER_IMAGE,
-            name="test-postgres-{}".format(uuid.uuid4()),
-            detach=True,
-        )
-        docker.start(container=container["Id"])
-        inspection = docker.inspect_container(container["Id"])
-        host = inspection["NetworkSettings"]["IPAddress"]
-
-        dsn = f"postgres://postgres:postgres@{host}/postgres"
-
-        try:
-            ping_postgres(dsn)
-            environ["DB_CONNECTION"] = dsn
-
-            yield container
-        finally:
-            docker.kill(container["Id"])
-            docker.remove_container(container["Id"])
-    else:  # pragma: no cover
-        yield
-        return
 
 
 @pytest.fixture(autouse=True)
-async def apply_migrations(postgres_server: None) -> None:
+async def apply_migrations() -> None:
     alembic.config.main(argv=["upgrade", "head"])
     yield
     alembic.config.main(argv=["downgrade", "base"])

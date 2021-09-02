@@ -33,7 +33,6 @@ pytest = "^6.2"
 pytest-cov = "^2.12"
 pytest-asyncio = "^0.15.1"
 pytest-env = "^0.6.2"
-docker = "^5.0"
 httpx = "^0.18.2"
 asgi-lifespan = "^1.0.1"
 

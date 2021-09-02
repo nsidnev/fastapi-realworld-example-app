@@ -4,34 +4,36 @@ on: [push, pull_request]
 
 jobs:
   lint:
-    name: Lint code (Python ${{ matrix.python-version }})
+    name: Lint code
+
     runs-on: ubuntu-18.04
-    strategy:
-      matrix:
-        python-version: [3.7, 3.8]
+
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
         uses: actions/setup-python@v2.2.2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
+
       - name: Install poetry
         run: pip install poetry==1.1
+
       - uses: actions/cache@v2.1.6
         id: cache-dev-deps
         with:
           path: .venv
-          key: venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
+          key: venv-dev-${{ runner.os }}-py-3.9-poetry-${{ hashFiles('poetry.lock') }}
           restore-keys: |
-            venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-poetry-
-            venv-dev-${{ runner.os }}-py-${{ matrix.python-version }}-
+            venv-dev-${{ runner.os }}-py-3.9-poetry-
+            venv-dev-${{ runner.os }}-py-3.9-
             venv-dev-${{ runner.os }}-py-
             venv-dev-${{ runner.os }}-
+
       - name: Install dependencies
         if: steps.cache-dev-deps.outputs.cache-hit != 'true'
         run: |
           poetry config virtualenvs.in-project true
           poetry install
+
       - name: Run linters
-        run: |
-          poetry run ./scripts/lint
+        run: poetry run ./scripts/lint

@@ -4,11 +4,8 @@ on: [push, pull_request]
 
 jobs:
   api-spec:
-    name: API spec tests (Python ${{ matrix.python-version }})
+    name: API spec tests
     runs-on: ubuntu-18.04
-    strategy:
-      matrix:
-        python-version: [3.7, 3.8]
     services:
       postgres:
         image: postgres:11.5-alpine
@@ -24,17 +21,17 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2.2.2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
       - name: Install poetry
         run: pip install poetry==1.1
       - uses: actions/cache@v2.1.6
         id: cache-spec-deps
         with:
           path: .venv
-          key: venv-conduit-${{ runner.os }}-py-${{ matrix.python-version }}-poetry-${{ hashFiles('poetry.lock') }}
+          key: venv-conduit-${{ runner.os }}-py-3.9-poetry-${{ hashFiles('poetry.lock') }}
           restore-keys: |
-            venv-conduit-${{ runner.os }}-py-${{ matrix.python-version }}-poetry-
-            venv-conduit-${{ runner.os }}-py-${{ matrix.python-version }}-
+            venv-conduit-${{ runner.os }}-py-3.9-poetry-
+            venv-conduit-${{ runner.os }}-py-3.9-
             venv-conduit-${{ runner.os }}-py-
             venv-conduit-${{ runner.os }}-
       - name: Install dependencies
