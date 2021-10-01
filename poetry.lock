@@ -12,7 +12,7 @@ typing-extensions = ">=3.7.4,<4"
 
 [[package]]
 name = "alembic"
-version = "1.7.1"
+version = "1.7.3"
 description = "A database migration tool for SQLAlchemy."
 category = "main"
 optional = false
@@ -1306,7 +1306,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "6376beaa9f8bcccd5627778f7d497458c4e3854daaa7a2773d9844d5ae588891"
+content-hash = "4bcac4e038b1e9c4019a75b5f0dfc53b8d1eba68b963de461096495702ecaf9a"
 
 [metadata.files]
 aiosql = [
@@ -1314,8 +1314,8 @@ aiosql = [
     {file = "aiosql-3.3.1.tar.gz", hash = "sha256:e7144b0e96c2783b79002657497b3a16ee41068290adc1e89cf08cb3974c76fa"},
 ]
 alembic = [
-    {file = "alembic-1.7.1-py3-none-any.whl", hash = "sha256:25f996b7408b11493d6a2d669fd9d2ff8d87883fe7434182bc7669d6caa526ab"},
-    {file = "alembic-1.7.1.tar.gz", hash = "sha256:aea964d3dcc9c205b8759e4e9c1c3935ea3afeee259bffd7ed8414f8085140fb"},
+    {file = "alembic-1.7.3-py3-none-any.whl", hash = "sha256:d0c580041f9f6487d5444df672a83da9be57398f39d6c1802bbedec6fefbeef6"},
+    {file = "alembic-1.7.3.tar.gz", hash = "sha256:bc5bdf03d1b9814ee4d72adc0b19df2123f6c50a60c1ea761733f3640feedb8d"},
 ]
 anyio = [
     {file = "anyio-3.3.0-py3-none-any.whl", hash = "sha256:929a6852074397afe1d989002aa96d457e3e1e5441357c60d03e7eea0e65e1b0"},
