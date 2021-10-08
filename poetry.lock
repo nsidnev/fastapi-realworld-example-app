@@ -265,7 +265,7 @@ python-versions = ">=3.6,<4.0"
 
 [[package]]
 name = "databases"
-version = "0.5.0"
+version = "0.5.2"
 description = "Async database support for Python."
 category = "main"
 optional = false
@@ -1306,7 +1306,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "90c4eec23b7feba8e0bb82bb52b215f71e43952f06343009dbe52d4789688181"
+content-hash = "a1a74461357b888e9c24b6ca580751ce331b8857aea3d336869f7ce47faf9e66"
 
 [metadata.files]
 aiosql = [
@@ -1502,8 +1502,8 @@ darglint = [
     {file = "darglint-1.8.0.tar.gz", hash = "sha256:aa605ef47817a6d14797d32b390466edab621768ea4ca5cc0f3c54f6d8dcaec8"},
 ]
 databases = [
-    {file = "databases-0.5.0-py3-none-any.whl", hash = "sha256:0c129b090e2f41650b1dd56a77c707d462c6685d2f15e98588cba91ec829d837"},
-    {file = "databases-0.5.0.tar.gz", hash = "sha256:530d5f489338bf34886cad0fb6f1584922cb25ce9684afec63c37f00e8d6725d"},
+    {file = "databases-0.5.2-py3-none-any.whl", hash = "sha256:c12473ce4a3eb9623bef0623ebd021012c6c4e27216689b501e701d012e84381"},
+    {file = "databases-0.5.2.tar.gz", hash = "sha256:4e93800c540a4dbef8b8ce73dfeee95551d5d27e872b07326b1e523c185645b4"},
 ]
 dnspython = [
     {file = "dnspython-2.1.0-py3-none-any.whl", hash = "sha256:95d12f6ef0317118d2a1a6fc49aac65ffec7eb8087474158f42f26a639135216"},
