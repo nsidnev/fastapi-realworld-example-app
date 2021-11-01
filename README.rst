@@ -46,7 +46,8 @@ Then run the following commands to bootstrap your environment with ``poetry``: :
 Then create ``.env`` file (or rename and modify ``.env.example``) in project root and set environment variables for application: ::
 
     touch .env
-    echo DB_CONNECTION=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB >> .env
+    echo APP_ENV=dev
+    echo DATABASE_URL=postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB >> .env
     echo SECRET_KEY=$(openssl rand -hex 32) >> .env
 
 To run the web application in debug use::
@@ -60,10 +61,10 @@ If you run into the following error in your docker container:
    Is the server running locally and accepting
    connections on Unix domain socket "/tmp/.s.PGSQL.5432"?
 
-Ensure the DB_CONNECTION variable is set correctly in the `.env` file.
+Ensure the DATABASE_URL variable is set correctly in the `.env` file.
 It is most likely caused by POSTGRES_HOST not pointing to its localhost.
 
-   DB_CONNECTION=postgresql://postgres:postgres@0.0.0.0:5432/rwdb
+   DATABASE_URL=postgresql://postgres:postgres@0.0.0.0:5432/rwdb
 
 
 
@@ -71,6 +72,8 @@ Run tests
 ---------
 
 Tests for this project are defined in the ``tests/`` folder.
+
+Set up environment variable ``DATABASE_URL`` or set up ``database_url`` in ``app/core/settings/test.py``
 
 This project uses `pytest
 <https://docs.pytest.org/>`_ to define tests because it allows you to use the ``assert`` keyword with good formatting for failed assertations.

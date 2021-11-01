@@ -54,7 +54,7 @@ jobs:
       - name: Run tests
         env:
           SECRET_KEY: secret_key
-          DB_CONNECTION: postgresql://postgres:postgres@localhost/postgres
+          DATABASE_URL: postgresql://postgres:postgres@localhost/postgres
         run: |
           poetry run alembic upgrade head
           poetry run ./scripts/test
