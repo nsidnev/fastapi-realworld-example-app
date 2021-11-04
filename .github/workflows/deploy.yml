@@ -62,6 +62,6 @@ jobs:
               --label \"traefik.http.routers.frw-backend.tls.certresolver=letsencrypt\" \
               --label \"traefik.http.routers.frw-backend.middlewares=http-to-https@file\" \
               --label \"traefik.http.services.frw-backend.loadbalancer.server.port=8000\" \
-              -e DATABASE_URL=\"$DATABASE_URL" \
+              -e DATABASE_URL=\"$DATABASE_URL\" \
               -e SECRET_KEY=\"$SECRET_KEY\" \
               $IMAGE_NAME"
