@@ -39,7 +39,7 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          DB_CONNECTION: ${{ secrets.DB_CONNECTION }}
+          DATABASE_URL: ${{ secrets.DB_CONNECTION }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
         run: |
           which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
@@ -62,6 +62,6 @@ jobs:
               --label \"traefik.http.routers.frw-backend.tls.certresolver=letsencrypt\" \
               --label \"traefik.http.routers.frw-backend.middlewares=http-to-https@file\" \
               --label \"traefik.http.services.frw-backend.loadbalancer.server.port=8000\" \
-              -e DB_CONNECTION=\"$DB_CONNECTION\" \
+              -e DATABASE_URL=\"$DATABASE_URL" \
               -e SECRET_KEY=\"$SECRET_KEY\" \
               $IMAGE_NAME"

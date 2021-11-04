@@ -2,16 +2,16 @@ import asyncpg
 from fastapi import FastAPI
 from loguru import logger
 
-from app.core.config import DATABASE_URL, MAX_CONNECTIONS_COUNT, MIN_CONNECTIONS_COUNT
+from app.core.settings.app import AppSettings
 
 
-async def connect_to_db(app: FastAPI) -> None:
-    logger.info("Connecting to {0}", repr(DATABASE_URL))
+async def connect_to_db(app: FastAPI, settings: AppSettings) -> None:
+    logger.info("Connecting to {0}", repr(settings.database_url))
 
     app.state.pool = await asyncpg.create_pool(
-        str(DATABASE_URL),
-        min_size=MIN_CONNECTIONS_COUNT,
-        max_size=MAX_CONNECTIONS_COUNT,
+        str(settings.database_url),
+        min_size=settings.min_connection_count,
+        max_size=settings.max_connection_count,
     )
 
     logger.info("Connection established")
