@@ -7,7 +7,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DB_CONNECTION: "postgresql://postgres:postgres@db/postgres"
+      DATABASE_URL: "postgresql://postgres:postgres@db/postgres"
     env_file:
       - .env
     depends_on:

@@ -13,6 +13,8 @@ from app.models.domain.users import UserInDB
 from app.services import jwt
 from tests.fake_asyncpg_pool import FakeAsyncPGPool
 
+environ['APP_ENV'] = "test"
+
 
 @pytest.fixture
 def app() -> FastAPI:
@@ -45,9 +47,12 @@ async def client(initialized_app: FastAPI) -> AsyncClient:
 
 @pytest.fixture
 def authorization_prefix() -> str:
-    from app.core.config import JWT_TOKEN_PREFIX
+    from app.core.config import get_app_settings
 
-    return JWT_TOKEN_PREFIX
+    settings = get_app_settings()
+    jwt_token_prefix = settings.jwt_token_prefix
+
+    return jwt_token_prefix
 
 
 @pytest.fixture
