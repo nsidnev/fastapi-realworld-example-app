@@ -6,7 +6,7 @@ from app.core.settings.app import AppSettings
 
 
 async def connect_to_db(app: FastAPI, settings: AppSettings) -> None:
-    logger.info("Connecting to {0}", repr(settings.database_url))
+    logger.info("Connecting to PostgreSQL")
 
     app.state.pool = await asyncpg.create_pool(
         str(settings.database_url),

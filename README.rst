@@ -26,6 +26,12 @@
 .. image:: https://img.shields.io/badge/style-wemake-000000.svg
    :target: https://github.com/wemake-services/wemake-python-styleguide
 
+----------
+
+**NOTE**: This repository is not actively maintained because this example is quite complete and does its primary goal - passing Conduit testsuite.
+
+More modern and relevant examples can be found in other repositories with ``fastapi`` tag on GitHub.
+
 Quickstart
 ----------
 
