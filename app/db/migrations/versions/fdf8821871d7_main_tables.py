@@ -45,6 +45,7 @@ def timestamps() -> Tuple[sa.Column, sa.Column]:
             sa.TIMESTAMP(timezone=True),
             nullable=False,
             server_default=func.now(),
+            onupdate=func.current_timestamp(),
         ),
     )
 
