@@ -13,7 +13,7 @@ from app.models.domain.users import UserInDB
 from app.services import jwt
 from tests.fake_asyncpg_pool import FakeAsyncPGPool
 
-environ['APP_ENV'] = "test"
+environ["APP_ENV"] = "test"
 
 
 @pytest.fixture
