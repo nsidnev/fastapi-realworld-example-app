@@ -9,8 +9,6 @@ updates:
     pull-request-branch-name:
       separator: "-"
     open-pull-requests-limit: 10
-    reviewers:
-      - nsidnev
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -20,5 +18,3 @@ updates:
     pull-request-branch-name:
       separator: "-"
     open-pull-requests-limit: 10
-    reviewers:
-      - nsidnev
