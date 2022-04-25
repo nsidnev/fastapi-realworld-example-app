@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, Body, Depends
+from fastapi import APIRouter, Body, Depends, Response
 from starlette import status
 
 from app.api.dependencies.articles import get_article_by_slug_from_path
@@ -62,6 +62,7 @@ async def create_comment_for_article(
     status_code=status.HTTP_204_NO_CONTENT,
     name="comments:delete-comment-from-article",
     dependencies=[Depends(check_comment_modification_permissions)],
+    response_class=Response,
 )
 async def delete_comment_from_article(
     comment: Comment = Depends(get_comment_by_id_from_path),

@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException, Response
 from starlette import status
 
 from app.api.dependencies.articles import (
@@ -111,6 +111,7 @@ async def update_article_by_slug(
     status_code=status.HTTP_204_NO_CONTENT,
     name="articles:delete-article",
     dependencies=[Depends(check_article_modification_permissions)],
+    response_class=Response,
 )
 async def delete_article_by_slug(
     article: Article = Depends(get_article_by_slug_from_path),
