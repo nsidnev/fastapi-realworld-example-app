@@ -222,21 +222,24 @@ python-versions = ">=3.6,<4.0"
 
 [[package]]
 name = "databases"
-version = "0.5.5"
+version = "0.6.1"
 description = "Async database support for Python."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 sqlalchemy = ">=1.4,<1.5"
 
 [package.extras]
 sqlite = ["aiosqlite"]
-postgresql_aiopg = ["aiopg"]
 postgresql = ["asyncpg"]
-mysql_asyncmy = ["asyncmy"]
 mysql = ["aiomysql"]
+asyncpg = ["asyncpg"]
+asyncmy = ["asyncmy"]
+aiosqlite = ["aiosqlite"]
+aiopg = ["aiopg"]
+aiomysql = ["aiomysql"]
 
 [[package]]
 name = "dnspython"
@@ -1208,7 +1211,7 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "26d11d90f7a540f28233af2943a34bf2ef056274ee41b40e844a7b2e4ba37f24"
+content-hash = "b1499a2279b72068a41c6183e206172ceb84f26aab900b760a89b9155ef4c00f"
 
 [metadata.files]
 aiosql = [
@@ -1432,8 +1435,8 @@ darglint = [
     {file = "darglint-1.8.1.tar.gz", hash = "sha256:080d5106df149b199822e7ee7deb9c012b49891538f14a11be681044f0bb20da"},
 ]
 databases = [
-    {file = "databases-0.5.5-py3-none-any.whl", hash = "sha256:97d9b9647216d1ab53ca61c059412b5c7b6e1f0bf8ce985477982ebcc7f278f3"},
-    {file = "databases-0.5.5.tar.gz", hash = "sha256:02c6b016c1c951c21cca281dc8e2e002c60dc44026c0084aabbd8c37514aeb37"},
+    {file = "databases-0.6.1-py3-none-any.whl", hash = "sha256:47fae85d82d8227049f08b154019913c3ad2f6057ceb0b5ebb36703be6f5666b"},
+    {file = "databases-0.6.1.tar.gz", hash = "sha256:0a69c6983a27e10a5b75ffa094486f1febadd9d5a8db016e69b8c2f6a354dc30"},
 ]
 dnspython = [
     {file = "dnspython-2.2.0-py3-none-any.whl", hash = "sha256:081649da27ced5e75709a1ee542136eaba9842a0fe4c03da4fb0a3d3ed1f3c44"},
