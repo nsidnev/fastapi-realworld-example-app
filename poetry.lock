@@ -868,11 +868,11 @@ python-versions = "*"
 
 [[package]]
 name = "pytest"
-version = "7.0.0"
+version = "7.1.2"
 description = "pytest: simple powerful testing with Python"
 category = "dev"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 atomicwrites = {version = ">=1.0", markers = "sys_platform == \"win32\""}
@@ -1208,7 +1208,7 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "2e8d83b0ecc6271ea2e7d73e58f5adc0890f45d0f89d5affb4769904e68ffa50"
+content-hash = "6b1f6493913b216cc2e6e94696e4bebefc86a44177ed726865c0e2e871cbea97"
 
 [metadata.files]
 aiosql = [
@@ -1876,8 +1876,8 @@ pypika = [
     {file = "PyPika-0.48.9.tar.gz", hash = "sha256:838836a61747e7c8380cd1b7ff638694b7a7335345d0f559b04b2cd832ad5378"},
 ]
 pytest = [
-    {file = "pytest-7.0.0-py3-none-any.whl", hash = "sha256:42901e6bd4bd4a0e533358a86e848427a49005a3256f657c5c8f8dd35ef137a9"},
-    {file = "pytest-7.0.0.tar.gz", hash = "sha256:dad48ffda394e5ad9aa3b7d7ddf339ed502e5e365b1350e0af65f4a602344b11"},
+    {file = "pytest-7.1.2-py3-none-any.whl", hash = "sha256:13d0e3ccfc2b6e26be000cb6568c832ba67ba32e719443bfe725814d3c42433c"},
+    {file = "pytest-7.1.2.tar.gz", hash = "sha256:a06a0425453864a270bc45e71f783330a7428defb4230fb5e6a731fde06ecd45"},
 ]
 pytest-asyncio = [
     {file = "pytest-asyncio-0.19.0.tar.gz", hash = "sha256:ac4ebf3b6207259750bc32f4c1d8fcd7e79739edbc67ad0c58dd150b1d072fed"},
