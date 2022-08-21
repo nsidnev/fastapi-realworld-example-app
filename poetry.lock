@@ -1,14 +1,10 @@
 [[package]]
 name = "aiosql"
-version = "3.3.1"
+version = "6.2"
 description = "Simple SQL in Python"
 category = "main"
 optional = false
-python-versions = ">=3.6"
-
-[package.dependencies]
-contextlib2 = ">=21.6.0"
-typing-extensions = ">=3.7.4,<4"
+python-versions = ">=3.7"
 
 [[package]]
 name = "alembic"
@@ -212,14 +208,6 @@ description = "Cross-platform colored terminal text."
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-
-[[package]]
-name = "contextlib2"
-version = "21.6.0"
-description = "Backports and enhancements for the contextlib module"
-category = "main"
-optional = false
-python-versions = ">=3.6"
 
 [[package]]
 name = "coverage"
@@ -1232,12 +1220,12 @@ dev = ["black (>=19.3b0)", "pytest (>=4.6.2)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "6f8d4a705df6c06fa4d86a6879d26ca0b80d9fe996145b6e26bdb1474d02abe1"
+content-hash = "5178e39d248d8ee97e9be009cd8c8e73d2f5c455c05403b571d3de5117ff8b58"
 
 [metadata.files]
 aiosql = [
-    {file = "aiosql-3.3.1-py3-none-any.whl", hash = "sha256:467067f2d237e2ccc47a3f651ae6bd128d89287a5dbf1357c065c9be37947cbc"},
-    {file = "aiosql-3.3.1.tar.gz", hash = "sha256:e7144b0e96c2783b79002657497b3a16ee41068290adc1e89cf08cb3974c76fa"},
+    {file = "aiosql-6.2-py3-none-any.whl", hash = "sha256:b4b2b9a3ca129aa0fb44fa28d67d817bf4ac6c6fd663bfd15ed7e2c36562869d"},
+    {file = "aiosql-6.2.tar.gz", hash = "sha256:644b488c17143c0897084db158977b44e1801805329bed8a7e0d34d5ac4aa0ef"},
 ]
 alembic = [
     {file = "alembic-1.7.6-py3-none-any.whl", hash = "sha256:ad842f2c3ab5c5d4861232730779c05e33db4ba880a08b85eb505e87c01095bc"},
@@ -1402,10 +1390,6 @@ click = [
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
     {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
-]
-contextlib2 = [
-    {file = "contextlib2-21.6.0-py2.py3-none-any.whl", hash = "sha256:3fbdb64466afd23abaf6c977627b75b6139a5a3e8ce38405c5b413aed7a0471f"},
-    {file = "contextlib2-21.6.0.tar.gz", hash = "sha256:ab1e2bfe1d01d968e1b7e8d9023bc51ef3509bba217bb730cee3827e1ee82869"},
 ]
 coverage = [
     {file = "coverage-6.4.4-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:e7b4da9bafad21ea45a714d3ea6f3e1679099e420c8741c74905b92ee9bfa7cc"},
