@@ -1,6 +1,13 @@
 name: API spec
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - "master"
+
+  pull_request:
+    branches:
+      - "*"
 
 jobs:
   api-spec:
